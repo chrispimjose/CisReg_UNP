@@ -12,7 +12,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   {
     if (!optionsBuilder.IsConfigured)
     {
-      optionsBuilder.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database");
+      optionsBuilder.UseMongoDB("mongodb+srv://root:admin@cisreg.kzr70.mongodb.net/?retryWrites=true&w=majority&appName=CisReg", "cisreg");
     }
   }
 

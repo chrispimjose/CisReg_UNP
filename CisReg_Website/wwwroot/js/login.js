@@ -45,6 +45,14 @@ function validateFieldInputAtLogin(input) {
     }
 }
 
+document.body.classList.add('no-scroll');
+
+
+
+
+
+
+
 
 
 

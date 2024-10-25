@@ -4,22 +4,26 @@ using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace CisReg_Website.Domain;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+public class ApplicationDbContext : DbContext
 {
-  public DbSet<UserModel> Users { get; set; }
-
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-  {
-    if (!optionsBuilder.IsConfigured)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
     {
-      optionsBuilder.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database");
     }
-  }
 
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
-  {
-    base.OnModelCreating(modelBuilder);
+    public DbSet<UserModel> Users { get; set; }
 
-    modelBuilder.Entity<UserModel>().ToCollection("users");
-  }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+      if (!optionsBuilder.IsConfigured)
+      {
+        optionsBuilder.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database");
+      }
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      modelBuilder.Entity<UserModel>().ToCollection("users");
+    }
 }

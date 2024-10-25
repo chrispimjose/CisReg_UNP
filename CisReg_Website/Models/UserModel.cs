@@ -6,10 +6,9 @@ namespace CisReg_Website.Models;
 
 public class UserModel : DataFoundation
 {
+    [BsonRepresentation(BsonType.String)]
+    public string? Name { get; set; }
 
-  [BsonElement("name")]
-  public string? Name { get; set; }
-
-  [BsonElement("email")]
-  public string? Email { get; set; }
+    [BsonRepresentation(BsonType.String)]
+    public string? Email { get; set; }
 }

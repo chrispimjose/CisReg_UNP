@@ -16,12 +16,14 @@ namespace CisReg_Website.Controllers
         }
 
         // GET: User
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
         }
 
         // GET: User/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(ObjectId id)
         {
             var userModel = await _context.Users
@@ -35,6 +37,7 @@ namespace CisReg_Website.Controllers
         }
 
         // GET: User/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +60,7 @@ namespace CisReg_Website.Controllers
         }
 
         // GET: User/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(ObjectId id)
         {
             var userModel = await _context.Users.FindAsync(id);
@@ -103,6 +107,7 @@ namespace CisReg_Website.Controllers
         }
 
         // GET: User/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(ObjectId id)
         {
             var userModel = await _context.Users

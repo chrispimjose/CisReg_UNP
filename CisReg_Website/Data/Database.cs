@@ -1,4 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using CisReg_Website.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
 
 namespace CisReg_Website.Data
 {
@@ -27,16 +30,12 @@ namespace CisReg_Website.Data
             client = new MongoClient(connectionString);
             database = client.GetDatabase("cisreg");
 
-            /*
-            TODO:
-            Criar o mapeamneto de classes para o driver do mongodb reconhecer os objetos e suas respectivas classes
-            alem de realizar a construção e leitura de cada propriedade
+            // Mapeamento de classes
 
-            BsonClassMap.RegisterClassMap<Classe>(map => {
+            BsonClassMap.RegisterClassMap<CombinedInfoModel>(map => {
                 map.AutoMap();
-                map.MapCreator(c => new Classe(...));
+                map.MapCreator(c => new CombinedInfoModel());
             });
-            */
         }
 
         /// <summary>
@@ -57,14 +56,18 @@ namespace CisReg_Website.Data
         /// Implementa a seleção dos dados contidos nos bancos
         /// </summary>
         /// <param name="collectionName">Nome da coleção (tabela) do banco</param>
-        /// <param name="filter">Definição do filtro para o processo de busca</param>
+        /// <param name="filter">Definição do filtro para o processo de busca, deixar nullo para buscar por tudo</param>
         /// <returns>Retorna uma lista dos objetos encontrados no banco se não o retorno é nulo</returns>
-        public List<DataFoundation>? Select(string collectionName, FilterDefinition<DataFoundation> filter)
+        public List<BsonDocument>? Select(string collectionName, FilterDefinition<BsonDocument>? filter)
         {
             try
             {
-                var collection = database.GetCollection<DataFoundation>(collectionName);
-                return collection.FindAsync(filter).Result.ToList<DataFoundation>();
+                var collection = database.GetCollection<BsonDocument>(collectionName);
+                if (filter == null)
+                {
+                    return collection.FindAsync(new BsonDocument()).Result.ToList();
+                }
+                return collection.FindAsync(filter).Result.ToList();
             }
             catch (Exception ex)
             {
@@ -78,11 +81,11 @@ namespace CisReg_Website.Data
         /// </summary>
         /// <param name="collectionName">Nome da coleção (tabela) do banco</param>
         /// <param name="value">Objecto a ser inserido no banco</param>
-        public void Insert(string collectionName, DataFoundation value)
+        public void Insert(string collectionName, BsonDocument value)
         {
             try
             {
-                database.GetCollection<DataFoundation>(collectionName).InsertOneAsync(value);
+                database.GetCollection<BsonDocument>(collectionName).InsertOneAsync(value);
             }
             catch (Exception ex)
             {
@@ -96,11 +99,11 @@ namespace CisReg_Website.Data
         /// <param name="collectionName">Nome da coleção (tabela) do banco</param>
         /// <param name="filter">Definição do filtro para o processo de busca</param>
         /// <param name="update">Definição dos valores para o processo de atualização</param>
-        public void Update(string collectionName, FilterDefinition<DataFoundation> filter, UpdateDefinition<DataFoundation> update)
+        public void Update(string collectionName, FilterDefinition<BsonDocument> filter, UpdateDefinition<BsonDocument> update)
         {
             try
             {
-                var collection = database.GetCollection<DataFoundation>(collectionName);
+                var collection = database.GetCollection<BsonDocument>(collectionName);
                 collection.UpdateOneAsync(filter, update);
             }
             catch (Exception ex)
@@ -114,11 +117,11 @@ namespace CisReg_Website.Data
         /// </summary>
         /// <param name="collectionName">Nome da coleção (tabela) do banco</param>
         /// <param name="filter">Definição do filtro para o processo de busca</param>
-        public void Delete(string collectionName, FilterDefinition<DataFoundation> filter)
+        public void Delete(string collectionName, FilterDefinition<BsonDocument> filter)
         {
             try
             {
-                var collection = database.GetCollection<DataFoundation>(collectionName);
+                var collection = database.GetCollection<BsonDocument>(collectionName);
                 collection.DeleteOneAsync(filter);
             }
             catch (Exception ex)

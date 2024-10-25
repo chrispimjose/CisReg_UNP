@@ -1,4 +1,5 @@
-﻿@{
+﻿@model CisReg_Website.Models.LoginModel
+@{
     ViewData["Title"] = "Login"; 
 }
 
@@ -31,7 +32,7 @@
 
     <!-- Formulário de Login -->
     <div class="flex flex-col custom-sm:w-394-px custom-sm:h-474-px w-360-px custom-lg:mr-36 rounded-lg-border bg-customGrey-light shadow-login justify-center items-center z-10">
-        <form method="post" class="login-form p-4" autocomplete="off">
+        <form method="post" asp-action="Submit" asp-controller="Login" class="login-form p-4" autocomplete="off">
 
             <!-- Título "Login" -->
             <div class="relative">
@@ -45,7 +46,8 @@
                     <i class="fa-solid fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-customGrey-default"></i>
                     <input type="email"
                            id="email"
-                           name="email"
+                           name="Email"
+                           asp-for="Email"
                            class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base leading-4"
                            placeholder="Digite seu e-mail"
                            pattern="^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -61,7 +63,8 @@
                     <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-customGrey-default"></i>
                     <input type="password"
                            id="password"
-                           name="password"
+                           name="Password"
+                           asp-for="Password"
                            class="input input-accent pl-10 pr-12 w-full bg-white text-customGrey-default font-poppins text-base leading-4"
                            placeholder="Digite sua senha"
                            pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@@$!%*?&]{8,}"

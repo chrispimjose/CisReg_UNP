@@ -1,14 +1,19 @@
-using CisReg_Website.Data;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CisReg_Website.Models;
 
-public class UserModel : DataFoundation
+public class UserModel
 {
-    [BsonRepresentation(BsonType.String)]
-    public string? Name { get; set; }
+  [BsonId]
+  public ObjectId Id { get; set; }
 
-    [BsonRepresentation(BsonType.String)]
-    public string? Email { get; set; }
+  [BsonElement("name")]
+  public string? Name { get; set; }
+
+  [BsonElement("email")]
+  public string? Email { get; set; }
+
+  [BsonElement("password")]
+  public string? Password { get; set; }
 }

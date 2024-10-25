@@ -14,10 +14,10 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      if (!optionsBuilder.IsConfigured)
-      {
-        optionsBuilder.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database");
-      }
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseMongoDB("mongodb+srv://root:admin@cisreg.kzr70.mongodb.net/?retryWrites=true&w=majority&appName=CisReg", "cisreg");
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

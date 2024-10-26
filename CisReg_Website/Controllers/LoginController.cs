@@ -4,11 +4,21 @@ using Newtonsoft.Json;
 using CisReg_Website.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using CisReg_Website.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace CisReg_Website.Controllers
 {
     public class LoginController : Controller
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public LoginController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -17,23 +27,28 @@ namespace CisReg_Website.Controllers
         }
 
         [HttpPost]
-        public IActionResult Submit(LoginModel model)
-        {    
+        public async Task<IActionResult> Submit(LoginModel model)
+        {
             if (ModelState.IsValid)
             {
-                var filtro = Builders<BsonDocument>.Filter.And(
-                    Builders<BsonDocument>.Filter.Eq("Email", model.Email),
-                    Builders<BsonDocument>.Filter.Eq("Password", model.Password)
-                    );
-                var result = Database.GetInstance().Select("profissional", filtro);
+                var professionalTable = await _context.Professional
+                     .FirstOrDefaultAsync(m => m.Email == model.Email);
 
-                if (result != null && result.Count > 0)
+                if (professionalTable == null)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return View("Index");
                 }
+
+                if (model.Password != professionalTable.Password)
+                {
+                    return View("Index");
+                }
+
+
+                return RedirectToAction("Index", "Home");
             }
 
-            return View("Index", model);
+            return View();
         }
 
         [HttpGet]

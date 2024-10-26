@@ -11,6 +11,9 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<UserModel> Users { get; set; }
+    public DbSet<CombinedInfoModel> Professional { get; set; }
+    public DbSet<FormationModel> Formations { get; set; }
+    public DbSet<SpecialtyModel> Specialties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -25,5 +28,8 @@ public class ApplicationDbContext : DbContext
       base.OnModelCreating(modelBuilder);
 
       modelBuilder.Entity<UserModel>().ToCollection("users");
+      modelBuilder.Entity<CombinedInfoModel>().ToCollection("professional");
+      modelBuilder.Entity<FormationModel>().ToCollection("formations");
+      modelBuilder.Entity<SpecialtyModel>().ToCollection("specialties");
     }
 }

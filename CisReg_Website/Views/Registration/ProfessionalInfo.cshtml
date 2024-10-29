@@ -67,7 +67,7 @@
                         <option value="" disabled selected>Selecione uma formação</option>
                         @foreach (var formacao in viewFormations)
                         {
-                                    <option value="@formacao.GetElement("nome").Value">@formacao.GetElement("nome").Value</option>
+                            <option value="@formacao.Name">@formacao.Name</option>
                         }
                     </select>
                 </div>
@@ -85,7 +85,7 @@
                         <option value="" disabled selected>Selecione uma especialidade</option>
                         @foreach (var especialidade in viewSpecialties)
                         {
-                                <option value="@especialidade.GetElement("nome").Value">@especialidade.GetElement("nome").Value</option>
+                            <option value="@especialidade.Name">@especialidade.Name</option>
                         }
 
                     </select>

@@ -8,7 +8,7 @@ public class FormationModel
     [BsonId]
     public ObjectId Id { get; set; }
 
-    [BsonElement("name")]
+    [BsonElement("nome")]
     public string? Name { get; set; }
 
 }

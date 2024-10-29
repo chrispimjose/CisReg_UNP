@@ -28,8 +28,8 @@ public class ApplicationDbContext : DbContext
       base.OnModelCreating(modelBuilder);
 
       modelBuilder.Entity<UserModel>().ToCollection("users");
-      modelBuilder.Entity<CombinedInfoModel>().ToCollection("professional");
-      modelBuilder.Entity<FormationModel>().ToCollection("formations");
-      modelBuilder.Entity<SpecialtyModel>().ToCollection("specialties");
+      modelBuilder.Entity<CombinedInfoModel>().ToCollection("profissional");
+      modelBuilder.Entity<FormationModel>().ToCollection("formação");
+      modelBuilder.Entity<SpecialtyModel>().ToCollection("especialidade");
     }
 }

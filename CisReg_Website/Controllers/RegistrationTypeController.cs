@@ -17,7 +17,7 @@ namespace CisReg_Website.Controllers
             {
                 return RedirectToAction("PersonalInfo");
             }
-            else if (SelectedRegistrationType == "Usuario")
+            else if (SelectedRegistrationType == "UsuarioUNP")
             {
                 return RedirectToAction("Index", "User");
             }

@@ -37,33 +37,6 @@ namespace CisReg_Website.Controllers
             var formationsList = _context.Formations.ToList();
             var specialtiesList = _context.Specialties.ToList();
 
-            /*
-            _context.Specialties.AddRange(
-                new SpecialtyModel { Name = "Clínico Geral" },
-                new SpecialtyModel { Name = "Cirurgião" },
-                new SpecialtyModel { Name = "Cardiologista" },
-                new SpecialtyModel { Name = "Ortopedista" },
-                new SpecialtyModel { Name = "Pediatria" },
-                new SpecialtyModel { Name = "Ginecologista" },
-                new SpecialtyModel { Name = "Anestesiologia" },
-                new SpecialtyModel { Name = "Dermatologista" },
-                new SpecialtyModel { Name = "Psiquiatra" },
-                new SpecialtyModel { Name = "Oftalmologista" },
-                new SpecialtyModel { Name = "Oftalmologista" },
-                new SpecialtyModel { Name = "Oftalmologista" },
-                new SpecialtyModel { Name = "Oftalmologista" },
-                new SpecialtyModel { Name = "Oftalmologista" },
-            );
-
-            _context.Formations.AddRange(
-                new FormationModel { Name = "Graduação" },
-                new FormationModel { Name = "Residência Médica" },
-                new FormationModel { Name = "Especialização" },
-                new FormationModel { Name = "Mestrado"},
-                new FormationModel { Name = "Doutorado"}
-            ); */
-
-
             ViewBag.Formations = formationsList;
             ViewBag.Specialties = specialtiesList;
 

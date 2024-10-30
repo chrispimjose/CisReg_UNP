@@ -4,12 +4,8 @@ using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace CisReg_Website.Domain;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
-    {
-    }
-
     public DbSet<UserModel> Users { get; set; }
     public DbSet<CombinedInfoModel> Professional { get; set; }
     public DbSet<FormationModel> Formations { get; set; }

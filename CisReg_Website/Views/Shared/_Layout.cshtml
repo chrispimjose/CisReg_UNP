@@ -19,8 +19,10 @@
     @{
         var allowedControllers = new[] { "Login", "Registration", "ProfessionalInfo" };
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }
-    @if (allowedControllers.Contains(currentController))
+    @if (allowedControllers.Contains(currentController) ||
+        (currentAction == "Index" || currentAction == "Submit"))
     {
         <div>
             @RenderBody()

@@ -38,7 +38,7 @@ namespace CisReg_Website.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "O CPF informado já está cadastrado. Por favor, tente novamente.";
+                    ViewBag.ErrorMessage = "O CPF informado já está cadastrado.";
                     return View("~/Views/Registration/PersonalInfo.cshtml", model);
                 }
             }

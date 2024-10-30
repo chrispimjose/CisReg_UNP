@@ -1,6 +1,22 @@
 ﻿
 // Views - Registration - PersonalInfo.cshtml
 
+// Função listener para verificar e adicionar o elemento de id 'errorToast' e fazer ele aparecer.
+
+document.addEventListener('DOMContentLoaded', function () {
+    const errorAlert = document.getElementById('errorAlert');
+        /*
+    if (errorAlert) {
+        errorAlert.style.display = 'fixed';
+    }
+
+
+    setTimeout(() => {
+        errorAlert.style.display = 'none';
+    }, 5000)
+    */
+});
+
 // Função que torna o password digitado visível por meio de uma troca de type (password -> text || text -> password), assim como o ícone. 
 // Levemente modificado, para alterar os respectivos campos segundo o uso: Senha e Confirme a Senha.
 function togglePasswordVisibility(inputId, iconId) {

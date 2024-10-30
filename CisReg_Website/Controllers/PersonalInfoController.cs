@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CisReg_Website.Models;
 using Newtonsoft.Json;
+using CisReg_Website.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace CisReg_Website.Controllers
 {
     public class PersonalInfoController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public PersonalInfoController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -14,16 +23,28 @@ namespace CisReg_Website.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Submit(PersonalInfoModel model)
+        public async Task <IActionResult> Submit(PersonalInfoModel model)
         {
 
             if (ModelState.IsValid)
             {
-                TempData["PersonalInfo"] = JsonConvert.SerializeObject(model);
-                return RedirectToAction("Index", "ProfessionalInfo");
+                var searchForCPF = await _context.Professional
+                    .FirstOrDefaultAsync(m => m.CPF == model.CPF);
+
+                if (searchForCPF == null)
+                {
+                    TempData["PersonalInfo"] = JsonConvert.SerializeObject(model);
+                    return RedirectToAction("Index", "ProfessionalInfo");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "O CPF informado já está cadastrado. Por favor, tente novamente.";
+                    return View("~/Views/Registration/PersonalInfo.cshtml", model);
+                }
             }
 
-            return View(model);
+            ViewBag.ErrorMessage = "Invalid...";
+            return View("~/Views/Registration/PersonalInfo.cshtml", model);
         }
 
         [HttpGet]

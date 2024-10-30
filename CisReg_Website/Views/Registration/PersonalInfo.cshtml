@@ -1,7 +1,10 @@
 ﻿
 @model CisReg_Website.Models.PersonalInfoModel
 @{
+
     ViewData["Title"] = "Register";
+
+    var viewToastError = ViewBag.ErrorMessage;
 }
 
 
@@ -25,6 +28,17 @@
         <input id="colorRange" type="range" min="0" max="100" value="100" class="w-full range range-xs" />
         <i id="sunIcon" class="fa-solid fa-sun fa-xl ml-2" style="color: #000000"></i>
     </div>
+
+    @{
+        if (!string.IsNullOrEmpty(viewToastError))
+        {
+            <div class="toast toast-top toast-center z-10">
+                <div class="alert alert-danger">
+                    <span>@viewToastError</span>
+                </div>
+            </div>
+        }
+    }
 
     <!-- Formulário de Cadastro (Informações Pessoais) -->
     <div class="z-10 custom-sm:w-394-px custom-sm:h-auto w-360-px rounded-lg-border bg-customGrey-light shadow-login flex flex-col justify-center items-center custom-lg:mr-36">

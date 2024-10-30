@@ -234,15 +234,25 @@ function validateAge(input, errorMessageText) {
         return;
     }
 
-    if (age > 100) {
+    if (age < 18) {
+        input.classList.add('input-error');
+        span.classList.remove('hidden');
+        span.innerHTML = "A idade não pode ser inferior a 18 anos.";
+        return;
+    } 
+
+    if (age > 130) {
         input.classList.add('input-error');
         span.classList.remove('hidden');
         span.innerHTML = errorMessageText;
-    } else {
-        input.classList.add('input-accent');
-        span.classList.add('hidden');
-        span.innerHTML = "";
+        return;
     }
+
+    input.classList.add('input-accent');
+    span.classList.add('hidden');
+    span.innerHTML = "";
+    
+
 }
 
 // Função que verifica se o campo (Senha) e o (Confirmar Senha) tem os inputs equivalentes.

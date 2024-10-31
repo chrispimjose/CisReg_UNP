@@ -2645,6 +2645,10 @@ html:has(.drawer-toggle:checked) {
   height: 1.5rem;
 }
 
+.h-auto {
+  height: auto;
+}
+
 .h-entrar-height-px {
   height: 40px;
 }
@@ -2665,12 +2669,12 @@ html:has(.drawer-toggle:checked) {
   width: 20%;
 }
 
-.w-125-rem {
-  width: 125rem;
+.w-100-px {
+  width: 300px;
 }
 
-.w-24 {
-  width: 6rem;
+.w-125-rem {
+  width: 125rem;
 }
 
 .w-3\/4 {

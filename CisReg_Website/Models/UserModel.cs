@@ -15,5 +15,5 @@ public class UserModel
   public string? Email { get; set; }
 
   [BsonElement("password")]
-  public string? Passowrd { get; set; }
+  public string? Password { get; set; }
 }

@@ -25,25 +25,35 @@ namespace CisReg_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task <IActionResult> Submit(PersonalInfoModel model)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Erro no envio...";
+                return View("~/Views/Registration/PersonalInfo.cshtml", model);
+            }
+            try
             {
                 var searchForCPF = await _context.Professional
                     .FirstOrDefaultAsync(m => m.CPF == model.CPF);
 
-                if (searchForCPF == null)
-                {
-                    TempData["PersonalInfo"] = JsonConvert.SerializeObject(model);
-                    return RedirectToAction("Index", "ProfessionalInfo");
-                }
-                else
+                if (searchForCPF != null)
                 {
                     ViewBag.ErrorMessage = "O CPF informado já está cadastrado.";
                     return View("~/Views/Registration/PersonalInfo.cshtml", model);
                 }
+
+                TempData["PersonalInfo"] = JsonConvert.SerializeObject(model);
+                return RedirectToAction("Index", "ProfessionalInfo");
+            }
+            catch (DbUpdateException ex)
+            {
+                ViewBag.ErrorMessage = "Erro no envio dos dados...";
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
             }
 
-            ViewBag.ErrorMessage = "Invalid...";
             return View("~/Views/Registration/PersonalInfo.cshtml", model);
         }
 

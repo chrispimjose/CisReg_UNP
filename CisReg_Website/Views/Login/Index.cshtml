@@ -30,6 +30,28 @@
         <i id="sunIcon" class="fa-solid fa-sun fa-xl ml-2" style="color: #000000"></i>
     </div>
 
+    <!-- Error Alert -->
+    @{
+        if (ViewBag.ErrorMessage != null)
+
+        {
+            <div class="fixed z-20 top-0 mt-4 w-25">
+                <div id="errorAlert" role="alert" class="alert alert-error mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6 shrink-0 stroke-current"
+                         fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>@ViewBag.ErrorMessage</span>
+                </div>
+            </div>
+        }
+    }
+
     <!-- Formulário de Login -->
     <div class="flex flex-col custom-sm:w-394-px custom-sm:h-auto w-360-px custom-lg:mr-36 rounded-lg-border bg-customGrey-light shadow-login justify-center items-center z-10">
         <form method="post" asp-action="Submit" asp-controller="Login" class="login-form p-4" autocomplete="off">

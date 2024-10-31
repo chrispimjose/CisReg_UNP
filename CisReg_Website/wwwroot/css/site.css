@@ -2467,6 +2467,10 @@ html:has(.drawer-toggle:checked) {
   inset-inline-start: 0px;
 }
 
+.top-0 {
+  top: 0px;
+}
+
 .top-1\/2 {
   top: 50%;
 }
@@ -2481,10 +2485,6 @@ html:has(.drawer-toggle:checked) {
 
 .top-minus-323-px {
   top: -323px;
-}
-
-.top-0 {
-  top: 0px;
 }
 
 .z-10 {
@@ -2669,6 +2669,10 @@ html:has(.drawer-toggle:checked) {
   width: 125rem;
 }
 
+.w-24 {
+  width: 6rem;
+}
+
 .w-3\/4 {
   width: 75%;
 }
@@ -2707,10 +2711,6 @@ html:has(.drawer-toggle:checked) {
 
 .w-full {
   width: 100%;
-}
-
-.max-w-xs {
-  max-width: 20rem;
 }
 
 .shrink-0 {
@@ -3309,10 +3309,6 @@ html:has(.drawer-toggle:checked) {
 
   .custom-lg\:justify-end {
     justify-content: flex-end;
-  }
-
-  .custom-lg\:justify-center {
-    justify-content: center;
   }
 }
 

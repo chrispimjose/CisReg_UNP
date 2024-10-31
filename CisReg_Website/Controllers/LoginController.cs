@@ -29,25 +29,42 @@ namespace CisReg_Website.Controllers
         [HttpPost]
         public async Task<IActionResult> Submit(LoginModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Erro no envio...";
+                return View();
+            }
+            try
             {
                 var professionalTable = await _context.Professional
                      .FirstOrDefaultAsync(m => m.Email == model.Email);
 
                 if (professionalTable == null)
                 {
-                    return View("Index");
+                    throw new ArgumentException("Usuário não existente.");
                 }
 
-                if (model.Password != professionalTable.Password)
+                if (model.Email != professionalTable.Email || model.Password != professionalTable.Password)
                 {
+                    ViewBag.ErrorMessage = "Email/senha incorretos.";
                     return View("Index");
                 }
-
 
                 return RedirectToAction("Index", "Home");
             }
-
+            catch (ArgumentException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+            }
+            catch (DbUpdateException ex)
+            {
+                ViewBag.ErrorMessage = "Erro na conexão.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
+               
+            }
             return View();
         }
 

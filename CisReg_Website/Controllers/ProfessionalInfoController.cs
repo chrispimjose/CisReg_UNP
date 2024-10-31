@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using CisReg_Website.Data;
 using MongoDB.Bson;
 using CisReg_Website.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace CisReg_Website.Controllers
 {
@@ -74,8 +75,12 @@ namespace CisReg_Website.Controllers
             combinedModel.academicTraining = model.academicTraining;
             combinedModel.specialty = model.specialty;
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Erro no envio...";
+                return View(model);
+            }
+            try
             {
                 TempData["ProfessionalInfo"] = JsonConvert.SerializeObject(combinedModel);
 
@@ -87,6 +92,14 @@ namespace CisReg_Website.Controllers
                 _context.Add(combinedModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Login");
+            }
+            catch (DbUpdateException ex)
+            {
+                ViewBag.ErrorMessage = "Erro no envio dos dados...";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
             }
 
             return View(model);

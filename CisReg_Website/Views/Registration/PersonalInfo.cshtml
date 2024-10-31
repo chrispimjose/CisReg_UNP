@@ -27,11 +27,12 @@
         <i id="sunIcon" class="fa-solid fa-sun fa-xl ml-2" style="color: #000000"></i>
     </div>
 
+    <!-- Error Alert -->
     @{
         if (ViewBag.ErrorMessage != null)
         {
-            <div class="fixed z-20 top-0 mt-4">
-                <div id="errorAlert" role="alert" class="alert alert-error max-w-xs mx-auto">
+            <div class="fixed z-20 top-0 mt-4 w-25">
+                <div id="errorAlert" role="alert" class="alert alert-error mx-auto">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="h-6 w-6 shrink-0 stroke-current"
                          fill="none"

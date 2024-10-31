@@ -1,20 +1,26 @@
 ﻿
 // Views - Registration - PersonalInfo.cshtml
 
-// Função listener para verificar e adicionar o elemento de id 'errorToast' e fazer ele aparecer.
-
+// Função listener para verificar e adicionar o elemento de id 'errorToast' e fazer ele desaparecer.
 document.addEventListener('DOMContentLoaded', function () {
     const errorAlert = document.getElementById('errorAlert');
-        /*
-    if (errorAlert) {
-        errorAlert.style.display = 'fixed';
+    errorAlert.style.opacity = 1;
+
+    let alertOpacity = parseFloat(errorAlert.style.opacity); 
+
+    function fadeAlert() {
+        alertOpacity -= 0.03; 
+        errorAlert.style.opacity = alertOpacity;
+
+        if (alertOpacity <= 0) {
+            errorAlert.style.display = 'none';
+        } else {
+            requestAnimationFrame(fadeAlert); 
+        }
     }
 
-
-    setTimeout(() => {
-        errorAlert.style.display = 'none';
-    }, 5000)
-    */
+    setTimeout(fadeAlert, 2000);
+    
 });
 
 // Função que torna o password digitado visível por meio de uma troca de type (password -> text || text -> password), assim como o ícone. 

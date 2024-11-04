@@ -7,8 +7,11 @@ using System.ComponentModel.DataAnnotations;
 namespace CisReg_Website.Models
 {
 
-    public class CombinedInfoModel : DataFoundation
+    public class CombinedInfoModel 
     {
+        [BsonId]
+        public ObjectId Id { get; set; }
+
         // Dados Pessoais
         [BsonRepresentation(BsonType.String)]
         public string CompleteName { get; set; } = string.Empty;

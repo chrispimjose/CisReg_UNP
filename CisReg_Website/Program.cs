@@ -10,8 +10,7 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN";
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database"));
+builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();
 

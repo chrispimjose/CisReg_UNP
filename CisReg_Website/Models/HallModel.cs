@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CisReg_Website.Models;
@@ -14,6 +15,9 @@ public class Address
 
 public class HallModel
 {
+  [BsonId]
+  public ObjectId Id { get; set; }
+
   [BsonElement("cnpj")]
   public string? CNPJ { get; set; }
 

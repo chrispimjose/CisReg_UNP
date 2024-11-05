@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -16,8 +18,6 @@ public enum Permissions
   Professional
 }
 
-[BsonDiscriminator(RootClass = true)]
-[BsonKnownTypes(typeof(Patient), typeof(Professional), typeof(UserHall), typeof(SupUnp), typeof(SupHall), typeof(Admin))]
 public class UserModel
 {
   [BsonId]
@@ -37,17 +37,12 @@ public class UserModel
 
   [BsonElement("permission")]
   [BsonRepresentation(BsonType.String)]
-  public Permissions Permission { get; set; }
+  public Permissions? Permission { get; set; }
 }
 
 public class Patient : UserModel
 {
-
-  public Patient()
-  {
-    Permission = Permissions.Patient;
-  }
-
+  private readonly ApplicationDbContext _context;
 
   [BsonElement("cnes")]
   public string? Cnes { get; set; }
@@ -66,15 +61,21 @@ public class Patient : UserModel
 
   [BsonElement("mother_name")]
   public string? MotherName { get; set; }
-}
 
-public class Professional : UserModel
-{
-  public Professional()
+  public Patient(ApplicationDbContext context)
   {
-    Permission = Permissions.Professional;
+    _context = context;
   }
 
+  public IEnumerable<Patient> GetAll()
+  {
+    return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
+  }
+}
+
+public class Professional(ApplicationDbContext context) : UserModel
+{
+  private readonly ApplicationDbContext _context = context;
 
   [BsonElement("academic")]
   public string? Academic { get; set; }
@@ -85,41 +86,29 @@ public class Professional : UserModel
   [BsonElement("council_number")]
   public string? CouncilNumber { get; set; }
 
-  public SpecialtyModel? Specialty { get; set; }
-  public FormationModel? Formation { get; set; }
+  public string? Specialty { get; set; }
+  public string? Formation { get; set; }
+
+  public IEnumerable<Professional> GetAll()
+  {
+    return [.. _context.Professionals.ToList()];
+  }
 }
 
 public class UserHall : UserModel
 {
-  public UserHall()
-  {
-    Permission = Permissions.UserHall;
-  }
-
   [BsonElement("hall")]
   public string? HallModel { get; set; }
 }
 
 public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator
 {
-  public SupUnp()
-  {
-    Permission = Permissions.SupUnp;
-  }
 }
 
 public class SupHall : UserHall, IVacancyCreator
 {
-  public SupHall()
-  {
-    Permission = Permissions.SupHall;
-  }
 }
 
 public class Admin : UserModel, IVacancyReserver, IVacancyCreator
 {
-  public Admin()
-  {
-    Permission = Permissions.Admin;
-  }
 }

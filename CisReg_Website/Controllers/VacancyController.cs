@@ -3,30 +3,33 @@ using Microsoft.EntityFrameworkCore;
 using CisReg_Website.Domain;
 using CisReg_Website.Models;
 using MongoDB.Bson;
-using CisReg_Website.Repositories;
 
-namespace CisReg_Website.Controllers.User
+namespace CisReg_Website.Controllers
 {
-    public class ProfessionalController(ApplicationDbContext context, ProfessionalRepository professionalRepository) : Controller
+    public class VacancyController : Controller
     {
-        private readonly ApplicationDbContext _context = context;
-        private readonly ProfessionalRepository _professionalRepository = professionalRepository;
+        private readonly ApplicationDbContext _context;
 
-        public IActionResult Index()
+        public VacancyController(ApplicationDbContext context)
         {
-            return View(_professionalRepository.GetAll());
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Vacancies.ToListAsync());
         }
 
         public async Task<IActionResult> Details(ObjectId id)
         {
-            var professional = await _context.Professionals
+            var vacancyModel = await _context.Vacancies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (professional == null)
+            if (vacancyModel == null)
             {
                 return NotFound();
             }
 
-            return View(professional);
+            return View(vacancyModel);
         }
 
         public IActionResult Create()
@@ -36,33 +39,32 @@ namespace CisReg_Website.Controllers.User
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName")] Professional professional)
+        public async Task<IActionResult> Create([Bind("Id,AvailableHour,PatientId,ProfessionalId,ReservedById,CreatedById,Status")] VacancyModel vacancyModel)
         {
             if (ModelState.IsValid)
             {
-                professional.Permission = Permissions.Professional;
-                _context.Add(professional);
+                _context.Add(vacancyModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(professional);
+            return View(vacancyModel);
         }
 
         public async Task<IActionResult> Edit(ObjectId id)
         {
-            var professional = await _context.Professionals.FindAsync(id);
-            if (professional == null)
+            var vacancyModel = await _context.Vacancies.FindAsync(id);
+            if (vacancyModel == null)
             {
                 return NotFound();
             }
-            return View(professional);
+            return View(vacancyModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ObjectId id, [Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName,Permission")] Professional professional)
+        public async Task<IActionResult> Edit(ObjectId id, [Bind("Id,AvailableHour,PatientId,ProfessionalId,ReservedById,CreatedById,Status")] VacancyModel vacancyModel)
         {
-            if (id != professional.Id)
+            if (id != vacancyModel.Id)
             {
                 return NotFound();
             }
@@ -71,12 +73,12 @@ namespace CisReg_Website.Controllers.User
             {
                 try
                 {
-                    _context.Update(professional);
+                    _context.Update(vacancyModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProfessionalExists(professional.Id))
+                    if (!VacancyModelExists(vacancyModel.Id))
                     {
                         return NotFound();
                     }
@@ -87,38 +89,38 @@ namespace CisReg_Website.Controllers.User
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(professional);
+            return View(vacancyModel);
         }
 
         public async Task<IActionResult> Delete(ObjectId id)
         {
-            var professional = await _context.Professionals
+            var vacancyModel = await _context.Vacancies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (professional == null)
+            if (vacancyModel == null)
             {
                 return NotFound();
             }
 
-            return View(professional);
+            return View(vacancyModel);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(ObjectId id)
         {
-            var professional = await _context.Professionals.FindAsync(id);
-            if (professional != null)
+            var vacancyModel = await _context.Vacancies.FindAsync(id);
+            if (vacancyModel != null)
             {
-                _context.Professionals.Remove(professional);
+                _context.Vacancies.Remove(vacancyModel);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProfessionalExists(ObjectId id)
+        private bool VacancyModelExists(ObjectId id)
         {
-            return _context.Professionals.Any(e => e.Id == id);
+            return _context.Vacancies.Any(e => e.Id == id);
         }
     }
 }

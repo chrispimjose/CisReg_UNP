@@ -3,25 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using CisReg_Website.Domain;
 using CisReg_Website.Models;
 using MongoDB.Bson;
+using CisReg_Website.Repositories;
 
 namespace CisReg_Website.Controllers.User
 {
-    public class ProfessionalController : Controller
+    public class ProfessionalController(ApplicationDbContext context, ProfessionalRepository professionalRepository) : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = context;
+        private readonly ProfessionalRepository _professionalRepository = professionalRepository;
 
-        public ProfessionalController(ApplicationDbContext context)
+        public IActionResult Index()
         {
-            _context = context;
+            return View(_professionalRepository.GetAll());
         }
 
-        // GET: Professional
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Professionals.ToListAsync());
-        }
-
-        // GET: Professional/Details/5
         public async Task<IActionResult> Details(ObjectId id)
         {
             if (id == null)
@@ -39,21 +34,18 @@ namespace CisReg_Website.Controllers.User
             return View(professional);
         }
 
-        // GET: Professional/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Professional/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName,Permission")] Professional professional)
+        public async Task<IActionResult> Create([Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName")] Professional professional)
         {
             if (ModelState.IsValid)
             {
+                professional.Permission = Permissions.Professional;
                 _context.Add(professional);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -61,7 +53,6 @@ namespace CisReg_Website.Controllers.User
             return View(professional);
         }
 
-        // GET: Professional/Edit/5
         public async Task<IActionResult> Edit(ObjectId id)
         {
             if (id == null)
@@ -77,9 +68,6 @@ namespace CisReg_Website.Controllers.User
             return View(professional);
         }
 
-        // POST: Professional/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ObjectId id, [Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName,Permission")] Professional professional)
@@ -112,7 +100,6 @@ namespace CisReg_Website.Controllers.User
             return View(professional);
         }
 
-        // GET: Professional/Delete/5
         public async Task<IActionResult> Delete(ObjectId id)
         {
             if (id == null)
@@ -130,7 +117,6 @@ namespace CisReg_Website.Controllers.User
             return View(professional);
         }
 
-        // POST: Professional/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(ObjectId id)

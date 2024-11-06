@@ -1,80 +1,92 @@
 ﻿@using CisReg_Website.Models
 @model List<HallModel>
 
-<div class="flex flex-col items-center p-4 bg-gray-200">
-    <h2 class="text-customGreen-light text-center font-poppins font-bold text-4xl leading-normal">Gerenciamento de Atribuição</h2>
+<div class="flex flex-col items-center justify-between min-h-screen bg-gray-100 p-4">
+    <!-- Cabeçalho -->
+    <h2 class="text-customGreen-light text-center font-poppins font-bold text-4xl mb-4">
+        Gerenciamento de Atribuição
+    </h2>
 
+    <!-- Mensagem de alerta -->
     @if (TempData["AlertMessage"] != null)
     {
-        <div class="alert alert-info">
+        <div class="alert alert-info mb-4">
             @TempData["AlertMessage"]
         </div>
     }
 
-    <table class="table-auto w-full bg-white rounded shadow">
-        <thead>
-            <tr class="bg-gray-300">
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">Município</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">CNPJ</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">CNES</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">Endereço</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">Número do Acordo</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized">Vagas Não Utilizadas</th>
-                <th class="text-customGreen-dark text-left font-poppins text-base leading-personalized print-hidden">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var hall in Model)
-            {
-                <tr class="border-b hover:bg-gray-100">
-                    <td class="border px-4 py-2 text-gray-700">@hall.Address?.City</td>
-                    <td class="border px-4 py-2 text-gray-700">@hall.CNPJ</td>
-                    <td class="border px-4 py-2 text-gray-700">@hall.CNES</td>
-                    <td class="border px-4 py-2 text-gray-700">
-                        @hall.Address?.StreetName, @hall.Address?.Number - @hall.Address?.Neighborhood, @hall.Address?.Zipcode
-                    </td>
-                    <td class="border px-4 py-2 text-gray-700">@hall.Agreement</td>
-                    <td class="border px-4 py-2 text-gray-700">10</td>
-                    <td class="border px-4 py-2 print-hidden">
-                       <button type="button"  class="absolute transform -translate-y-1/2"
-        onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City')">
-    Editar Acordo
-</button>
-                    </td>
+    <!-- Tabela -->
+    <div class="overflow-x-auto w-full">
+        <table class="table-auto w-full border-collapse bg-white shadow-md rounded-lg">
+            <thead class="bg-gray-300">
+                <tr>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">Município</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">CNPJ</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">CNES</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">Endereço</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">Número do Acordo</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base">Vagas Não Utilizadas</th>
+                    <th class="text-customGreen-dark text-left px-4 py-2 font-poppins text-base print-hidden">Ações</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var hall in Model)
+                {
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="px-4 py-2 text-gray-700">@hall.Address?.City</td>
+                        <td class="px-4 py-2 text-gray-700 whitespace-nowrap">@hall.CNPJ</td>
+                        <td class="px-4 py-2 text-gray-700 whitespace-nowrap">@hall.CNES</td>
+                        <td class="px-4 py-2 text-gray-700">
+                            @hall.Address?.StreetName, @hall.Address?.Number - @hall.Address?.Neighborhood, @hall.Address?.Zipcode
+                        </td>
+                        <td class="px-4 py-2 text-gray-700">@hall.Agreement</td>
+                        <td class="px-4 py-2 text-gray-700">10</td>
+                        <td class="px-4 py-2 print-hidden">
+                            <!-- Ajustado para que o botão fique dentro da célula -->
+                            <button type="button" class="bg-customGreen-default text-white px-4 py-2 rounded-lg w-full"
+                                    onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City')">
+                                Editar Acordo
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <div class="mb-4 mt-6">
-        <button onclick="window.print()" class="w-full h-entrar-height-px rounded-lg bg-customGreen-default hover:bg-onHoverGreen-on_hover_default text-customGrey-light text-center font-poppins text-base leading-personalized">
+    <!-- Botão de Imprimir -->
+    <div class="mb-4 mt-6 w-full">
+        <button onclick="window.print()" class="w-full bg-customGreen-default hover:bg-onHoverGreen-on_hover_default text-white font-poppins py-2 px-4 rounded-lg">
             Imprimir
         </button>
     </div>
 
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 hidden">
-    <div class="bg-white p-4 rounded-lg w-1/3">
-        <h2 class="text-xl font-bold mb-4">Editar Acordo</h2>
-        <form asp-action="UpdateAgreement" method="post">
-            <!-- Campo CNPJ (Somente leitura) -->
-            <label for="cityName" class="block text-sm font-medium text-gray-700">Nome do Município:</label>
-            <input type="text" id="cityName"class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base leading-4" readonly />
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 hidden">
+        <div class="bg-white p-4 rounded-lg w-1/3">
+            <h2 class="text-xl font-bold mb-4">Editar Acordo</h2>
+            <form asp-action="UpdateAgreement" method="post">
+                <!-- Campo CNPJ (Somente leitura) -->
+                <label for="cityName" class="block text-sm font-medium text-gray-700">Nome do Município:</label>
+                <input type="text" id="cityName" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" readonly />
 
-            <label for="cnpjInput" class="block text-sm font-medium text-gray-700 mt-2">CNPJ:</label>
-            <input type="text" name="cnpj" id="cnpjInput" class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base leading-4" readonly />
+                <label for="cnpjInput" class="block text-sm font-medium text-gray-700 mt-2">CNPJ:</label>
+                <input type="text" name="cnpj" id="cnpjInput" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" readonly />
 
-            <label for="newAgreement" class="block text-sm font-medium text-gray-700 mt-2">Novo Acordo:</label>
-            <input type="number" name="newAgreement" id="newAgreement" class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base leading-4" required />
+                <label for="newAgreement" class="block text-sm font-medium text-gray-700 mt-2">Novo Acordo:</label>
+                <input type="number" name="newAgreement" id="newAgreement" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" required />
 
-            <div class="mt-4">
-                <button type="submit" class="w-full h-entrar-height-px rounded-lg-border bg-customGreen-default hover:bg-onHoverGreen-on_hover_default text-customGrey-light text-center font-poppins text-base leading-personalized">Salvar</button>
-                <button type="button" onclick="closeModal()" class="w-full h-entrar-height-px rounded-lg-border bg-customGreen-default hover:bg-onHoverGreen-on_hover_default text-customGrey-light text-center font-poppins text-base leading-personalized">Cancelar</button>
-            </div>
-        </form>
+                <div class="mt-4">
+                    <button type="submit" class="w-full bg-customGreen-default text-white py-2 px-4 rounded-lg">Salvar</button>
+                    <button type="button" onclick="closeModal()" class="w-full bg-gray-500 text-white py-2 px-4 rounded-lg mt-2">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-</div>
+
+
+
 
 
 <script>

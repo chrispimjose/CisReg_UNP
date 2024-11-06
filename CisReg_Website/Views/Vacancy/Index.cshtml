@@ -1,0 +1,95 @@
+﻿@model List<VacancyModel>
+@{
+    ViewData["Title"] = "Gerenciamento";
+    Layout = "_Layout";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px;
+        margin: auto;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        text-align: left;
+        transition: transform 0.2s ease;
+    }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .card h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .card p {
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            color: #666;
+        }
+
+            .card p span {
+                font-weight: bold;
+                color: #444;
+            }
+</style>
+
+<h1>Gerenciamento de Vagas</h1>
+
+<div class="container">
+    @foreach (var vacancy in Model)
+    {
+        <div class="card">
+            <h3>@($"{vacancy.Professional.FirstName} {vacancy.Professional.LastName}")</h3>
+            <p><span>Profissão:</span>@vacancy.Professional.Academic </p>
+            <p><span>Especialidade:</span> @vacancy.CreatedBy.Hall.specialties</p> <!-- Assumindo que Specialty tem uma propriedade Name -->
+            <p><span>Paciente:</span> @($"{vacancy.Patient?.FirstName} {vacancy.Patient?.LastName}")</p>
+
+            <p>
+                <span>Data:</span>
+                @foreach (var hour in vacancy.AvailableHour)
+                {
+                    <span>@hour.ToString("dd/MM/yyyy")</span>
+                    <br />
+                }
+            </p>
+
+            <p>
+                <span>Horário:</span>
+                @foreach (var hour in vacancy.AvailableHour)
+                {
+                    <span>@hour.ToString("HH:mm")</span>
+                    <br />
+                }
+            </p>
+
+            <p><span>Status:</span> @vacancy.Status</p>
+        </div>
+    }
+</div>

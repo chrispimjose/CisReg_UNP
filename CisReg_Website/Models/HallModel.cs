@@ -12,6 +12,7 @@ public class Address
   public string? StreetName { get; set; }
   public string? Number { get; set; }
   public string? Neighborhood { get; set; }
+    public string? specialties { get; set; }
 }
 
 public class HallModel
@@ -30,4 +31,6 @@ public class HallModel
 
   [BsonElement("address")]
   public Address? Address { get; set; }
+    [BsonElement("specialties")]
+    public string? specialties { get; set; }
 }

@@ -3,8 +3,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace CisReg_Website.Models;
 
-public interface IVacancyReserver { }
+public interface IVacancyReserver {
+
+}
 public interface IVacancyCreator { }
+// Implementação concreta 1
 
 public enum Permissions
 {
@@ -52,7 +55,7 @@ public class Patient : UserModel
   [BsonElement("cnes")]
   public string? Cnes { get; set; }
 
-  [BsonElement("birth_date")]
+  [BsonElement("birthday")]
   public DateTime? BirthDate { get; set; }
 
   [BsonElement("sus_card")]
@@ -91,13 +94,14 @@ public class Professional : UserModel
 
 public class UserHall : UserModel
 {
-  public UserHall()
-  {
-    Permission = Permissions.UserHall;
-  }
+    public UserHall()
+    {
+        Permission = Permissions.UserHall;
+    }
 
-  [BsonElement("hall")]
-  public string? HallModel { get; set; }
+    [BsonElement("hall")]
+    public HallModel? Hall { get; set; }  // Alteração aqui: Agora está como HallModel
+
 }
 
 public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator

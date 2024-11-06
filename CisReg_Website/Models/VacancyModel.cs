@@ -8,7 +8,8 @@ public enum Status
   Available,
   Occupied,
   Canceled,
-  Rescheduled
+  Rescheduled,
+  Vazio
 }
 public class VacancyModel
 {

@@ -21,26 +21,49 @@ namespace CisReg_Website.Controllers
         // Método para listar vagas associadas a um CNPJ específico
         public async Task<IActionResult> Index(string cnpj = "98765432000198")
         {
-            if (string.IsNullOrEmpty(cnpj))
-            {
-                return BadRequest("CNPJ não fornecido.");
-            }
+            
 
-            // Define o filtro para buscar todas as vagas com o CNPJ específico dentro de `created_by.hall.cnpj`
             var filter = Builders<VacancyModel>.Filter.Eq("created_by.hall.cnpj", cnpj);
-
-            // Executa a busca
             var vacancies = await _vacancies.Find(filter).ToListAsync();
 
-            if (vacancies == null || vacancies.Count == 0)
+            
+
+            // Obter o valor de Agreement do Hall
+            var hallFilter = Builders<HallModel>.Filter.Eq(h => h.CNPJ, cnpj);
+            var hall = await _halls.Find(hallFilter).FirstOrDefaultAsync();
+
+            if (hall == null)
             {
-                return NotFound("Nenhuma vaga encontrada para o CNPJ fornecido.");
+                return NotFound("Hall não encontrado.");
             }
 
-            // Passa as vagas para a View
+            // Calcular a quantidade de cards vazios
+            int emptyCardsNeeded = hall.Agreement - vacancies.Count;
+            if (emptyCardsNeeded > 0)
+            {
+                // Criar cards vazios
+                var emptyVacancies = new List<VacancyModel>();
+                for (int i = 0; i < emptyCardsNeeded; i++)
+                {
+                    emptyVacancies.Add(new VacancyModel
+                    {
+                        Status = Status.Vazio, // Marcar como Vazio
+                    });
+                }
+
+                // Adicionar os cards vazios à lista de vagas
+                vacancies.AddRange(emptyVacancies);
+            }
+
             return View(vacancies);
         }
 
+        public IActionResult Preenchimento()
+        {
+            
+            // Retorna a vaga para ser preenchida
+            return View();
+        }
         // Método para obter detalhes de uma vaga específica (usando ID)
         public async Task<IActionResult> Details(string vacancyId)
         {

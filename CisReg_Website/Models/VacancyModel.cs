@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -16,21 +17,27 @@ public class VacancyModel
   public ObjectId Id { get; set; }
 
   [BsonElement("available_hour")]
+  [DisplayName("Horário disponível")]
   public DateTime AvailableHour { get; set; }
 
   [BsonElement("patient")]
-  public Patient? Patient { get; set; }
+  [DisplayName("Paciente")]
+  public ObjectId? PatientId { get; set; }
 
   [BsonElement("professional")]
-  public Professional? Professional { get; set; }
+  [DisplayName("Profissional")]
+  public ObjectId? ProfessionalId { get; set; }
 
   [BsonElement("reserved_by")]
-  public IVacancyReserver? ReservedBy { get; set; }
+  [DisplayName("Reservado por")]
+  public ObjectId? ReservedById { get; set; }
 
   [BsonElement("created_by")]
-  public IVacancyCreator? CreatedBy { get; set; }
+  [DisplayName("Criado por")]
+  public ObjectId? CreatedById { get; set; }
 
   [BsonElement("status")]
+  [DisplayName("Status")]
   [BsonRepresentation(BsonType.String)]
   public Status Status { get; set; }
 }

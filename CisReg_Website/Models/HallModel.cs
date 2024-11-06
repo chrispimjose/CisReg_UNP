@@ -1,4 +1,6 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 
 namespace CisReg_Website.Models;
 
@@ -13,8 +15,11 @@ public class Address
 }
 
 public class HallModel
+
 {
-  [BsonElement("cnpj")]
+    [BsonId] // Marca a propriedade como o identificador único do MongoDB
+    public ObjectId Id { get; set; }
+    [BsonElement("cnpj")]
   public string? CNPJ { get; set; }
 
   [BsonElement("cnes")]

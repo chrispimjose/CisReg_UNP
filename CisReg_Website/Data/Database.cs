@@ -12,7 +12,7 @@ namespace CisReg_Website.Data
     {
 
         // String de conexão com o cluster do projeto armazenado no serviço do mongodb
-        private const string connectionString = "mongodb+srv://root:admin@cisreg.kzr70.mongodb.net/?retryWrites=true&w=majority&appName=CisReg";
+        private const string connectionString = "mongodb+srv://Kaion:kaionmurilo123@cisregdb.lagqc.mongodb.net/?retryWrites=true&w=majority&appName=Cisregdb";
 
         // Instância do singleton
         private static Database? instance;
@@ -28,7 +28,7 @@ namespace CisReg_Website.Data
         private Database()
         {
             client = new MongoClient(connectionString);
-            database = client.GetDatabase("cisreg");
+            database = client.GetDatabase("CisregDB");
 
             // Mapeamento de classes
 

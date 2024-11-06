@@ -1,13 +1,79 @@
 ﻿using CisReg_Website.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
+using static CisReg_Website.Models.HallModel;
+using MongoDB.Driver;
 
 namespace CisReg_Website.Controllers
 {
     public class HallController : Controller
     {
-        // Simulação de dados
-        private static List<HallModel> _halls = new List<HallModel>
+        private readonly IMongoCollection<HallModel> _Halls;
+
+        public HallController(IMongoDatabase database)
+        {
+            _Halls = database.GetCollection<HallModel>("Halls"); // Aqui acessamos a coleção "Halls"
+        }
+        public async Task<IActionResult> UpdateAgreement(string cnpj, int newAgreement)
+        {
+            try
+            {
+                // Busca o hall (município) pelo CNPJ
+                var filter = Builders<HallModel>.Filter.Eq(h => h.CNPJ, cnpj);
+                var update = Builders<HallModel>.Update.Set(h => h.Agreement, newAgreement);
+
+                // Executa a atualização
+                var result = await _Halls.UpdateOneAsync(filter, update);
+
+                if (result.ModifiedCount > 0)
+                {
+                    TempData["AlertMessage"] = "Acordo atualizado com sucesso!";
+                }
+                else
+                {
+                    TempData["AlertMessage"] = "Nenhuma alteração foi feita. Verifique o CNPJ.";
+                }
+
+                return RedirectToAction("Index"); // Redireciona para a página principal
+            }
+            catch (Exception ex)
+            {
+                // Em caso de erro, exibe uma mensagem
+                TempData["AlertMessage"] = $"Erro ao atualizar o acordo: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+            public async Task<IActionResult> IndexAsync()
+        {
+            try
+            {
+                // Consulta para pegar todos os halls (municípios)
+                var listaHalls = await _Halls.Find(_ => true).ToListAsync();
+
+                // Verifica se encontrou algum município
+                if (listaHalls.Count == 0)
+                {
+                    TempData["AlertMessage"] = "Nenhum município encontrado.";
+                }
+                else
+                {
+                    TempData["AlertMessage"] = $"Carregados {listaHalls.Count} municípios com sucesso!";
+                }
+
+                return View(listaHalls);
+            }
+            catch (Exception ex)
+            {
+                // Em caso de erro, mostra uma mensagem de erro
+                TempData["AlertMessage"] = $"Erro ao buscar municípios: {ex.Message}";
+                return View(new List<HallModel>());
+            }
+        }
+
+
+        // Exibe a tela de gerenciamento de atribuição
+        private static List<HallModel> _hall = new List<HallModel>
     {
         new HallModel
         {
@@ -40,126 +106,20 @@ namespace CisReg_Website.Controllers
             }
         }
     };
-
-        // Exibe a tela de gerenciamento de atribuição
-        public IActionResult Index()
+        public IActionResult Index1()
         {
-            var hallsWithVagas = _halls.Select(hall => new
+            var hallsWithVagas = _hall.Select(hall => new
             {
                 hall.Address,
                 hall.CNPJ,
                 hall.CNES,
                 hall.Agreement,
-                VagasNaoUtilizadas = GetVagasNaoUtilizadas(hall) // Chama a função para calcular as vagas não utilizadas
+                 // Chama a função para calcular as vagas não utilizadas
             }).ToList();
 
             return View(hallsWithVagas);
         }
 
-        // Ação para atualizar o número do acordo
-        [HttpPost]
-        public IActionResult UpdateAgreement(string cnpj, int newAgreement)
-        {
-            // Encontra o município pelo CNPJ
-            var hall = _halls.FirstOrDefault(h => h.CNPJ == cnpj);
-
-            if (hall == null)
-            {
-                return NotFound("Município não encontrado.");
-            }
-
-            // Verifica se o novo acordo é válido
-            if (newAgreement < hall.Agreement)
-            {
-                ModelState.AddModelError("", "O novo acordo não pode ser menor do que o atual.");
-                return View("Index", _halls);
-            }
-
-            // Atualiza o número do acordo na lista simulada
-            hall.Agreement = newAgreement;
-
-            // Redireciona para a tela de gerenciamento após a atualização
-            return RedirectToAction(nameof(Index));
-        }
-
-        // Método para calcular vagas não utilizadas
-        private int GetVagasNaoUtilizadas(HallModel hall)
-        {
-            // Aqui você deve implementar a lógica real para calcular as vagas não utilizadas
-            // Exemplo fictício
-            return 5; // Retornar um número de exemplo
-        }
-
-
-
-        // GET: HallController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: HallController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: HallController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HallController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HallController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HallController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HallController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
     }
 }

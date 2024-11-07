@@ -1,4 +1,5 @@
 using CisReg_Website.Domain;
+using CisReg_Website.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +11,8 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN";
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMongoDB("mongodb://admin:password@localhost:27017", "CisReg_Database"));
+builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddScoped<ProfessionalRepository>();
 
 var app = builder.Build();
 

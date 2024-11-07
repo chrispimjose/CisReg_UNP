@@ -88,7 +88,10 @@
                 <h3>Vaga Vazia</h3>
                 <p><span>Status:</span> Vaga sem reserva</p>
                 <p><span>Para preencher, clique abaixo:</span></p>
-                <a href="@Url.Action("Preenchimento", "Vacancy", new { vacancyId = vacancy.Id.ToString() })" class="btn btn-primary">Preencher Vaga</a>
+                <a asp-controller="Vacancy" asp-action="Preenchimento" asp-route-cnpj="@vacancy.CreatedBy?.Hall?.CNPJ"
+                   class="btn btn-primary">
+                    <i class="fa-solid fa-plus-circle"></i>Preencher Vaga
+                </a>
             }
             else
             {

@@ -1,0 +1,89 @@
+﻿@model CisReg_Website.Models.VacancyModel
+
+@{
+    var cnpj = ViewData["CNPJ"] as string;
+}
+
+<h2>Cadastrar Nova Vaga</h2>
+
+<form method="post">
+    <!-- CNPJ hidden -->
+    <input type="hidden" name="CNPJ" value="@cnpj" />
+
+    <!-- Campos do Paciente -->
+    <div class="form-group">
+        <label for="first_name">Primeiro Nome do Paciente</label>
+        <input type="text" class="form-control" id="first_name" name="Patient.FirstName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="last_name">Último Nome do Paciente</label>
+        <input type="text" class="form-control" id="last_name" name="Patient.LastName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="sus_card">Cartão SUS</label>
+        <input type="text" class="form-control" id="sus_card" name="Patient.SusCard" required />
+    </div>
+
+    <div class="form-group">
+        <label for="phone">Telefone</label>
+        <input type="text" class="form-control" id="phone" name="Patient.Phone" required />
+    </div>
+
+    <div class="form-group">
+        <label for="father_name">Nome do Pai</label>
+        <input type="text" class="form-control" id="father_name" name="Patient.FatherName" />
+    </div>
+
+    <div class="form-group">
+        <label for="mother_name">Nome da Mãe</label>
+        <input type="text" class="form-control" id="mother_name" name="Patient.MotherName" />
+    </div>
+
+    <div class="form-group">
+        <label for="birthday">Data de Nascimento</label>
+        <input type="date" class="form-control" id="birthday" name="Patient.Birthday" required />
+    </div>
+
+    <!-- Campos do Profissional -->
+    <div class="form-group">
+        <label for="professional_first_name">Primeiro Nome do Profissional</label>
+        <input type="text" class="form-control" id="professional_first_name" name="Professional.FirstName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="professional_last_name">Sobrenome do Profissional</label>
+        <input type="text" class="form-control" id="professional_last_name" name="Professional.LastName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="academic">Formação Acadêmica do Profissional</label>
+        <input type="text" class="form-control" id="academic" name="Professional.Academic" required />
+    </div>
+
+    <div class="form-group">
+        <label for="council">Conselho Profissional</label>
+        <input type="text" class="form-control" id="council" name="Professional.Council" required />
+    </div>
+
+    <div class="form-group">
+        <label for="council_number">Número do Conselho</label>
+        <input type="text" class="form-control" id="council_number" name="Professional.CouncilNumber" required />
+    </div>
+
+    <!-- Especialidade (Adicionando o campo de especialidade) -->
+    <div class="form-group">
+        <label for="specialty">Especialidade</label>
+        <input type="text" class="form-control" id="specialty" name="CreatedBy.Hall.Specialties" required />
+    </div>
+
+    <!-- Horário Disponível -->
+    <div class="form-group">
+        <label for="available_hour">Horário Disponível</label>
+        <input type="datetime-local" class="form-control" id="available_hour" name="AvailableHour" required />
+    </div>
+
+    <!-- Botão de Submit -->
+    <button type="submit" class="btn btn-primary">Cadastrar Vaga</button>
+</form>

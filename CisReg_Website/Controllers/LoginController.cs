@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CisReg_Website.Models;
 using Newtonsoft.Json;
-using CisReg_Website.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using CisReg_Website.Domain;

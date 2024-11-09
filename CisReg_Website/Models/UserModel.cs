@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -53,8 +51,6 @@ public class UserModel
 
 public class Patient : UserModel
 {
-  private readonly ApplicationDbContext _context;
-
   [BsonElement("cnes")]
   [DisplayName("CNES")]
   public string? Cnes { get; set; }
@@ -79,14 +75,9 @@ public class Patient : UserModel
   [DisplayName("Nome da mãe")]
   public string? MotherName { get; set; }
 
-  public Patient(ApplicationDbContext context)
+  public Patient()
   {
-    _context = context;
-  }
 
-  public IEnumerable<Patient> GetAll()
-  {
-    return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
   }
 }
 
@@ -114,6 +105,7 @@ public class Professional : UserModel
 
   public Professional()
   {
+
   }
 }
 

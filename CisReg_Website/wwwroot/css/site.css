@@ -2200,6 +2200,10 @@ html {
   }
 }
 
+.select-bordered {
+  border-color: var(--fallback-bc,oklch(var(--bc)/0.2));
+}
+
 .select:focus {
   box-shadow: none;
   border-color: var(--fallback-bc,oklch(var(--bc)/0.2));
@@ -2207,6 +2211,17 @@ html {
   outline-width: 2px;
   outline-offset: 2px;
   outline-color: var(--fallback-bc,oklch(var(--bc)/0.2));
+}
+
+.select-primary {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
+}
+
+.select-primary:focus {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
+  outline-color: var(--fallback-p,oklch(var(--p)/1));
 }
 
 .select-accent {
@@ -2354,6 +2369,15 @@ html {
 html:has(.drawer-toggle:checked) {
   overflow-y: hidden;
   scrollbar-gutter: stable;
+}
+
+.input-md {
+  height: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 2;
 }
 
 [type="radio"].radio-sm {
@@ -2743,6 +2767,14 @@ html:has(.drawer-toggle:checked) {
   width: 100%;
 }
 
+.max-w-sm {
+  max-width: 24rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
 .shrink-0 {
   flex-shrink: 0;
 }
@@ -2825,6 +2857,10 @@ html:has(.drawer-toggle:checked) {
 
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-12 {
+  gap: 3rem;
 }
 
 .gap-8 {
@@ -2977,14 +3013,6 @@ html:has(.drawer-toggle:checked) {
   padding: 2rem;
 }
 
-.p-5 {
-  padding: 1.25rem;
-}
-
-.p-24 {
-  padding: 6rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -3004,16 +3032,8 @@ html:has(.drawer-toggle:checked) {
   padding-left: 2.5rem;
 }
 
-.pl-4 {
-  padding-left: 1rem;
-}
-
 .pr-12 {
   padding-right: 3rem;
-}
-
-.pl-0 {
-  padding-left: 0px;
 }
 
 .text-left {
@@ -3034,6 +3054,11 @@ html:has(.drawer-toggle:checked) {
 
 .\!text-base {
   font-size: 1rem !important;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .text-3xl {
@@ -3303,10 +3328,6 @@ html:has(.drawer-toggle:checked) {
     width: 5rem;
   }
 
-  .md\:w-\[30\%\] {
-    width: 30%;
-  }
-
   .md\:grid-cols-\[repeat\(auto-fit\2c minmax\(100px\2c 200px\)\)\] {
     grid-template-columns: repeat(auto-fit,minmax(100px,200px));
   }
@@ -3329,18 +3350,6 @@ html:has(.drawer-toggle:checked) {
 
   .md\:gap-10 {
     gap: 2.5rem;
-  }
-
-  .md\:p-24 {
-    padding: 6rem;
-  }
-
-  .md\:pl-0 {
-    padding-left: 0px;
-  }
-
-  .md\:pr-0 {
-    padding-right: 0px;
   }
 
   .md\:text-sm {

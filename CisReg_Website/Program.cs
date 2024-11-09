@@ -13,6 +13,7 @@ builder.Services.AddAntiforgery(options =>
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<ProfessionalRepository>();
 builder.Services.AddScoped<PatientRepository>();
+builder.Services.AddScoped<VacancyRepository>();
 
 var app = builder.Build();
 

@@ -1,28 +1,30 @@
+@model CisReg_Website.Models.Vacancy.VacancySchedulesMadeViewModel
+
 @{
     ViewData["Title"] = "Confira os agendamentos realizados";
 }
 
 <div class="min-h-screen bg-customGrey-light font-poppins w-full">
     <!--Cabechalo da página - Nav Inicial -->
-    <div class="bg-[#57BE93] text-white p-12 w-full">
+    <div class="bg-customGreen-default text-white p-12 w-full">
         <h2 class="text-4xl font-poppins font-bold">AGENDAMENTOS REALIZADOS</h2>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-16">
         <div class="p-8 lg:p-24 lg:pr-0 lg:w-[30%]">
             <div class="grid grid-flow-row gap-4">
-                <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-lg bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">
+                <a href="?Period=Morning"
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">
                     <i class="fa-solid fa-sun mr-4"></i> Manhã
-                </button>
-                <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-lg bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">
+                </a>
+                <a href="?Period=Afternoon"
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">
                     <i class="fa-regular fa-sun mr-4"></i> Tarde
-                </button>
-                <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-lg bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">
+                </a>
+                <a href="?Period=Night"
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">
                     <i class="fa-solid fa-moon mr-4"></i> Noite
-                </button>
+                </a>
             </div>
 
             <div class="divider"></div>
@@ -30,87 +32,97 @@
             <!--Criação dos botões para seleção de especialistas-->
             <div class="flex flex-wrap gap-2">
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Psicólogo</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Psicólogo</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Cardiologista</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Cardiologista</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Fonoaudiólogo</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Fonoaudiólogo</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Esteticista</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Esteticista</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Fisioterapeuta</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Fisioterapeuta</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Dentista</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Dentista</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Médico</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Médico</button>
                 <button
-                    class="border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-full bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">Urologista</button>
+                    class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">Urologista</button>
             </div>
 
             <div class="divider"></div>
 
             <!--Criação do checkbox com as opções de horarios para visualização-->
-            <div class="bg-[#57BE93] border rounded-lg p-4">
+            <div class="bg-customGreen-default border rounded-lg p-4">
                 <label class="flex items-center space-x-2 mb-4">
-                    <input type="checkbox" class="form-checkbox h-5 w-5 text-white" checked>
-                    <span class="text-white font-semibold">Confirmados</span>
+                    <a href="?Status=Occupied">
+                        <input type="checkbox" class="form-checkbox h-5 w-5 text-white" checked>
+                        <span class="text-white font-semibold">Confirmados</span>
+                    </a>
                 </label>
                 <label class="flex items-center space-x-2 mb-4">
-                    <input type="checkbox" class="form-checkbox h-5 w-5 text-white">
-                    <span class="text-white font-semibold">Reagendados</span>
+                    <a href="?Status=Rescheduled">
+                        <input type="checkbox" class="form-checkbox h-5 w-5 text-white">
+                        <span class="text-white font-semibold">Reagendados</span>
+                    </a>
                 </label>
                 <label class="flex items-center space-x-2">
-                    <input type="checkbox" class="form-checkbox h-5 w-5 text-white">
-                    <span class="text-white font-semibold">Cancelados</span>
+                    <a href="?Status=Canceled">
+                        <input type="checkbox" class="form-checkbox h-5 w-5 text-white">
+                        <span class="text-white font-semibold">Cancelados</span>
+                    </a>
                 </label>
             </div>
         </div>
 
         <!-- Segunda Seção do código, com o a área de pesquisa - personalização do input buscar -->
-        <div class="p-8 lg:p-24 lg:pl-0 flex flex-col gap-2">
+        <div class="p-8 lg:p-24 lg:pl-0 flex flex-col gap-2 w-[70%]">
             <form>
                 <div class="relative flex">
                     <div class="inset-y-0 start-0 flex items-center">
                         <i class="fa-solid fa-magnifying-glass absolute top-3 left-3"></i>
                     </div>
                     <input type="search" id="default-search"
-                        class="w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg rounded-r-none bg-gray-50 dark:border-[#57BE93] dark:text-black focus:outline-none focus:ring focus:ring-[#57BE93]"
+                        class="w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg rounded-r-none bg-gray-50 dark:border-customGreen-default dark:text-black focus:outline-none focus:ring focus:ring-customGreen-default"
                         placeholder="Pesquisar" required />
                     <button type="submit"
-                        class="text-white end-1.5 bottom-1.5 bg-[#57BE93] hover:bg-[#57BE93] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg rounded-l-none text-sm px-4 py-1 dark:bg-[#57BE93] dark:hover:bg-[#57BE93]dark:focus:ring-blue-800">Pesquisar</button>
+                        class="text-white end-1.5 bottom-1.5 bg-customGreen-default hover:bg-customGreen-default focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg rounded-l-none text-sm px-4 py-1 dark:bg-customGreen-default dark:hover:bg-customGreen-defaultdark:focus:ring-blue-800">Pesquisar</button>
                 </div>
             </form>
 
             <!--Acrescentando os botoes de datas de agendamentos-->
             <div class="flex flex-col gap-2 text-white">
                 <div class="grid grid-cols-3 gap-4">
-                    <button class=" bg-[#57BE93] border-none rounded-lg p-2 hover:bg-emerald-700"> <i
+                    <button class=" bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700"> <i
                             class="fa-regular fa-calendar-minus mr-6"></i> Selecionar a data de ínicio</button>
-                    <button class=" bg-[#57BE93] border-none rounded-lg p-2 hover:bg-emerald-700"> <i
+                    <button class=" bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700"> <i
                             class="fa-regular fa-calendar-plus mr-6"></i> Selecionar a data de final</button>
                     <button
-                        class=" border border-[#57BE93] text-[#57BE93] py-2 px-4 rounded-lg bg-white hover:bg-[#57BE93] hover:text-white focus:bg-[#57BE93] focus:text-white active:bg-[#57BE93] active:text-white transition-colors">
+                        class=" border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors">
                         <i class="fa-regular fa-calendar-minus mr-6"></i> Agendamentos de hoje</button>
                 </div>
 
                 <!-- Acrescentado o layout dos agendamentos realizados - card com os agendametos-->
                 <div class="grid grid-cols-3 gap-4">
-
-                    <div class="card w-100 shadow-xl bg-[#57BE93] ">
-                        <figure>
-                            <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
-                        </figure>
-                        <div class="card-body">
-                            <p class="card-title">
-                                <spam class="font-bold text-5xl">12:30</spam> hoje
-                            </p>
-                            <p>Agendamento para Fulano De tal</p>
-                            <div class="card-actions mt-1">
-                                <div class="badge badge-outline">Dentista</div>
-                                <div class="badge badge-outline">Fisioterapeuta</div>
+                    @foreach (var vacancy in Model.Vacancies)
+                    {
+                        <div class="card w-100 shadow-xl bg-customGreen-default ">
+                            <figure>
+                                <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
+                            </figure>
+                            <div class="card-body">
+                                <p class="card-title">
+                                    <span class="font-bold text-5xl">@vacancy.AvailableHour.TimeOfDay.ToString("hh\\:mm")
+                                    </span> hoje
+                                </p>
+                                <p>Agendamento para @vacancy?.Patient?.FirstName @vacancy?.Patient?.LastName</p>
+                                <div class="card-actions mt-1">
+                                    <div class="badge badge-outline">@vacancy?.Professional?.FirstName
+                                        @vacancy?.Professional?.LastName</div>
+                                    <div class="badge badge-outline">@vacancy?.Professional?.Formation</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>

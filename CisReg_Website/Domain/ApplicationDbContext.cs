@@ -36,5 +36,4 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
     }
 
-public DbSet<CisReg_Website.Models.Admin> Admin { get; set; } = default!;
 }

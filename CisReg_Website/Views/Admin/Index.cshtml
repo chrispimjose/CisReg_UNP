@@ -3,10 +3,60 @@
 }
 
 <style>
+    /* Barra verde no topo do site */
+    .barra-verde {
+        background-color: #074E40;
+        height: 83px; 
+        width: 100%; 
+        position: fixed; 
+        top: 0;
+        left: 0;
+        z-index: 1000; 
+    }
+
+    /* Estilo do fundo da página */
+    html, body {
+        background-color: white !important; 
+        margin: 0; 
+        height: 100%; 
+        min-height: 100%; 
+        font-family: Arial, sans-serif; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+    }
+
+    /* Estilos para o formulário e inputs */
     input, select, option {
-        background-color :white;
+        background-color: white;
+    }
+
+    /* Ajuste para o conteúdo, para não sobrepor a barra verde */
+    #mainContainer {
+        margin-top: 93px; 
+        padding: 20px;
+        width: 100%;
+        max-width: 800px;
+        min-width: 600px; 
+        background-color: #f7f7f7; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        border-radius: 10px; 
+    }
+
+    form {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: wrap; 
+    }
+
+
+    label {
+        margin-bottom: 10px;
     }
 </style>
+
+<!-- Barra verde no topo -->
+<div class="barra-verde"></div>
 
 <!-- Container flexível para centralização -->
 <div id="mainContainer">
@@ -15,7 +65,7 @@
         <label> CPF: <input type="text" required /></label>
         <br />
         <label> Email: <input type="email" required /></label>
-        <label> Sexo: 
+        <label> Sexo:
             <select id="sexo" name="sexo" required>
                 <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
@@ -23,8 +73,9 @@
             </select>
         </label>
         <br />
-        <label>Telefone: <input type="tel" id="telefone" name="telefone" placeholder="(XX) 9XXXX-XXXX"
-                          pattern="[\(\)\d\- ]+" required title="Apenas números, parênteses e hífen são permitidos"/>
+        <label>
+            Telefone: <input type="tel" id="telefone" name="telefone" placeholder="(XX) 9XXXX-XXXX"
+                             pattern="[\(\)\d\- ]+" required title="Apenas números, parênteses e hífen são permitidos" />
         </label>
         <br />
         <label> Nascimento: <input type="date" required /></label>
@@ -36,7 +87,7 @@
             </select>
         </label>
         <br />
-        <input type = "submit" value= "Cadastrar" />
+        <input type="submit" value="Cadastrar" />
     </form>
 </div>
 

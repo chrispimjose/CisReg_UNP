@@ -1,4 +1,43 @@
-﻿@page
-@model CisReg_Website.Views.Admin.IndexModel
-@{
+﻿@{
+    ViewData["Title"] = "Administração";
 }
+
+<style>
+    input, select, option {
+        background-color :white;
+    }
+</style>
+
+<!-- Container flexível para centralização -->
+<div id="mainContainer">
+    <form>
+        <label> Nome: <input type="text" required /></label>
+        <label> CPF: <input type="text" required /></label>
+        <br />
+        <label> Email: <input type="email" required /></label>
+        <label> Sexo: 
+            <select id="sexo" name="sexo" required>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+            </select>
+        </label>
+        <br />
+        <label>Telefone: <input type="tel" id="telefone" name="telefone" placeholder="(XX) 9XXXX-XXXX"
+                          pattern="[\(\)\d\- ]+" required title="Apenas números, parênteses e hífen são permitidos"/>
+        </label>
+        <br />
+        <label> Nascimento: <input type="date" required /></label>
+        <br />
+        <label> Afiliação:
+            <select id="afiliacao" name="afiliacao" required>
+                <option value="unp">Unp</option>
+                <option value="prefeitura">Prefeitura</option>
+            </select>
+        </label>
+        <br />
+        <input type = "submit" value= "Cadastrar" />
+    </form>
+</div>
+
+<script src="~/js/colorRange.js"></script>

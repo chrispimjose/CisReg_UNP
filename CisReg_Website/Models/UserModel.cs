@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

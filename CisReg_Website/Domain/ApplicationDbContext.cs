@@ -39,4 +39,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
     }
 
+public DbSet<CisReg_Website.Models.UserHall> UserHall { get; set; } = default!;
+
 }

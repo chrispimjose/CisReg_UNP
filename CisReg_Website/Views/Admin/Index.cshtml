@@ -1,149 +1,71 @@
-﻿@{
-    ViewData["Title"] = "Administração";
+﻿@model IEnumerable<CisReg_Website.Models.UserHall>
+
+@{
+    ViewData["Title"] = "Index";
 }
 
-<style>
-    /* Barra verde no topo do site */
-    .barra-verde {
-        background-color: #074E40;
-        height: 83px;
-        width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-    }
+<h1>Index</h1>
 
-    /* Estilo do fundo da página */
-    html, body {
-        background-color: white !important;
-        margin: 0;
-        height: 100%;
-        min-height: 100%;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Estilos para o formulário e inputs */
-    input, select, option {
-        background-color: white;
-        border-radius: 10px; /* Faz as caixas ficarem redondinhas */
-        padding: 1px; /* Espaçamento interno para ficar mais espaçoso */
-        border: 1px solid #ccc; /* Define a cor da borda */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Leve sombra nas caixas */
-    }
-
-    /* Ajuste para o conteúdo, para não sobrepor a barra verde */
-    #mainContainer {
-        margin-top: 93px;
-        padding: 20px;
-        width: 100%;
-        max-width: 800px;
-        min-width: 600px;
-        min-height: 330px;
-        background-color: #f7f7f7;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        border-radius: 20px;
-    }
-
-    /* Ajuste específico para o select */
-    select {
-        width: 100px; /* Aumenta a largura do select */
-        height: 30px; /* Aumenta a altura do select */
-    }
-
-    form {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 100%;
-        position: relative;
-    }
-
-        /* Ajuste no botão */
-        form input[type="submit"] {
-            display: inline-block;
-            margin: 20px;
-            margin-top: 60px; /* Centraliza o botão e cria um espaçamento */
-            padding: 10px 20px; /* Tamanho do botão */
-            background-color: #57BE93; /* Cor de fundo do botão */
-            color: black; /* Cor do texto do botão */
-            border: none; /* Remove borda */
-            border-radius: 30px; /* Bordas arredondadas */
-            cursor: pointer; /* Cursor de pointer ao passar por cima */
-            font-size: 16px; /* Tamanho da fonte */
-            transition: background-color 0.3s ease; /* Efeito de transição ao passar o mouse */
-        }
-
-            /* Ajuste no botão "Visualizar Cadastros" para posicionamento no canto inferior direito */
-            form input[type="submit"]:last-child {
-                position: absolute;
-                bottom: -50px; /* Distância do fundo do formulário */
-                right: -20px; /* Distância da borda direita do formulário */
-                padding: 10px 20px;
-                background-color: #57BE93;
-                color: black;
-                border: none;
-                border-radius: 30px;
-                cursor: pointer;
-                font-size: 16px;
-                transition: background-color 0.3s ease;
-            }
-
-            /* Efeito de hover no botão */
-            form input[type="submit"]:hover {
-                background-color: #053a2d; /* Cor mais escura no hover */
-            }
-
-    label {
-        margin-bottom: 10px;
-    }
-
-    form label {
-        margin-bottom: 20px; /* Aumenta o espaço abaixo de cada label */
-        margin-right: 20px; /* Aumenta o espaço à direita de cada label */
-    }
-</style>
-
-<!-- Barra verde no topo -->
-<div class="barra-verde"></div>
-
-<!-- Container flexível para centralização -->
-<div id="mainContainer">
-    <form>
-        <label> Nome: <input type="text" required /></label>
-        <label> CPF: <input type="text" required /></label>
-        <br />
-        <label> Email: <input type="email" required /></label>
-        <label>
-            Sexo:
-            <select id="sexo" name="sexo" required>
-                <option value="masculino">Masculino</option>
-                <option value="feminino">Feminino</option>
-                <option value="outro">Outro</option>
-            </select>
-        </label>
-        <br />
-        <label>
-            Telefone: <input type="tel" id="telefone" name="telefone" placeholder="(XX) 9XXXX-XXXX"
-                             pattern="[\(\)\d\- ]+" required title="Apenas números, parênteses e hífen são permitidos" />
-        </label>
-        <br />
-        <label> Nascimento: <input type="date" required /></label>
-        <br />
-        <label>
-            Afiliação:
-            <select id="afiliacao" name="afiliacao" required>
-                <option value="unp">Unp</option>
-                <option value="prefeitura">Prefeitura</option>
-            </select>
-        </label>
-        <br />
-        <input type="submit" value="Cadastrar" />
-        <input type="submit" value="Visualizar Cadastros" />
-    </form>
-</div>
-
-<script src="~/js/colorRange.js"></script>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.HallModel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Permission)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.HallModel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Permission)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

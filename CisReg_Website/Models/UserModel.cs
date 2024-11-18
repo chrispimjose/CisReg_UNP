@@ -124,7 +124,7 @@ public class UserHall : UserModel
 
     [BsonElement("phone")]
     [DisplayName("Telefone")]
-    public int? Phone { get; set; }
+    public string? Phone { get; set; }
 }
 
 public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator

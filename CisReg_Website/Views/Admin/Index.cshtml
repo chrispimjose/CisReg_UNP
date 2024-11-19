@@ -4,14 +4,11 @@
     ViewData["Title"] = "Administração do sistema";
 }
 
-<h1>Lista de usuário da prefeitura</h1>
-
-<!-- Contêiner que ocupa toda a altura da tela para centralizar -->
 <div class="flex flex-col justify-center items-center min-h-screen w-full bg-white">
-    <div class="custom-sm:w-394-px custom-sm:h-auto w-360-px custom-lg:mr-36 rounded-lg-border bg-white shadow-lg p-6">
-        <p>
-            <a asp-action="Create">Cadastrar novo usuário</a>
-        </p>
+    <h1>Lista de usuário da prefeitura</h1>
+    <div class="custom-sm:w-394-px custom-sm:h-auto w-auto custom-lg:mr-36 rounded-lg-border bg-white shadow-lg p-6">
+        <p><a asp-action="Create">Cadastrar novo usuário</a></p>
+
         <table class="table">
             <thead>
                 <tr>
@@ -36,7 +33,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Permission)
                     </th>
-                    <th></th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>

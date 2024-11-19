@@ -1,129 +1,136 @@
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CisReg_Website.Models;
 
-public interface IVacancyReserver {
-
-}
+public interface IVacancyReserver { }
 public interface IVacancyCreator { }
-// Implementa��o concreta 1
 
 public enum Permissions
 {
-  Admin,
-  SupUnp,
-  SupHall,
-  Patient,
-  UserHall,
-  Professional
+    Admin,
+    SupUnp,
+    SupHall,
+    Patient,
+    UserHall,
+    Professional
 }
 
-[BsonDiscriminator(RootClass = true)]
-[BsonKnownTypes(typeof(Patient), typeof(Professional), typeof(UserHall), typeof(SupUnp), typeof(SupHall), typeof(Admin))]
 public class UserModel
 {
-  [BsonId]
-  public ObjectId Id { get; set; }
+    [BsonId]
+    public ObjectId Id { get; set; }
 
-  [BsonElement("email")]
-  public string? Email { get; set; }
+    [BsonElement("email")]
+    [DisplayName("Email")]
+    public string? Email { get; set; }
 
-  [BsonElement("password")]
-  public string? Password { get; set; }
+    [BsonElement("password")]
+    [DisplayName("Senha")]
+    public string? Password { get; set; }
 
-  [BsonElement("first_name")]
-  public string? FirstName { get; set; }
+    [BsonElement("first_name")]
+    [DisplayName("Nome")]
+    public string? FirstName { get; set; }
 
-  [BsonElement("last_name")]
-  public string? LastName { get; set; }
+    [BsonElement("last_name")]
+    [DisplayName("Sobrenome")]
+    public string? LastName { get; set; }
 
-  [BsonElement("permission")]
-  [BsonRepresentation(BsonType.String)]
-  public Permissions Permission { get; set; }
+    [BsonElement("permission")]
+    [DisplayName("Permissão")]
+    [BsonRepresentation(BsonType.String)]
+    public Permissions? Permission { get; set; }
+
+    public UserModel()
+    {
+
+    }
 }
 
 public class Patient : UserModel
 {
+    private readonly ApplicationDbContext _context;
 
-  public Patient()
-  {
-    Permission = Permissions.Patient;
-  }
+    [BsonElement("cnes")]
+    [DisplayName("CNES")]
+    public string? Cnes { get; set; }
 
+    [BsonElement("birth_date")]
+    [DisplayName("Data de aniverśario")]
+    public DateTime? BirthDate { get; set; }
 
-  [BsonElement("cnes")]
-  public string? Cnes { get; set; }
+    [BsonElement("sus_card")]
+    [DisplayName("Cartão do SUS")]
+    public string? SusCard { get; set; }
 
-  [BsonElement("birthday")]
-  public DateTime? BirthDate { get; set; }
+    [BsonElement("phone")]
+    [DisplayName("Telefone")]
+    public string? Phone { get; set; }
 
-  [BsonElement("sus_card")]
-  public string? SusCard { get; set; }
+    [BsonElement("father_name")]
+    [DisplayName("Nome do pai")]
+    public string? FatherName { get; set; }
 
-  [BsonElement("phone")]
-  public string? Phone { get; set; }
+    [BsonElement("mother_name")]
+    [DisplayName("Nome da mãe")]
+    public string? MotherName { get; set; }
 
-  [BsonElement("father_name")]
-  public string? FatherName { get; set; }
+    public Patient(ApplicationDbContext context)
+    {
+        _context = context;
+    }
 
-  [BsonElement("mother_name")]
-  public string? MotherName { get; set; }
+    public IEnumerable<Patient> GetAll()
+    {
+        return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
+    }
 }
 
 public class Professional : UserModel
 {
-  public Professional()
-  {
-    Permission = Permissions.Professional;
-  }
+    [BsonElement("academic")]
+    [DisplayName("Formação acadêmica")]
+    public string? Academic { get; set; }
 
+    [BsonElement("council")]
+    [DisplayName("Conselho")]
+    public string? Council { get; set; }
 
-  [BsonElement("academic")]
-  public string? Academic { get; set; }
+    [BsonElement("council_number")]
+    [DisplayName("Número do conselho")]
+    public string? CouncilNumber { get; set; }
 
-  [BsonElement("council")]
-  public string? Council { get; set; }
+    [BsonElement("specialty")]
+    [DisplayName("Especialidade")]
+    public string? Specialty { get; set; }
 
-  [BsonElement("council_number")]
-  public string? CouncilNumber { get; set; }
+    [BsonElement("formation")]
+    [DisplayName("Formação")]
+    public string? Formation { get; set; }
 
-  public SpecialtyModel? Specialty { get; set; }
-  public FormationModel? Formation { get; set; }
+    public Professional()
+    {
+    }
 }
 
 public class UserHall : UserModel
 {
-    public UserHall()
-    {
-        Permission = Permissions.UserHall;
-    }
-
     [BsonElement("hall")]
-    public HallModel? Hall { get; set; }  // Altera��o aqui: Agora est� como HallModel
-
+    public string? HallModel { get; set; }
 }
 
 public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator
 {
-  public SupUnp()
-  {
-    Permission = Permissions.SupUnp;
-  }
 }
 
 public class SupHall : UserHall, IVacancyCreator
 {
-  public SupHall()
-  {
-    Permission = Permissions.SupHall;
-  }
 }
 
 public class Admin : UserModel, IVacancyReserver, IVacancyCreator
 {
-  public Admin()
-  {
-    Permission = Permissions.Admin;
-  }
 }

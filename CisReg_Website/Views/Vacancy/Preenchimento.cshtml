@@ -1,12 +1,12 @@
-﻿@model CisReg_Website.Models.VacancyModel
+﻿@model VacancyModel
 
 @{
+    ViewData["Title"] = "Cadastrar Vaga";
     var cnpj = ViewData["CNPJ"] as string;
 }
 
-<h2>Cadastrar Nova Vaga</h2>
-
-<form method="post">
+<h2>@ViewData["Title"]</h2>
+<form asp-action="Preenchimento" method="post">
     <!-- CNPJ hidden -->
     <input type="hidden" name="CNPJ" value="@cnpj" />
 
@@ -43,47 +43,196 @@
 
     <div class="form-group">
         <label for="birthday">Data de Nascimento</label>
-        <input type="date" class="form-control" id="birthday" name="Patient.Birthday" required />
+        <input type="date" class="form-control" id="birthday" name="Patient.BirthDate" required />
     </div>
 
-    <!-- Campos do Profissional -->
+    <!-- Seleção de Campo Acadêmico -->
     <div class="form-group">
-        <label for="professional_first_name">Primeiro Nome do Profissional</label>
-        <input type="text" class="form-control" id="professional_first_name" name="Professional.FirstName" required />
+        <label for="academicField">Campo Acadêmico</label>
+        <select id="academicField" class="form-control" name="Professional.Academic" required>
+            <option value="">Selecione...</option>
+            @foreach (var academicField in ViewBag.AcademicFields as List<string>)
+            {
+                <option value="@academicField">@academicField</option>
+            }
+        </select>
     </div>
 
-    <div class="form-group">
-        <label for="professional_last_name">Sobrenome do Profissional</label>
-        <input type="text" class="form-control" id="professional_last_name" name="Professional.LastName" required />
-    </div>
-
-    <div class="form-group">
-        <label for="academic">Formação Acadêmica do Profissional</label>
-        <input type="text" class="form-control" id="academic" name="Professional.Academic" required />
-    </div>
-
-    <div class="form-group">
-        <label for="council">Conselho Profissional</label>
-        <input type="text" class="form-control" id="council" name="Professional.Council" required />
-    </div>
-
-    <div class="form-group">
-        <label for="council_number">Número do Conselho</label>
-        <input type="text" class="form-control" id="council_number" name="Professional.CouncilNumber" required />
-    </div>
-
-    <!-- Especialidade (Adicionando o campo de especialidade) -->
-    <div class="form-group">
+    <!-- Seleção de Especialidade -->
+    <div class="form-group" id="specialtyForm" style="display:none;">
         <label for="specialty">Especialidade</label>
-        <input type="text" class="form-control" id="specialty" name="CreatedBy.Hall.Specialties" required />
+        <select id="specialty" class="form-control" name="Professional.Specialty">
+            <option value="">Selecione a especialidade</option>
+        </select>
     </div>
 
-    <!-- Horário Disponível -->
-    <div class="form-group">
-        <label for="available_hour">Horário Disponível</label>
-        <input type="datetime-local" class="form-control" id="available_hour" name="AvailableHour" required />
-    </div>
+    <!-- Tabela de Profissionais e Horários -->
+    <table id="profissionaisTable" class="table mt-4" style="display:none;">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Campo Acadêmico</th>
+                <th>Especialidade</th>
+                <th>Conselho</th>
+                <th>Número do Conselho</th>
+                <th>Horários</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas de dados dos profissionais serão inseridas aqui -->
+        </tbody>
+    </table>
+
+    <div id="errorMessage" class="alert alert-danger mt-3" style="display:none;"></div>
 
     <!-- Botão de Submit -->
     <button type="submit" class="btn btn-primary">Cadastrar Vaga</button>
 </form>
+
+<script>
+    $(document).ready(function () {
+        $('#academicField').change(function () {
+            var academicField = $(this).val();
+
+            if (academicField) {
+                $.ajax({
+                    url: '@Url.Action("GetSpecialtiesByAcademic")',
+                    type: 'GET',
+                    data: { academicField: academicField },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).show();
+                            $('#specialty').empty().append('<option value="">Selecione a especialidade</option>');
+                            $('#specialtyForm').hide();
+                        } else {
+                            $('#specialty').empty().append('<option value="">Selecione a especialidade</option>');
+                            response.specialties.forEach(function (specialty) {
+                                $('#specialty').append('<option value="' + specialty + '">' + specialty + '</option>');
+                            });
+                            $('#errorMessage').hide();
+                            $('#specialtyForm').show();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
+                    }
+                });
+            } else {
+                $('#specialty').empty().append('<option value="">Selecione a especialidade</option>');
+                $('#specialtyForm').hide();
+                $('#errorMessage').hide();
+            }
+        });
+        document.getElementById("submitBtn").addEventListener("click", function (event) {
+            event.preventDefault(); // Previne o envio padrão de formulário
+
+            // Coleta os valores dos campos
+            var vacancyData = {
+                CNPJ: "@cnpj",
+                Patient: {
+                    FirstName: document.getElementById("first_name").value,
+                    LastName: document.getElementById("last_name").value,
+                    SusCard: document.getElementById("sus_card").value,
+                    Phone: document.getElementById("phone").value,
+                    FatherName: document.getElementById("father_name").value,
+                    MotherName: document.getElementById("mother_name").value,
+                    BirthDate: document.getElementById("birthday").value
+                },
+                Professional: {
+                    Academic: document.getElementById("academicField").value,
+                    Specialty: document.getElementById("specialty").value
+                }
+            };
+
+            // Envia os dados com fetch
+            fetch('@Url.Action("Preenchimento")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': '@(Html.AntiForgeryToken())' // Se necessário para CSRF
+                },
+                body: JSON.stringify(vacancyData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(error => { throw new Error(error.message); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Vaga cadastrada com sucesso!");
+                    console.log("Dados enviados:", data); // Log dos dados retornados para confirmar
+                })
+                .catch(error => {
+                    showErrorMessage("Erro ao cadastrar vaga: " + error.message);
+                });
+        });
+        $('#specialty').change(function () {
+            var academicField = $('#academicField').val();
+            var specialty = $(this).val();
+
+            if (!academicField || !specialty) {
+                $('#errorMessage').text('Por favor, selecione o campo acadêmico e a especialidade.').show();
+                $('#profissionaisTable').hide();
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("BuscarProfissionaisPorEspecialidade")',
+                type: 'GET',
+                data: {
+                    academicField: academicField,
+                    specialty: specialty
+                },
+                success: function (response) {
+                    if (response.error) {
+                        $('#errorMessage').text(response.error).show();
+                        $('#profissionaisTable').hide();
+                    } else {
+                        $('#profissionaisTable tbody').empty();
+
+                        response.profissionais.forEach(function (prof) {
+                            // Adiciona o ID do profissional ao botão usando data-id
+                            var horarioBotoes = `
+                                    <button type="button" class="btn btn-primary btn-sm horario-btn" data-id="${prof.id}" data-time="8:00-9:00">8:00 - 9:00</button>
+                                    <button type="button" class="btn btn-primary btn-sm horario-btn" data-id="${prof.id}" data-time="9:00-10:00">9:00 - 10:00</button>
+                                    <button type="button" class="btn btn-primary btn-sm horario-btn" data-id="${prof.id}" data-time="10:00-11:00">10:00 - 11:00</button>
+                                    <button type="button" class="btn btn-primary btn-sm horario-btn" data-id="${prof.id}" data-time="11:00-12:00">11:00 - 12:00</button>`;
+
+                            var row = `<tr>
+                                        <td>${prof.firstName} ${prof.lastName}</td>
+                                        <td>${prof.academic}</td>
+                                        <td>${prof.specialty}</td>
+                                        <td>${prof.council}</td>
+                                        <td>${prof.councilNumber}</td>
+                                        <td>${horarioBotoes}</td>
+                                    </tr>`;
+                            $('#profissionaisTable tbody').append(row);
+                        });
+
+                        $('#profissionaisTable').show();
+                        $('#errorMessage').hide();
+                    }
+                },
+                error: function () {
+                    $('#errorMessage').text('Erro ao buscar profissionais.').show();
+                    $('#profissionaisTable').hide();
+                }
+            });
+        });
+
+        // Event listener para capturar o ID do profissional e o horário ao clicar em um botão de horário
+        $(document).on('click', '.horario-btn', function () {
+            var profissionalId = $(this).data('id');
+            var horarioSelecionado = $(this).data('time');
+
+            alert('Profissional ID: ' + profissionalId + '\nHorário: ' + horarioSelecionado);
+
+            // Aqui você pode adicionar a lógica para enviar o ID e o horário ao backend se necessário
+        });
+        });
+    });
+</script>
+
+
+

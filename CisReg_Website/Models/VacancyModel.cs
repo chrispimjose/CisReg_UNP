@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -5,37 +6,38 @@ namespace CisReg_Website.Models;
 
 public enum Status
 {
-  Available,
-  Occupied,
-  Canceled,
-  Rescheduled,
-  Vazio
+    Available,
+    Occupied,
+    Canceled,
+    Rescheduled
 }
 public class VacancyModel
 {
-  [BsonId]
-  public ObjectId Id { get; set; }
+    [BsonId]
+    public ObjectId Id { get; set; }
 
     [BsonElement("available_hour")]
-    public List<DateTime> AvailableHour { get; set; }  // Mantido como DateTime, assumindo um único horário
-
-
+    [DisplayName("Horário disponível")]
+    public DateTime AvailableHour { get; set; }
 
     [BsonElement("patient")]
-  public Patient? Patient { get; set; }
+    [DisplayName("Paciente")]
+    public ObjectId? PatientId { get; set; }
 
-  [BsonElement("professional")]
-  public Professional? Professional { get; set; }
+    [BsonElement("professional")]
+    [DisplayName("Profissional")]
+    public ObjectId? ProfessionalId { get; set; }
 
     [BsonElement("reserved_by")]
-    public List<UserModel>? ReservedBy { get; set; }  // Alterado para uma lista de UserModel
-                                                      // Mudei para UserModel ou uma implementação concreta
+    [DisplayName("Reservado por")]
+    public ObjectId? ReservedById { get; set; }
 
     [BsonElement("created_by")]
-    public UserHall? CreatedBy { get; set; }  // Mudei para UserModel ou uma implementação concreta
-
+    [DisplayName("Criado por")]
+    public ObjectId? CreatedById { get; set; }
 
     [BsonElement("status")]
-  [BsonRepresentation(BsonType.String)]
-  public Status Status { get; set; }
+    [DisplayName("Status")]
+    [BsonRepresentation(BsonType.String)]
+    public Status Status { get; set; }
 }

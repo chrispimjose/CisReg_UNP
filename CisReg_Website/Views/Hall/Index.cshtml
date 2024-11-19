@@ -44,7 +44,7 @@
                         <td class="px-4 py-2 print-hidden">
                             <!-- Ajustado para que o botão fique dentro da célula -->
                             <button type="button" class="bg-customGreen-default text-white px-4 py-2 rounded-lg w-full"
-                                    onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City')">
+                                    onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City', '@hall.Id')">
                                 Editar Acordo
                             </button>
                         </td>
@@ -66,13 +66,18 @@
         <div class="bg-white p-4 rounded-lg w-1/3">
             <h2 class="text-xl font-bold mb-4">Editar Acordo</h2>
             <form asp-action="UpdateAgreement" method="post">
-                <!-- Campo CNPJ (Somente leitura) -->
+                <!-- Campo oculto para o Id do hall -->
+                <input type="hidden" name="id" id="hallId" />
+
+                <!-- Nome do Município (Somente leitura) -->
                 <label for="cityName" class="block text-sm font-medium text-gray-700">Nome do Município:</label>
                 <input type="text" id="cityName" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" readonly />
 
+                <!-- CNPJ (Somente leitura) -->
                 <label for="cnpjInput" class="block text-sm font-medium text-gray-700 mt-2">CNPJ:</label>
                 <input type="text" name="cnpj" id="cnpjInput" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" readonly />
 
+                <!-- Novo Acordo -->
                 <label for="newAgreement" class="block text-sm font-medium text-gray-700 mt-2">Novo Acordo:</label>
                 <input type="number" name="newAgreement" id="newAgreement" class="input pl-10 w-full bg-white text-gray-700 font-poppins text-base" required />
 
@@ -85,38 +90,22 @@
     </div>
 </div>
 
-
-
-
-
 <script>
-    let currentAgreement = 0;
+    // Função para abrir o modal e preencher os campos
+    function openModal(cnpj, agreement, city, hallId) {
+        // Preenche os campos do modal com os valores passados
+        document.getElementById("cityName").value = city;
+        document.getElementById("cnpjInput").value = cnpj;
+        document.getElementById("newAgreement").value = agreement;
+        document.getElementById("hallId").value = hallId;  // Definindo o ID do hall no campo oculto
+        
+        // Mostra o modal
+        document.getElementById("modal").classList.remove("hidden");
+    }
 
-// Função para abrir o modal
-function openModal(cnpj, agreement, city) {
-    // Preenche os campos do modal com os valores passados
-    document.getElementById("cityName").value = city;
-    document.getElementById("cnpjInput").value = cnpj;
-    document.getElementById("newAgreement").value = agreement;
-    
-    // Mostra o modal
-    document.getElementById("modal").classList.remove("hidden");
-}
-
-// Função para fechar o modal
-function closeModal() {
-    // Esconde o modal
-    document.getElementById("modal").classList.add("hidden");
-}
-
-
-    document.getElementById("newAgreement").addEventListener("input", function () {
-        const newAgreement = parseInt(this.value);
-        const errorText = document.getElementById("errorText");
-        if (newAgreement < currentAgreement) {
-            errorText.classList.remove("hidden");
-        } else {
-            errorText.classList.add("hidden");
-        }
-    });
+    // Função para fechar o modal
+    function closeModal() {
+        // Esconde o modal
+        document.getElementById("modal").classList.add("hidden");
+    }
 </script>

@@ -17,10 +17,5 @@ namespace CisReg_Website.Controllers
         {
             return View();
         }
-
-        private bool UserModelExists(ObjectId id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
     }
 }

@@ -29,13 +29,20 @@ public class VacancyComplete
 public class VacancySchedulesMadeQueryParams
 {
   public Period? Period { get; set; }
-  public string? ProfessionalSpecialty { get; set; }
+  public IEnumerable<string>? ProfessionalSpecialties { get; set; }
   public Status[]? Status { get; set; }
   public DateTime? InitialDate { get; set; }
   public DateTime? FinalDate { get; set; }
+  public string? Search { get; set; }
 }
 
-public class VacancySchedulesMadeViewModel(IEnumerable<VacancyComplete> vacancies)
+public class VacancySchedulesMadeViewModel(
+  IEnumerable<VacancyComplete> vacancies,
+  IEnumerable<string> professionalSpecialties,
+  VacancySchedulesMadeQueryParams queryParams
+)
 {
   public IEnumerable<VacancyComplete> Vacancies { get; set; } = vacancies;
+  public IEnumerable<string> ProfessionalSpecialties { get; set; } = professionalSpecialties;
+  public VacancySchedulesMadeQueryParams QueryParams { get; set; } = queryParams;
 }

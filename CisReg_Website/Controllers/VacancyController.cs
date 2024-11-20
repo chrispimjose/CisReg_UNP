@@ -158,10 +158,11 @@ namespace CisReg_Website.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult SchedulesMade(VacancySchedulesMadeQueryParams Params)
+        public IActionResult SchedulesMade(VacancySchedulesMadeQueryParams QueryParams)
         {
-            var schedules = _vacancyRepository.GetAllByQuery(Params);
-            var viewModel = new VacancySchedulesMadeViewModel(schedules);
+            var schedules = _vacancyRepository.GetAllByQuery(QueryParams);
+            var specialties = _professionalRepository.GetAllSpecialties();
+            VacancySchedulesMadeViewModel viewModel = new(schedules, specialties, QueryParams);
 
             return View(viewModel);
         }

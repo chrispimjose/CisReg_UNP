@@ -1,140 +1,143 @@
 ﻿@{
+   
     var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
 }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+<h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
+    Gerenciamento de Vagas
 
+</h1>
+
+
+<div class="container">
+    @foreach (var vacancy in vacancyDetails)
+    {
+        <div class="card">
+            @if (vacancy.Status == "Vazio")
+            {
+                <!-- Card para vaga vazia -->
+                <h3 class="title">Vaga Vazia</h3>
+                <p class="info">
+                    <span>Status:</span> Vaga sem reserva
+                </p>
+
+                <div class="info-container">
+
+                <p class="info">
+                    <span>Para preencher, clique abaixo:</span>
+                </p>
+                <form asp-controller="Vacancy" asp-action="Preenchimento" method="post">
+                    <input type="hidden" name="id" value="@vacancy.HallId" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-plus-circle"></i> Preencher Vaga
+                    </button>
+                </form>
+                </div>
+
+            }
+            else
+            {
+                <!-- Card com dados de vaga -->
+                <h3 class="title">@vacancy.ProfessionalName</h3>
+                <p class="info">
+                    <span>Profissão:</span> @vacancy.ProfessionalAcademic
+                </p>
+                <p class="info">
+                    <span>Especialidade:</span> @vacancy.ProfessionalSpecialty
+                </p>
+                <p class="info">
+                    <span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")
+                </p>
+                <p class="info">
+                    <span>Data:</span> @vacancy.AvailableHour.ToString("dd/MM/yyyy")
+                </p>
+                <p class="info">
+                    <span>Horário:</span> @vacancy.AvailableHour.ToString("HH:mm")
+                </p>
+                <p class="info">
+                    <span>Status:</span> @vacancy.Status
+                </p>
+                <form asp-controller="Vacancy" asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </form>
+            }
+        </div>
+    }
+</div>
 <style>
     :root,
     [data-theme] {
         background-color: white;
     }
 
-    * {
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    html {
-        background-color: white;
-    }
-
-    h1 {
-        text-align: center;
-        font-size: 40px;
-        color: #57BE93;
-        margin: 50px 0px 25px 0px;
-        padding: 50px 50px 25px 50px;
-    }
-
     .container {
         display: grid;
-        justify-items: center;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        width: 100%;
-        max-width: 1200px;
-        padding: 20px;
-        margin: auto;
+        gap: 1.5rem;
+        padding: 1rem;
+        justify-content: center;
+        align-items: center;
     }
+
 
     .card {
-        width: 220px;
-        min-height: 300px;
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 16px;
-        text-align: left;
-        transition: transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 12px 14px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        width: 100%;
+        transition: transform 0.2s;
+        min-height: 330px;
     }
 
+        .card .info-container {
+            margin-top: auto; /* Empurra para o final do card */
+            text-align: center; /* Centraliza o conteúdo */
+        }
+
         .card:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
         }
 
-        .card:active {
-            box-shadow: inset -2px -2px;
-            transform: scale(0.98);
-        }
+    .title {
+        font-size: 1.125rem;
+        font-family: 'Poppins';
+        color: #374151;
+    }
 
-        .card h3 {
-            font-size: 1.2em;
-            margin-bottom: 8px;
-            color: #333;
-        }
+    .info {
+        font-size: 0.875rem;
+        font-family: 'Poppins';
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
 
-        .card p {
-            font-size: 0.9em;
-            margin-bottom: 4px;
-            color: #666;
+        .info span {
+            font-weight: bold;
+            color: #374151;
         }
-
-            .card p span {
-                font-weight: bold;
-                color: #444;
-            }
 
     .btn {
+        display: inline-block;
         background-color: #57BE93;
+        color: black;
+        padding: 0.9rem 1rem;
+        border-radius: 0.25rem;
+        text-align: center;
+        text-decoration: none;
+        max-height: 20px;
+        transition: transform 0.2s, background-color 0.2s;
     }
 
         .btn:hover {
-            background-color: green;
-            transform: scale(1.02);
+            background-color: #40a57b;
+            transform: scale(1.05);
         }
 </style>
-
-<h1>Gerenciamento de Vagas</h1>
-
-<div class="container">
-    @foreach (var vacancy in vacancyDetails)
-    {
-        @if (vacancy.Status == "Vazio")
-        {
-            <div class="card">
-                <!-- Exibir um card vazio com link para a tela de preenchimento -->
-                <h3>Vaga Vazia</h3>
-                <p><span>Status:</span> Vaga sem reserva</p>
-                <p><span>Para preencher, clique abaixo:</span></p>
-                <a asp-controller="Vacancy" asp-action="Preenchimento" class="btn btn-primary">
-                    <i class="fa-solid fa-plus-circle"></i> Preencher Vaga
-                </a>
-            </div>
-        }
-        else
-        {
-
-            <div class="card" onclick="window.location.href='@Url.Action("edit", "VacancyController")'">
-                <!-- Exibir o card com dados de vaga -->
-                <h3>@vacancy.ProfessionalName</h3>
-                <p><span>Profissão:</span> @vacancy.ProfessionalAcademic</p>
-                <p><span>Especialidade:</span> @vacancy.ProfessionalSpecialty</p>
-                <p><span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")</p>
-
-                <p>
-                    <span>Data:</span>
-                    <span>@vacancy.AvailableHour.ToString("dd/MM/yyyy")</span>
-                </p>
-
-                <p>
-                    <span>Horário:</span>
-                    <span>@vacancy.AvailableHour.ToString("HH:mm")</span>
-                </p>
-
-                <p><span>Status:</span> @vacancy.Status</p>
-                <form asp-controller="Vacancy" asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
-
-
-
-            </div>
-        }
-    }
-</div>
-

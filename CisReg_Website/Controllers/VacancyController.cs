@@ -59,7 +59,8 @@ namespace CisReg_Website.Controllers
                     ProfessionalAcademic = professional?.Academic,
                     // Dados do Hall (agreement e specialties)
                     HallAgreement = hall.Agreement,
-                    HallSpecialties = hall.specialties
+                    HallSpecialties = hall.specialties,
+                    HallId    =      hall.Id
                 };
 
                 // Adiciona os dados da vaga à lista
@@ -76,6 +77,7 @@ namespace CisReg_Website.Controllers
                 {
                     emptyVacancies.Add(new VacancyModel
                     {
+
                         Status = Status.Vazio, // Marcar como Vazio
                         
                     });
@@ -90,7 +92,8 @@ namespace CisReg_Website.Controllers
                         AvailableHour = "N/A", // Para os cards vazios, a hora pode ser 'N/A'
                         Status = "Vazio",
                         HallAgreement = hall.Agreement,
-                        HallSpecialties = hall.specialties
+                        HallSpecialties = hall.specialties,
+                         HallId = hall.Id.ToString()
                     };
 
                     vacancyDetails.Add(emptyVacancyData);
@@ -278,17 +281,20 @@ namespace CisReg_Website.Controllers
         {
             return _context.Vacancies.Any(e => e.Id == id);
         }
-        public IActionResult Preenchimento(string cnpj= "6737780d104e9aafd1f34972")
+        [HttpPost]
+        public async Task<IActionResult> Preenchimento(ObjectId id)
         {
-            if (string.IsNullOrEmpty(cnpj))
+            // Exemplo: Lógica para processar o ID
+            if (id == ObjectId.Empty)
             {
-                return BadRequest("CNPJ não fornecido.");
+                return BadRequest("ID inválido.");
             }
-            // Passa o CNPJ para a view
-            ViewData["CNPJ"] = cnpj;
-            // Outros dados necessários para o formulário de preenchimento
+
+            // Processar o ID ou executar alguma lógica aqui
+            // Retorna a mesma view ou outra conforme o necessário
             return View();
         }
+
 
     }
 }

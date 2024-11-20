@@ -1,6 +1,5 @@
-﻿@model List<VacancyModel>
-@{
-    ViewData["Title"] = "Gerenciamento";
+﻿@{
+    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
@@ -10,16 +9,19 @@
     [data-theme] {
         background-color: white;
     }
+
     * {
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
     }
-    html{
-        background-color:white;
+
+    html {
+        background-color: white;
     }
+
     h1 {
         text-align: center;
-        font-size:40px;
+        font-size: 40px;
         color: #57BE93;
         margin: 50px 0px 25px 0px;
         padding: 50px 50px 25px 50px;
@@ -37,7 +39,7 @@
     }
 
     .card {
-        width: 220px; 
+        width: 220px;
         min-height: 300px;
         background-color: #ffffff;
         border: 1px solid #ddd;
@@ -48,35 +50,75 @@
         transition: transform 0.2s ease;
     }
 
-    .card:hover {
-        transform: scale(1.02);
-    }
+        .card:hover {
+            transform: scale(1.02);
+        }
 
-    .card h3 {
-        font-size: 1.2em;
-        margin-bottom: 8px;
-        color: #333;
-    }
+        .card h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            color: #333;
+        }
 
-    .card p {
-        font-size: 0.9em;
-        margin-bottom: 4px;
-        color: #666;
-    }
+        .card p {
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            color: #666;
+        }
 
-    .card p span {
-        font-weight: bold;
-        color: #444;
-    }
+            .card p span {
+                font-weight: bold;
+                color: #444;
+            }
 
     .btn {
         background-color: #57BE93;
     }
-    .btn:hover{
+
+        .btn:hover {
             background-color: green;
             transform: scale(1.02);
-    }
+        }
 </style>
 
 <h1>Gerenciamento de Vagas</h1>
 
+<div class="container">
+    @foreach (var vacancy in vacancyDetails)
+    {
+        <div class="card">
+        @if (vacancy.Status =="Vazio")
+        {
+            <!-- Exibir um card vazio com link para a tela de preenchimento -->
+            <h3>Vaga Vazia</h3>
+            <p><span>Status:</span> Vaga sem reserva</p>
+            <p><span>Para preencher, clique abaixo:</span></p>
+                    <a class="btn btn-primary">
+                        <i class="fa-solid fa-plus-circle"></i> Preencher Vaga
+                    </a>
+
+        }
+        else
+        {
+          
+                <!-- Exibir o card com dados de vaga -->
+            <h3>@vacancy.ProfessionalName</h3>
+            <p><span>Profissão:</span> @vacancy.ProfessionalAcademic</p>
+            <p><span>Especialidade:</span> @vacancy.ProfessionalSpecialty</p>
+            <p><span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")</p>
+
+            <p>
+                <span>Data:</span>
+                <span>@vacancy.AvailableHour.ToString("dd/MM/yyyy")</span>
+            </p>
+
+            <p>
+                <span>Horário:</span>
+                <span>@vacancy.AvailableHour.ToString("HH:mm")</span>
+            </p>
+
+            <p><span>Status:</span> @vacancy.Status</p>
+        }
+        </div>
+    }
+</div>

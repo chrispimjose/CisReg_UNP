@@ -17,5 +17,10 @@ namespace CisReg_Website.Controllers
         {
             return View();
         }
+
+        public IActionResult SelectProfessional()
+        {
+            return View();
+        }
     }
 }

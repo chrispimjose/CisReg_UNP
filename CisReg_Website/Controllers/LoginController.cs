@@ -62,7 +62,7 @@ namespace CisReg_Website.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
-               
+
             }
             return View();
         }

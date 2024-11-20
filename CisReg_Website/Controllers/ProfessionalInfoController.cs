@@ -33,7 +33,7 @@ namespace CisReg_Website.Controllers
             };
 
             TempData["CombinedInfo"] = JsonConvert.SerializeObject(combinedModel);
-            
+
             var formationsList = _context.Formations.ToList();
             var specialtiesList = _context.Specialties.ToList();
 

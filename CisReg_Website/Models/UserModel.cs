@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -111,8 +112,13 @@ public class Professional : UserModel
 
 public class UserHall : UserModel
 {
-  [BsonElement("hall")]
-  public string? HallModel { get; set; }
+    [BsonElement("hall")]
+    [DisplayName("Prefeitura")]
+    public string? HallModel { get; set; }
+
+    [BsonElement("phone")]
+    [DisplayName("Telefone")]
+    public string? Phone { get; set; }
 }
 
 public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator

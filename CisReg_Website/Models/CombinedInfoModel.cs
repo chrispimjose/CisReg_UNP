@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace CisReg_Website.Models
 {
 
-    public class CombinedInfoModel 
+    public class CombinedInfoModel
     {
         [BsonId]
         public ObjectId Id { get; set; }

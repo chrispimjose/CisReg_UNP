@@ -1,4 +1,5 @@
 using CisReg_Website.Models;
+using CisReg_Website.Models.Vacancy;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
 

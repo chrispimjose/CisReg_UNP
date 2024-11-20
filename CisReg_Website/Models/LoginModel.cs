@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CisReg_Website.Models;
 
-public class LoginModel 
+public class LoginModel
 {
   public string Email { get; set; } = string.Empty;
 

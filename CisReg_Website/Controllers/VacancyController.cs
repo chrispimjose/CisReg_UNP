@@ -278,6 +278,17 @@ namespace CisReg_Website.Controllers
         {
             return _context.Vacancies.Any(e => e.Id == id);
         }
+        public IActionResult Preenchimento(string cnpj= "6737780d104e9aafd1f34972")
+        {
+            if (string.IsNullOrEmpty(cnpj))
+            {
+                return BadRequest("CNPJ não fornecido.");
+            }
+            // Passa o CNPJ para a view
+            ViewData["CNPJ"] = cnpj;
+            // Outros dados necessários para o formulário de preenchimento
+            return View();
+        }
 
     }
 }

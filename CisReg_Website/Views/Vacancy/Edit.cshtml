@@ -1,58 +1,125 @@
-﻿@model CisReg_Website.Models.VacancyModel
-
-@{
-    ViewData["Title"] = "Edit";
+﻿@{
+    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
+    var vacancy = vacancyDetails != null && vacancyDetails.Count > 0 ? vacancyDetails[0] : null;
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var professionalAcademic = vacancy != null ? vacancy.ProfessionalAcademic : string.Empty;
 }
 
-<div class="flex flex-col w-full p-28">
+<h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
+    Editar a Vaga
+</h1>
 
-    <h1>Edit</h1>
-
-    <h4>VacancyModel</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="AvailableHour" class="control-label"></label>
-                    <input asp-for="AvailableHour" class="form-control" />
-                    <span asp-validation-for="AvailableHour" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="PatientId" class="control-label"></label>
-                    <input asp-for="PatientId" class="form-control" />
-                    <span asp-validation-for="PatientId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ProfessionalId" class="control-label"></label>
-                    <input asp-for="ProfessionalId" class="form-control" />
-                    <span asp-validation-for="ProfessionalId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ReservedById" class="control-label"></label>
-                    <input asp-for="ReservedById" class="form-control" />
-                    <span asp-validation-for="ReservedById" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="CreatedById" class="control-label"></label>
-                    <input asp-for="CreatedById" class="form-control" />
-                    <span asp-validation-for="CreatedById" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Status" class="control-label"></label>
-                    <select asp-for="Status" class="form-control"></select>
-                    <span asp-validation-for="Status" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            </form>
+@if (vacancy != null)
+{
+    <!-- Container Principal -->
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="CreateVacancy" method="post">
+        <!-- Dados do Paciente -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+            <div class="grid gap-4">
+                <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
+                <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@vacancy.AvailableHour" required>
+                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" value="@vacancy.AvailableHour" required>
+                <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
+                <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
+                <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
+                <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
+                <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+            </div>
         </div>
-    </div>
 
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
-</div>
+        <!-- Dados da Vaga -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Vaga</h3>
+            <div class="grid gap-4">
+                <div>
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                        <option value="">Selecione a Formação Acadêmica</option>
+                        @if (academicDetails != null)
+                        {
+                            foreach (var academic in academicDetails)
+                            {
+                                <option value="@academic">@academic</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Removi a lógica de esconder o campo de especialidade -->
+                <div id="especialidadeForm" style="margin-top: 10px;">
+                    <label for="especialidade">Especialidade</label> value="@vacancy.ProfessionalSpecialty
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
+                        <option value="">Selecione a Especialidade</option>
+                    </select>
+                </div>
+
+                <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-between mt-6">
+            <button type="button" class="" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="">Cadastrar</button>
+        </div>
+    </form>
+}
+else
+{
+    <p>Nenhuma vaga encontrada.</p>
+}
+
+<script>
+    // Valor da formação acadêmica vinda do servidor
+    var professionalAcademic = "@professionalAcademic";
+
+    // Quando o documento estiver carregado, selecione o valor no dropdown
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElement = document.getElementById('formacaoAcademica');
+        if (professionalAcademic) {
+            // Iterar sobre as opções e selecionar a correspondente
+            for (var i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].value === professionalAcademic) {
+                    selectElement.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    });
+
+    // A lógica de carregamento de especialidades via AJAX ainda está presente, mas agora o campo sempre ficará visível.
+    $(document).ready(function () {
+        $('#formacaoAcademica').change(function () {
+            var formacaoAcademica = $(this).val();
+
+            if (formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: formacaoAcademica },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).show();
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                        } else {
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            response.especialidades.forEach(function (especialidade) {
+                                $('#especialidade').append('<option value="' + especialidade.nome + '">' + especialidade.nome + '</option>');
+                            });
+                            $('#errorMessage').hide();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
+                    }
+                });
+            } else {
+                $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                $('#errorMessage').hide();
+            }
+        });
+    });
+</script>

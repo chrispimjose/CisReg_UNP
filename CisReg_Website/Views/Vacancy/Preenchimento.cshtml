@@ -1,21 +1,29 @@
-﻿
+﻿@{
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var id = ViewData["id"] as string;
+}
 
-    <!-- Container Principal -->
-    <div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
+<!-- Container Principal -->
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
 
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="CreateVacancy" method="post">
         <!-- Dados do Paciente -->
+        <input type="hidden" name="id" value="@id" />
         <div>
             <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
             <div class="grid gap-4">
-                <input type="text" placeholder="Nome Completo" class="border rounded p-2 w-full">
-                <input type="text" placeholder="CPF" class="border rounded p-2 w-full">
-                <input type="date" placeholder="Data de Nascimento" class="border rounded p-2 w-full">
-                <input type="text" placeholder="Cartão SUS" class="border rounded p-2 w-full">
-                <input type="text" placeholder="CID" class="border rounded p-2 w-full">
-                <input type="tel" placeholder="Telefone" class="border rounded p-2 w-full">
-                <input type="text" placeholder="Nome da Mãe" class="border rounded p-2 w-full">
-                <input type="text" placeholder="Nome do Pai" class="border rounded p-2 w-full">
+                <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" required>
+                <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" required>
+                <input type="text" name="cpf" placeholder="CPF" class="border rounded p-2 w-full" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" required>
+                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" required>
+                <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" required>
+                <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" required>
+                <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" required>
+                <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" required>
+                <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" required>
             </div>
         </div>
 
@@ -23,40 +31,74 @@
         <div class="mt-6">
             <h3 class="text-xl font-semibold mb-4">Vaga</h3>
             <div class="grid gap-4">
-                <!-- Tipo de Profissional -->
-                <select id="tipoProfissional" class="border rounded p-2 w-full">
-                    <option value="">Selecione o Tipo de Profissional</option>
-                    <option value="saude">Profissional da Saúde</option>
-                    <option value="psicologia">Profissional de Psicologia</option>
-                    <option value="nutricao">Profissional de Nutrição</option>
-                    <option value="fisioterapia">Profissional de Fisioterapia</option>
-                </select>
+                <div>
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                        <option value="">Selecione a Formação Acadêmica</option>
+                        @if (academicDetails != null)
+                        {
+                            foreach (var academic in academicDetails)
+                            {
+                                        <option value="@academic">@academic</option>
+                            }
+                        }
+                    </select>
+                </div>
 
-                <!-- Especialidade -->
-                <select id="especialidade" class="border rounded p-2 w-full" disabled>
-                    <option value="">Selecione a Especialidade</option>
-                </select>
+                <div id="especialidadeForm" style="display: none; margin-top: 10px;">
+                    <label for="especialidade">Especialidade</label>
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
+                        <option value="">Selecione a Especialidade</option>
+                    </select>
+                </div>
 
-                <!-- Subespecialidade -->
-                <select id="subespecialidade" class="border rounded p-2 w-full" disabled>
-                    <option value="">Selecione a Subespecialidade</option>
-                </select>
+                <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
             </div>
         </div>
 
         <!-- Botões de Ação -->
         <div class="flex justify-between mt-6">
-            <button class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" onclick="clearFields()">Voltar</button>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="showLoadingPopup()">Cadastrar</button>
+            <button type="button" class="" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="">Cadastrar</button>
         </div>
-    </div>
+    </form>
+</div>
 
-    <!-- Popup de Carregando -->
-    <div id="loadingPopup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center gap-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
-            <p>Processando, por favor aguarde...</p>
-        </div>
-    </div>
+<script>
+    $(document).ready(function () {
+        $('#formacaoAcademica').change(function () {
+            var formacaoAcademica = $(this).val();
 
-    <!-- JavaScript para Tom Select -->
+            if (formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: formacaoAcademica },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).show();
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            $('#especialidadeForm').hide();
+                        } else {
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            response.especialidades.forEach(function (especialidade) {
+                                $('#especialidade').append('<option value="' + especialidade.nome + '">' + especialidade.nome + '</option>');
+                            });
+                            $('#errorMessage').hide();
+                            $('#especialidadeForm').show();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
+                    }
+                });
+            } else {
+                $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                $('#especialidadeForm').hide();
+                $('#errorMessage').hide();
+            }
+        });
+    });
+</script>
+
+

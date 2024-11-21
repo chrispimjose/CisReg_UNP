@@ -78,7 +78,10 @@ public class Patient : UserModel
     [BsonElement("mother_name")]
     [DisplayName("Nome da mãe")]
     public string? MotherName { get; set; }
-
+    public Patient()
+    {
+        
+    }
     public Patient(ApplicationDbContext context)
     {
         _context = context;

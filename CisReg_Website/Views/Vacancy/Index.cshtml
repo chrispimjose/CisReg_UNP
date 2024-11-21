@@ -37,6 +37,7 @@
             }
             else
             {
+                <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId })'">
                 <!-- Card com dados de vaga -->
                 <h3 class="title">@vacancy.ProfessionalName</h3>
                 <p class="info">
@@ -63,6 +64,7 @@
                         <i class="fa-solid fa-trash"></i> Delete
                     </button>
                 </form>
+                </div>
             }
         </div>
     }

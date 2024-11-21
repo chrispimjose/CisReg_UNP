@@ -1,131 +1,103 @@
 ﻿@{
-    @using CisReg_Website.Models
-    @model List<VacancyModel>
-    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var id = ViewData["id"] as string;
 }
 
-<h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
-    Gerenciamento de Vagas
+<!-- Container Principal -->
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
 
-</h1>
-
-
-<div class="container">
-    @foreach (var vacancy in vacancyDetails)
-    {
-        <div class="card">
-            @if (vacancy.Status == "Vazio")
-            {
-                <!-- Card para vaga vazia -->
-                <h3 class="title">Vaga Vazia</h3>
-                <p class="info">
-                    <span>Status:</span> Vaga sem reserva
-                </p>
-                <p class="info">
-                    <span>Para preencher, clique abaixo:</span>
-                </p>
-                <form asp-controller="Vacancy" asp-action="Preenchimento" method="post">
-                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-trash"></i> Preencher Vaga
-                    </button>
-                </form>
-            }
-            else
-            {
-                <!-- Card com dados de vaga -->
-                <h3 class="title">@vacancy.ProfessionalName</h3>
-                <p class="info">
-                    <span>Profissão:</span> @vacancy.ProfessionalAcademic
-                </p>
-                <p class="info">
-                    <span>Especialidade:</span> @vacancy.ProfessionalSpecialty
-                </p>
-                <p class="info">
-                    <span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")
-                </p>
-                <p class="info">
-                    <span>Data:</span> @vacancy.AvailableHour.ToString("dd/MM/yyyy")
-                </p>
-                <p class="info">
-                    <span>Horário:</span> @vacancy.AvailableHour.ToString("HH:mm")
-                </p>
-                <p class="info">
-                    <span>Status:</span> @vacancy.Status
-                </p>
-                <form asp-controller="Vacancy" asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
-            }
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="CreateVacancy" method="post">
+        <!-- Dados do Paciente -->
+        <input type="hidden" name="id" value="@id" />
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+            <div class="grid gap-4">
+                <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" required>
+                <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" required>
+                <input type="text" name="cpf" placeholder="CPF" class="border rounded p-2 w-full" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" required>
+                <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" required>
+                <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" required>
+                <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" required>
+                <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" required>
+                <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" required>
+            </div>
         </div>
-    }
+
+        <!-- Dados da Vaga -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Vaga</h3>
+            <div class="grid gap-4">
+                <div>
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                        <option value="">Selecione a Formação Acadêmica</option>
+                        @if (academicDetails != null)
+                        {
+                            foreach (var academic in academicDetails)
+                            {
+                                <option value="@academic">@academic</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div id="especialidadeForm" style="display: none; margin-top: 10px;">
+                    <label for="especialidade">Especialidade</label>
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
+                        <option value="">Selecione a Especialidade</option>
+                    </select>
+                </div>
+
+                <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-between mt-6">
+            <button type="button" class="" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="">Cadastrar</button>
+        </div>
+    </form>
 </div>
 
-<style>
-    :root,
-    [data-theme] {
-        background-color: white;
-    }
+<script>
+    $(document).ready(function () {
+        $('#formacaoAcademica').change(function () {
+            var formacaoAcademica = $(this).val();
 
-    .container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem;
-        justify-content: center;
-        align-items: center;
-    }
+            if (formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: formacaoAcademica },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).show();
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            $('#especialidadeForm').hide();
+                        } else {
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            response.especialidades.forEach(function (especialidade) {
+                                $('#especialidade').append('<option value="' + especialidade.nome + '">' + especialidade.nome + '</option>');
+                            });
+                            $('#errorMessage').hide();
+                            $('#especialidadeForm').show();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
+                    }
+                });
+            } else {
+                $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                $('#especialidadeForm').hide();
+                $('#errorMessage').hide();
+            }
+        });
+    });
+</script>
 
-    .card {
-        background-color: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        width: 100%;
-        transition: transform 0.2s;
-        min-height: 300px;
-    }
 
-    .card:hover {
-        transform: scale(1.05);
-    }
-
-    .title {
-        font-size: 1.125rem;
-        font-family: 'Poppins';
-        color: #374151;
-    }
-
-    .info {
-        font-size: 0.875rem;
-        font-family: 'Poppins';
-        color: #6b7280;
-        margin-bottom: 0.5rem;
-    }
-
-    .info span {
-        font-weight: bold;
-        color: #374151;
-    }
-
-    .btn {
-        display: inline-block;
-        background-color: #57BE93;
-        color: black;
-        padding: 0.9rem 1rem;
-        border-radius: 0.25rem;
-        text-align: center;
-        text-decoration: none;
-        max-height: 20px;
-        transition: transform 0.2s, background-color 0.2s;
-    }
-
-    .btn:hover {
-        background-color: #40a57b;
-        transform: scale(1.05);
-    }
-</style>

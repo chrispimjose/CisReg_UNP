@@ -6,6 +6,8 @@ using CisReg_Website.Models;
 using MongoDB.Bson;
 using CisReg_Website.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System;
 
 namespace CisReg_Website.Controllers
 {
@@ -176,9 +178,6 @@ namespace CisReg_Website.Controllers
             return View(vacancies);
         }
 
-
-
-
         public async Task<IActionResult> Details(ObjectId id)
         {
             var vacancyModel = await _context.Vacancies
@@ -211,12 +210,63 @@ namespace CisReg_Website.Controllers
 
         public async Task<IActionResult> Edit(ObjectId id)
         {
-            var vacancyModel = await _context.Vacancies.FindAsync(id);
-            if (vacancyModel == null)
+            var vacancies = await _context.Vacancies
+            .Where(v => v.Id == id)  // Filtra vagas associadas ao Hall
+    .ToListAsync();
+
+            var vacancyDetails = new List<object>(); // Lista para guardar dados de vagas com pacientes, profissionais e halls
+
+            foreach (var vacancy in vacancies)
             {
-                return NotFound();
+                var patient = vacancy.PatientId.HasValue ? await _context.Patients.FindAsync(new ObjectId(vacancy.PatientId.Value.ToString())) : null;
+                var professional = vacancy.ProfessionalId.HasValue ? await _context.Professionals.FindAsync(new ObjectId(vacancy.ProfessionalId.Value.ToString())) : null;
+                
+                // Prepara os dados da vaga
+                var vacancyData = new
+                {
+                    VacancyId = vacancy.Id,
+                    AvailableHour = vacancy.AvailableHour,
+                    Status = vacancy.Status.ToString(),
+                    // Dados do paciente
+                    PatientName = patient?.FatherName,
+                    PatientFirstName = patient?.FirstName,
+                    PatientLastName = patient?.LastName,
+                    PatientEmail = patient?.Email,
+                    // Dados do profissional
+                    ProfessionalName = professional?.FirstName + " " + professional?.LastName,
+                    ProfessionalEmail = professional?.Email,
+                    ProfessionalSpecialty = professional?.Specialty,
+                    ProfessionalAcademic = professional?.Academic,
+                    SusC = patient?.SusCard,
+                    Mother = patient?.MotherName,
+                    Father= patient?.FatherName,
+                    cnes= patient?.Cnes,
+                    php= patient?.Phone,
+
+                    //CID = patient?.Cid,
+
+
+
+
+                    // Dados do Hall (agreement e specialties)
+
+                };
+
+                // Adiciona os dados da vaga à lista
+                vacancyDetails.Add(vacancyData);
             }
-            return View(vacancyModel);
+
+          
+            // Obtenha todas as formações acadêmicas dos profissionais
+            var academicDetails = _context.Professionals
+                .Select(p => p.Academic)
+                .Distinct()
+                .ToList();
+
+            // Passe os detalhes acadêmicos para a View
+            ViewData["academicDetails"] = academicDetails;
+            ViewData["VacancyDetails"] = vacancyDetails;
+            return View();
         }
 
         [HttpPost]
@@ -282,19 +332,118 @@ namespace CisReg_Website.Controllers
             return _context.Vacancies.Any(e => e.Id == id);
         }
         [HttpPost]
-        public async Task<IActionResult> Preenchimento(ObjectId id)
+        public IActionResult Preenchimento(string id)
         {
-            // Exemplo: Lógica para processar o ID
-            if (id == ObjectId.Empty)
-            {
-                return BadRequest("ID inválido.");
-            }
+          
 
-            // Processar o ID ou executar alguma lógica aqui
-            // Retorna a mesma view ou outra conforme o necessário
+            // Passa o CNPJ para a view
+            ViewData["id"] = id;
+            // Obtenha todas as formações acadêmicas dos profissionais
+            var academicDetails = _context.Professionals
+                .Select(p => p.Academic)
+                .Distinct()
+                .ToList();
+
+            // Passe os detalhes acadêmicos para a View
+            ViewData["academicDetails"] = academicDetails;
+
             return View();
         }
 
+        [HttpGet]
+        public IActionResult GetEspecialidadesPorFormacao(string formacaoAcademica)
+        {
+            if (string.IsNullOrWhiteSpace(formacaoAcademica))
+            {
+                return Json(new { error = "Formação acadêmica inválida." });
+            }
+
+            try
+            {
+                // Busca os profissionais com a formação acadêmica específica e retorna suas especialidades
+                var especialidades = _context.Professionals
+                    .Where(p => p.Academic == formacaoAcademica)  // Filtra pela formação acadêmica
+                    .Select(p => p.Specialty)  // Seleciona a especialidade de cada profissional
+                    .Distinct()  // Remove duplicados, se houver
+                    .ToList();  // Executa a consulta e retorna a lista
+
+                // Se não houver especialidades encontradas
+                if (!especialidades.Any())
+                {
+                    return Json(new { error = "Nenhuma especialidade encontrada." });
+                }
+
+                // Retorna as especialidades para o front-end
+                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message +   formacaoAcademica});
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> CreateVacancy(string id, string firstName, string lastName, string cpf, DateTime dob, DateTime data, string susCard,
+                                                string cid, string phone, string motherName, string fatherName, string academic,
+                                                string specialty)
+        {
+            // Verifica se os campos obrigatórios foram preenchidos
+            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(cpf))
+            {
+                ViewData["ErrorMessage"] = "Preencha todos os campos obrigatórios!";
+                return View(); // Retorna a view de criação com erro
+            }
+
+            var patient = new Patient();
+
+            // Atribuindo os valores diretamente
+            patient.FirstName = firstName;
+            patient.LastName = lastName;
+            patient.Email = $"{firstName.ToLower()}.{lastName.ToLower()}@teste.com"; // Gera um email fictício
+            patient.Password = "senhaTeste"; // Em produção, use hash de senha
+            patient.Cnes = cid;
+            patient.BirthDate = dob;
+            patient.SusCard = susCard;
+            patient.Phone = phone;
+            patient.FatherName = fatherName;
+            patient.MotherName = motherName;
+
+            // Adiciona o paciente ao contexto e salva
+            _context.Patients.Add(patient);
+            await _context.SaveChangesAsync();
+
+
+            // 2. Criar o Profissional (Professional)
+            var professional = await _context.Professionals
+                .FirstOrDefaultAsync(p => p.Academic == academic && p.Specialty == specialty);
+
+            if (professional == null)
+            {
+                ViewData["ErrorMessage"] = "Profissional com a formação acadêmica e especialidade fornecidas não encontrado!";
+                return View(); // Retorna a view de criação com erro
+            }
+
+            // 3. Criar a Vaga (Vacancy)
+            var vacancy = new VacancyModel
+            {
+                AvailableHour = data, // Exemplo, isso pode vir de algum campo de formulário ou lógica
+                Status = Status.Available, // Inicializando com o status "Vago"
+                PatientId = patient.Id, // Atribuindo o ID do paciente criado
+                ProfessionalId = professional.Id, // Atribuindo o ID do profissional encontrado
+                ReservedById = new ObjectId(id), // ID do Hall (salvo no formulário ou no banco de dados)
+                CreatedById = new ObjectId(), // Este valor precisa ser obtido com base no usuário autenticado
+            };
+
+            // Adiciona a vaga ao contexto e salva
+            _context.Vacancies.Add(vacancy);
+            await _context.SaveChangesAsync();
+
+            // Redireciona para a página de detalhes ou a página inicial
+            return RedirectToAction(nameof(Index)); // Ou outra ação desejada após criação
+        }
 
     }
+
+
+
 }

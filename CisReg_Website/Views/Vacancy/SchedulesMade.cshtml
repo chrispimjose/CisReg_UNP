@@ -61,13 +61,13 @@
             <div class="flex flex-wrap gap-2">
                 @foreach (var specialty in Model.ProfessionalSpecialties)
                 {
-                        <div class="flex">
-                            <input id="@specialty" type="checkbox" class="peer hidden" value="@specialty"
-                                name="ProfessionalSpecialties"
-                                checked="@(Model.QueryParams?.ProfessionalSpecialties?.Contains(specialty))">
-                            <label for="@specialty"
-                                class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer">@specialty</label>
-                        </div>
+                    <div class="flex">
+                        <input id="@specialty" type="checkbox" class="peer hidden" value="@specialty"
+                            name="ProfessionalSpecialties"
+                            checked="@(Model.QueryParams?.ProfessionalSpecialties?.Contains(specialty))">
+                        <label for="@specialty"
+                            class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer">@specialty</label>
+                    </div>
                 }
             </div>
 
@@ -126,34 +126,34 @@
                         class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
                 </div>
 
-                <button
+                <a asp-action="SchedulesMade"
                     class=" border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors h-fit">
-                    <i class="fa-solid fa-broom mr-6"></i>Limpar filtros</button>
+                    <i class="fa-solid fa-broom mr-6"></i>Limpar filtros</a>
 
                 <!-- Acrescentado o layout dos agendamentos realizados - card com os agendametos-->
                 @foreach (var vacancy in Model.Vacancies)
                 {
-                        <div class="card w-100 shadow-xl bg-customGreen-default ">
-                            <figure>
-                                <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
-                            </figure>
-                            <div class="card-body">
-                                <div class="flex items-end gap-2">
-                                    <span class="card-title text-5xl font-bold">
+                    <div class="card w-100 shadow-xl bg-customGreen-default ">
+                        <figure>
+                            <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
+                        </figure>
+                        <div class="card-body">
+                            <div class="flex items-end gap-2">
+                                <span class="card-title text-5xl font-bold">
                                     @vacancy.AvailableHour.TimeOfDay.ToString("hh\\:mm")
-                                    </span>
-                                    <span class="text-sm mb-2">
+                                </span>
+                                <span class="text-sm mb-2">
                                     @vacancy.AvailableHour.Date.ToString("d")
-                                    </span>
-                                </div>
-                                <p>Agendamento para @vacancy?.Patient?.FirstName @vacancy?.Patient?.LastName</p>
-                                <div class="card-actions mt-1">
-                                    <div class="badge badge-outline">@vacancy?.Professional?.FirstName
+                                </span>
+                            </div>
+                            <p>Agendamento para @vacancy?.Patient?.FirstName @vacancy?.Patient?.LastName</p>
+                            <div class="card-actions mt-1">
+                                <div class="badge badge-outline">@vacancy?.Professional?.FirstName
                                     @vacancy?.Professional?.LastName</div>
-                                    <div class="badge badge-outline">@vacancy?.Professional?.Formation</div>
-                                </div>
+                                <div class="badge badge-outline">@vacancy?.Professional?.Specialty</div>
                             </div>
                         </div>
+                    </div>
                 }
             </div>
         </div>

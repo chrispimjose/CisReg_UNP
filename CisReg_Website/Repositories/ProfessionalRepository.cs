@@ -25,7 +25,6 @@ public class ProfessionalRepository(ApplicationDbContext context)
 
   public IEnumerable<Professional> GetAllByQuery(SelectProfessionalQueryParams Params)
   {
-    Console.WriteLine(Params.ProfessionalSpecialties?.ToString());
 
     var professionals = _context.Professionals
       .Where(u => u.Permission == Permissions.Professional)
@@ -42,6 +41,6 @@ public class ProfessionalRepository(ApplicationDbContext context)
     return (professional?.FirstName + " "
       + professional?.LastName + " "
       + professional?.Council + " "
-      + professional?.CouncilNumber).Contains(search);
+      + professional?.CouncilNumber).ToLower().Contains(search.ToLower());
   }
 }

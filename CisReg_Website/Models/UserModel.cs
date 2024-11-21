@@ -114,15 +114,3 @@ public class UserHall : UserModel
   [BsonElement("hall")]
   public string? HallModel { get; set; }
 }
-
-public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator
-{
-}
-
-public class SupHall : UserHall, IVacancyCreator
-{
-}
-
-public class Admin : UserModel, IVacancyReserver, IVacancyCreator
-{
-}

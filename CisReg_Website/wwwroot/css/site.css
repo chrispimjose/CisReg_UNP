@@ -2827,6 +2827,10 @@ html:has(.drawer-toggle:checked) {
   grid-template-columns: repeat(auto-fit,minmax(100px,1fr));
 }
 
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -2873,6 +2877,14 @@ html:has(.drawer-toggle:checked) {
 
 .gap-8 {
   gap: 2rem;
+}
+
+.gap-32 {
+  gap: 8rem;
+}
+
+.gap-1 {
+  gap: 0.25rem;
 }
 
 .rounded {

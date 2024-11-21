@@ -1,5 +1,4 @@
 ﻿using CisReg_Website.Models;
-using CisReg_Website.Models;
 using CisReg_Website.Models.Vacancy;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
@@ -8,15 +7,15 @@ namespace CisReg_Website.Domain;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public DbSet<Professional> Professionals { get; set; }
-    public DbSet<Patient> Patients { get; set; }
-    public DbSet<HallModel> Halls { get; set; }
-    public DbSet<VacancyModel> Vacancies { get; set; }
-    public DbSet<CombinedInfoModel> Professional { get; set; }
-    public DbSet<FormationModel> Formations { get; set; }
-    public DbSet<SpecialtyModel> Specialties { get; set; }
+    required public DbSet<Professional> Professionals { get; set; }
+    required public DbSet<Patient> Patients { get; set; }
+    required public DbSet<HallModel> Halls { get; set; }
+    required public DbSet<VacancyModel> Vacancies { get; set; }
+    required public DbSet<CombinedInfoModel> Professional { get; set; }
+    required public DbSet<FormationModel> Formations { get; set; }
+    required public DbSet<SpecialtyModel> Specialties { get; set; }
 
-    public DbSet<Admin> Admins { get; set; }
+    required public DbSet<Admin> Admins { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -41,6 +40,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
     }
 
-public DbSet<CisReg_Website.Models.UserHall> UserHall { get; set; } = default!;
+    public DbSet<CisReg_Website.Models.UserHall> UserHall { get; set; } = default!;
 
 }

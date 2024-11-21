@@ -112,11 +112,16 @@ public class Professional : UserModel
 
 public class UserHall : UserModel
 {
-    [BsonElement("hall")]
-    [DisplayName("Prefeitura")]
-    public string? HallModel { get; set; }
+  [BsonElement("hall")]
+  [DisplayName("Prefeitura")]
+  public string? HallModel { get; set; }
 
-    [BsonElement("phone")]
-    [DisplayName("Telefone")]
-    public string? Phone { get; set; }
+  [BsonElement("phone")]
+  [DisplayName("Telefone")]
+  public string? Phone { get; set; }
+}
+
+public class Admin : UserModel
+{
+
 }

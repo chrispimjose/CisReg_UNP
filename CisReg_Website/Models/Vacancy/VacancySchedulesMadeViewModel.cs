@@ -1,13 +1,7 @@
 using MongoDB.Bson;
+using CisReg_Website.Models;
 
 namespace CisReg_Website.Models.Vacancy;
-
-public enum Period
-{
-  Morning,
-  Afternoon,
-  Night
-}
 
 public class VacancyComplete
 {

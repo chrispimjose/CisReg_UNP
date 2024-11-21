@@ -120,15 +120,3 @@ public class UserHall : UserModel
     [DisplayName("Telefone")]
     public string? Phone { get; set; }
 }
-
-public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator
-{
-}
-
-public class SupHall : UserHall, IVacancyCreator
-{
-}
-
-public class Admin : UserModel, IVacancyReserver, IVacancyCreator
-{
-}

@@ -242,7 +242,7 @@ namespace CisReg_Website.Controllers
                     Father= patient?.FatherName,
                     cnes= patient?.Cnes,
                     php= patient?.Phone,
-
+                    PatientId= patient?.Id,
                     //CID = patient?.Cid,
 
 
@@ -440,6 +440,85 @@ namespace CisReg_Website.Controllers
 
             // Redireciona para a página de detalhes ou a página inicial
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após criação
+        }
+
+        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, DateTime data, string susCard,
+                                                    string cid, string phone, string motherName, string fatherName, string academic, string specialty)
+        {
+     
+            // Buscar o paciente pelo ID
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id.ToString() == patientId);
+
+
+            // Atualizar as informações do paciente
+            patient.FirstName = firstName;
+            patient.LastName = lastName;
+            patient.Email = $"{firstName.ToLower()}.{lastName.ToLower()}@teste.com"; // Gera um email fictício
+            patient.Cnes = cid;
+            patient.BirthDate = dob;
+            patient.SusCard = susCard;
+            patient.Phone = phone;
+            patient.FatherName = fatherName;
+            patient.MotherName = motherName;
+
+            // Salva as atualizações do paciente
+            _context.Patients.Update(patient);
+            await _context.SaveChangesAsync();
+
+            // Buscar o profissional com a formação acadêmica e especialidade fornecidas
+            var professional = await _context.Professionals
+                .FirstOrDefaultAsync(p => p.Academic == academic && p.Specialty == specialty);
+
+            if (professional == null)
+            {
+                ViewData["ErrorMessage"] = "Profissional com a formação acadêmica e especialidade fornecidas não encontrado!";
+                return View(); // Retorna a view de edição com erro
+            }
+
+            // Buscar todas as vagas associadas ao PatientId
+            var vacancies = await _context.Vacancies
+                .Where(v => v.PatientId == patient.Id)  // Filtra vagas associadas ao paciente
+                .ToListAsync();
+
+            var vacancyDetails = new List<object>(); // Lista para armazenar os detalhes das vagas
+
+            foreach (var vacancy in vacancies)
+            {
+                // Para cada vaga, buscar o paciente e o profissional associados
+                var vacancyPatient = vacancy.PatientId.HasValue ? await _context.Patients.FindAsync(new ObjectId(vacancy.PatientId.Value.ToString())) : null;
+                var vacancyProfessional = vacancy.ProfessionalId.HasValue ? await _context.Professionals.FindAsync(new ObjectId(vacancy.ProfessionalId.Value.ToString())) : null;
+
+                // Adiciona os detalhes da vaga à lista
+                vacancyDetails.Add(new
+                {
+                    Vacancy = vacancy,
+                    Patient = vacancyPatient,
+                    Professional = vacancyProfessional
+                });
+            }
+
+            // Se não encontrar nenhuma vaga associada, retorne um erro
+            if (vacancyDetails.Count == 0)
+            {
+                ViewData["ErrorMessage"] = "Nenhuma vaga associada ao paciente foi encontrada!";
+                return View();
+            }
+
+            // Atualizar os dados da vaga para o paciente (caso haja uma vaga para atualizar)
+            var vacancyToUpdate = vacancies.FirstOrDefault(); // Exemplo: seleciona a primeira vaga associada ao paciente
+            if (vacancyToUpdate != null)
+            {
+                vacancyToUpdate.AvailableHour = data;
+                vacancyToUpdate.Status = Status.Available; // Ou outro status desejado
+                vacancyToUpdate.ProfessionalId = professional.Id;
+
+                // Salvar as atualizações da vaga
+                _context.Vacancies.Update(vacancyToUpdate);
+                await _context.SaveChangesAsync();
+            }
+
+            // Redireciona para a página de detalhes ou a página inicial
+            return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
         }
 
     }

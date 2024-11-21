@@ -3,6 +3,7 @@
     var vacancy = vacancyDetails != null && vacancyDetails.Count > 0 ? vacancyDetails[0] : null;
     var academicDetails = ViewData["academicDetails"] as List<string>;
     var professionalAcademic = vacancy != null ? vacancy.ProfessionalAcademic : string.Empty;
+    var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
 }
 
 <h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
@@ -13,15 +14,18 @@
 {
     <!-- Container Principal -->
     <!-- Formulário de Cadastro -->
-    <form asp-controller="Vacancy" asp-action="CreateVacancy" method="post">
+    <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
+        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+        <input type="hidden" name="patientId" value="@vacancy.PatientId" />
         <!-- Dados do Paciente -->
         <div>
             <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
             <div class="grid gap-4">
                 <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
                 <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
-                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@vacancy.AvailableHour" required>
-                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" value="@vacancy.AvailableHour" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+
                 <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
                 <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
                 <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
@@ -48,9 +52,8 @@
                     </select>
                 </div>
 
-                <!-- Removi a lógica de esconder o campo de especialidade -->
                 <div id="especialidadeForm" style="margin-top: 10px;">
-                    <label for="especialidade">Especialidade</label> value="@vacancy.ProfessionalSpecialty
+                    <label for="especialidade">Especialidade</label>
                     <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
                         <option value="">Selecione a Especialidade</option>
                     </select>
@@ -73,53 +76,63 @@ else
 }
 
 <script>
-    // Valor da formação acadêmica vinda do servidor
+    // Valores iniciais de formação acadêmica e especialidade vindos do servidor
     var professionalAcademic = "@professionalAcademic";
+    var professionalSpecialty = "@professionalSpecialty";
 
-    // Quando o documento estiver carregado, selecione o valor no dropdown
     document.addEventListener('DOMContentLoaded', function () {
-        var selectElement = document.getElementById('formacaoAcademica');
+        // Verifica se há uma formação acadêmica selecionada por padrão
         if (professionalAcademic) {
-            // Iterar sobre as opções e selecionar a correspondente
-            for (var i = 0; i < selectElement.options.length; i++) {
-                if (selectElement.options[i].value === professionalAcademic) {
-                    selectElement.selectedIndex = i;
-                    break;
-                }
-            }
+            // Define a formação acadêmica selecionada no JavaScript
+            var selectAcademic = document.getElementById('formacaoAcademica');
+            selectAcademic.value = professionalAcademic;
+
+            // Carrega especialidades associadas automaticamente
+            loadSpecialties(professionalAcademic, professionalSpecialty);
         }
-    });
 
-    // A lógica de carregamento de especialidades via AJAX ainda está presente, mas agora o campo sempre ficará visível.
-    $(document).ready(function () {
-        $('#formacaoAcademica').change(function () {
-            var formacaoAcademica = $(this).val();
-
-            if (formacaoAcademica) {
-                $.ajax({
-                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
-                    type: 'GET',
-                    data: { formacaoAcademica: formacaoAcademica },
-                    success: function (response) {
-                        if (response.error) {
-                            $('#errorMessage').text(response.error).show();
-                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
-                        } else {
-                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
-                            response.especialidades.forEach(function (especialidade) {
-                                $('#especialidade').append('<option value="' + especialidade.nome + '">' + especialidade.nome + '</option>');
-                            });
-                            $('#errorMessage').hide();
-                        }
-                    },
-                    error: function () {
-                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
-                    }
-                });
-            } else {
-                $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
-                $('#errorMessage').hide();
-            }
+        // Configura o evento de mudança de formação acadêmica para atualizar as especialidades
+        document.getElementById('formacaoAcademica').addEventListener('change', function () {
+            var selectedAcademic = this.value;
+            loadSpecialties(selectedAcademic, null);  // Carrega especialidades sem especialidade padrão
         });
     });
+
+    // Função para carregar especialidades baseadas na formação acadêmica selecionada
+    function loadSpecialties(academic, selectedSpecialty) {
+        if (academic) {
+            $.ajax({
+                url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                type: 'GET',
+                data: { formacaoAcademica: academic },
+                success: function (response) {
+                    var specialtySelect = document.getElementById('especialidade');
+                    specialtySelect.innerHTML = '<option value="">Selecione a Especialidade</option>';
+
+                    if (response.error) {
+                        document.getElementById('errorMessage').textContent = response.error;
+                        document.getElementById('errorMessage').style.display = 'block';
+                    } else {
+                        response.especialidades.forEach(function (especialidade) {
+                            var option = document.createElement('option');
+                            option.value = especialidade.nome;
+                            option.textContent = especialidade.nome;
+
+                            // Marca a especialidade padrão, se houver
+                            if (especialidade.nome === selectedSpecialty) {
+                                option.selected = true;
+                            }
+
+                            specialtySelect.appendChild(option);
+                        });
+                        document.getElementById('errorMessage').style.display = 'none';
+                    }
+                },
+                error: function () {
+                    document.getElementById('errorMessage').textContent = 'Erro ao carregar especialidades.';
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
+            });
+        }
+    }
 </script>

@@ -97,15 +97,20 @@
         width: 100%;
         transition: transform 0.2s;
         min-height: 330px;
+        cursor: pointer;
     }
 
         .card .info-container {
-            margin-top: auto; /* Empurra para o final do card */
-            text-align: center; /* Centraliza o conteúdo */
+            margin-top: auto; /* Empurra para o final do card /
+                text-align: center; / Centraliza o conteúdo */
         }
 
         .card:hover {
             transform: scale(1.05);
+        }
+
+        .card:active {
+            box-shadow: inset -1px -1px;
         }
 
     .title {

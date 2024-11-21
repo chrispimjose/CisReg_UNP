@@ -520,6 +520,7 @@ namespace CisReg_Website.Controllers
             // Redireciona para a página de detalhes ou a página inicial
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
         }
+       
 
     }
 

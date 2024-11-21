@@ -18,7 +18,6 @@
                 <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" required>
                 <input type="text" name="cpf" placeholder="CPF" class="border rounded p-2 w-full" required>
                 <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" required>
-                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" required>
                 <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" required>
                 <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" required>
                 <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" required>
@@ -31,35 +30,52 @@
         <div class="mt-6">
             <h3 class="text-xl font-semibold mb-4">Vaga</h3>
             <div class="grid gap-4">
+                <!-- Formação Acadêmica -->
                 <div>
                     <label for="formacaoAcademica">Formação Acadêmica</label>
                     <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
-                        <option value="">Selecione a Formação Acadêmica</option>
+                        <option disabled value="">Selecione a Formação Acadêmica</option>
                         @if (academicDetails != null)
                         {
                             foreach (var academic in academicDetails)
                             {
-                                        <option value="@academic">@academic</option>
+                                <option value="@academic">@academic</option>
                             }
                         }
                     </select>
                 </div>
 
+                <!-- Especialidade -->
                 <div id="especialidadeForm" style="display: none; margin-top: 10px;">
                     <label for="especialidade">Especialidade</label>
-                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
-                        <option value="">Selecione a Especialidade</option>
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full" onchange="updateCalendario()">
+                        <option disabled value="">Selecione a Especialidade</option>
                     </select>
                 </div>
 
+                <!-- Calendário -->
+                <div id="calendarioContainer" style="display:none; margin-top: 10px;">
+                    <label for="calendario">Selecione o Dia</label>
+                    <input type="date" id="calendario" class="border rounded p-2 w-full max-w-md" onchange="updateProfissionaisDisponiveis()">
+                </div>
+
+                <!-- Profissionais Disponíveis -->
+                <div id="profissionaisContainer" style="display:none; margin-top: 10px;">
+                    <h4 class="font-medium">Profissionais Disponíveis</h4>
+                    <div id="profissionaisList" class="border rounded p-2 w-full max-w-md mt-2">
+                        <!-- A lista de profissionais será preenchida dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Mensagem de Erro -->
                 <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
             </div>
         </div>
 
         <!-- Botões de Ação -->
         <div class="flex justify-between mt-6">
-            <button type="button" class="" onclick="clearFields()">Voltar</button>
-            <button type="submit" class="">Cadastrar</button>
+            <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Cadastrar</button>
         </div>
     </form>
 </div>
@@ -99,6 +115,66 @@
             }
         });
     });
+
+    function updateCalendario() {
+        const especialidade = document.getElementById('especialidade').value;
+        const calendarioContainer = document.getElementById('calendarioContainer');
+        calendarioContainer.style.display = especialidade ? 'block' : 'none';
+    }
+
+    function updateProfissionaisDisponiveis() {
+        const calendario = document.getElementById('calendario').value;
+        const profissionaisContainer = document.getElementById('profissionaisContainer');
+        const profissionaisList = document.getElementById('profissionaisList');
+
+        profissionaisList.innerHTML = '';
+
+        if (calendario) {
+            const profissionais = [
+                { nome: 'Profissional 1', turno: ['matutino', 'vespertino'] },
+                { nome: 'Profissional 2', turno: ['noturno'] },
+                { nome: 'Profissional 3', turno: ['matutino', 'noturno'] }
+            ];
+
+            profissionais.forEach(function (profissional) {
+                const div = document.createElement('div');
+                div.classList.add('p-2', 'border-b', 'border-gray-200');
+                div.textContent = profissional.nome;
+
+                const selectTurno = document.createElement('select');
+                selectTurno.classList.add('border', 'rounded', 'p-2', 'w-full', 'max-w-md');
+                const optionDefault = document.createElement('option');
+                optionDefault.value = "";
+                optionDefault.textContent = "Selecione um Turno";
+                selectTurno.appendChild(optionDefault);
+
+                profissional.turno.forEach(function (turno) {
+                    const option = document.createElement('option');
+                    option.value = turno;
+                    option.textContent = turno.charAt(0).toUpperCase() + turno.slice(1);
+                    selectTurno.appendChild(option);
+                });
+
+                div.appendChild(selectTurno);
+                profissionaisList.appendChild(div);
+            });
+
+            profissionaisContainer.style.display = 'block';
+        }
+    }
 </script>
 
+<style>
+    input, select {
+        background-color: white !important;
+        color: black !important;
+    }
 
+    #calendarioContainer, #profissionaisContainer {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+</style>

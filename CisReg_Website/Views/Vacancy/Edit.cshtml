@@ -6,17 +6,15 @@
     var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
 }
 
-<h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
-    Editar a Vaga
-</h1>
+<!-- Container Principal -->
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
 
-@if (vacancy != null)
-{
-    <!-- Container Principal -->
     <!-- Formulário de Cadastro -->
     <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
         <input type="hidden" name="id" value="@vacancy.VacancyId" />
         <input type="hidden" name="patientId" value="@vacancy.PatientId" />
+        
         <!-- Dados do Paciente -->
         <div>
             <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
@@ -24,7 +22,7 @@
                 <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
                 <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
                 <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
-                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+                <input type="date" name="data" placeholder="Agendado" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
 
                 <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
                 <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
@@ -38,10 +36,11 @@
         <div class="mt-6">
             <h3 class="text-xl font-semibold mb-4">Vaga</h3>
             <div class="grid gap-4">
+                <!-- Formação Acadêmica -->
                 <div>
                     <label for="formacaoAcademica">Formação Acadêmica</label>
                     <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
-                        <option value="">Selecione a Formação Acadêmica</option>
+                        <option disabled value="">Selecione a Formação Acadêmica</option>
                         @if (academicDetails != null)
                         {
                             foreach (var academic in academicDetails)
@@ -52,87 +51,166 @@
                     </select>
                 </div>
 
-                <div id="especialidadeForm" style="margin-top: 10px;">
+                <!-- Especialidade -->
+                <div id="especialidadeForm" style=" margin-top: 10px;">
                     <label for="especialidade">Especialidade</label>
                     <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
                         <option value="">Selecione a Especialidade</option>
                     </select>
                 </div>
-
-                <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+                
+                <!-- Mensagem de Erro -->
+                <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
             </div>
+        </div>
+        
+        <!-- Tabela de Turnos -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Seleção de Turno</h3>
+            <table class="table-auto w-full border-collapse border border-gray-300" id="profissionaisTurnoTable">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border p-2">Nome dos Profissionais</th>
+                        <th class="border p-2 text-center">Manhã</th>
+                        <th class="border p-2 text-center">Tarde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conteúdo será carregado dinamicamente via AJAX -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Botões de Ação -->
         <div class="flex justify-between mt-6">
-            <button type="button" class="" onclick="clearFields()">Voltar</button>
-            <button type="submit" class="">Cadastrar</button>
+            <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Cadastrar</button>
         </div>
     </form>
-}
-else
-{
-    <p>Nenhuma vaga encontrada.</p>
-}
+</div>
 
 <script>
-    // Valores iniciais de formação acadêmica e especialidade vindos do servidor
-    var professionalAcademic = "@professionalAcademic";
-    var professionalSpecialty = "@professionalSpecialty";
+    $(document).ready(function () {
+        // Function to update the shift table for professionals
+        function updateProfissionaisTurnos() {
+            const especialidade = $('#especialidade').val();
+            const formacaoAcademica = $('#formacaoAcademica').val();
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Verifica se há uma formação acadêmica selecionada por padrão
-        if (professionalAcademic) {
-            // Define a formação acadêmica selecionada no JavaScript
-            var selectAcademic = document.getElementById('formacaoAcademica');
-            selectAcademic.value = professionalAcademic;
+            // Reference to the table body
+            const profissionaisTurnoTableBody = $('#profissionaisTurnoTable tbody');
 
-            // Carrega especialidades associadas automaticamente
-            loadSpecialties(professionalAcademic, professionalSpecialty);
+            // Check if both fields are filled before making the request
+            if (especialidade && formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetProfissionaisPorEspecialidadeEFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { especialidade, formacaoAcademica },
+                    success: function (response) {
+                        console.log(response);  // Debugging: log response
+
+                        profissionaisTurnoTableBody.empty(); // Clear previous rows
+
+                        // Check if there are professionals in the response
+                        if (response.profissionais && response.profissionais.length > 0) {
+                            // Iterate over professionals and create rows
+                            response.profissionais.forEach(profissional => {
+                                const row = `
+                                    <tr data-professional-id="${profissional.id}">
+                                        <td class="border border-gray-300 px-4 py-2">${profissional.firstName} ${profissional.lastName}</td>
+                                        <td class="border border-gray-300 px-4 py-2 text-center">
+                                            <input type="radio" name="turno_${profissional.id}" value="Manha">
+                                        </td>
+                                        <td class="border border-gray-300 px-4 py-2 text-center">
+                                            <input type="radio" name="turno_${profissional.id}" value="Tarde">
+                                        </td>
+                                    </tr>`;
+                                // Append the row to the table
+                                profissionaisTurnoTableBody.append(row);
+                            });
+                        } else {
+                            alert('Nenhum profissional encontrado.');
+                        }
+                    },
+                    error: function () {
+                        alert('Erro ao carregar profissionais.');
+                    }
+                });
+            }
         }
 
-        // Configura o evento de mudança de formação acadêmica para atualizar as especialidades
-        document.getElementById('formacaoAcademica').addEventListener('change', function () {
-            var selectedAcademic = this.value;
-            loadSpecialties(selectedAcademic, null);  // Carrega especialidades sem especialidade padrão
+        // Function to check if both academic and specialty are selected, then update the table
+        function checkAndUpdate() {
+            const especialidade = $('#especialidade').val();
+            const formacaoAcademica = $('#formacaoAcademica').val();
+
+            if (especialidade && formacaoAcademica) {
+                updateProfissionaisTurnos();
+            }
+        }
+
+        // Call checkAndUpdate on page load
+        checkAndUpdate();
+
+        // Trigger the update when academic or specialty changes
+        $('#especialidade, #formacaoAcademica').on('change', function () {
+            checkAndUpdate();
         });
+
+        // Function to load specialties based on the selected academic formation
+        function loadSpecialties(academic, selectedSpecialty) {
+            if (academic) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: academic },
+                    success: function (response) {
+                        var specialtySelect = document.getElementById('especialidade');
+                        specialtySelect.innerHTML = '<option value="">Selecione a Especialidade</option>';
+
+                        if (response.error) {
+                            document.getElementById('errorMessage').textContent = response.error;
+                            document.getElementById('errorMessage').style.display = 'block';
+                        } else {
+                            response.especialidades.forEach(function (especialidade) {
+                                var option = document.createElement('option');
+                                option.value = especialidade.nome;
+                                option.textContent = especialidade.nome;
+
+                                // Preselect the specialty if it matches the provided value
+                                if (especialidade.nome === selectedSpecialty) {
+                                    option.selected = true;
+                                }
+
+                                specialtySelect.appendChild(option);
+                            });
+                            document.getElementById('errorMessage').style.display = 'none';
+                        }
+                    },
+                    error: function () {
+                        alert('Erro ao carregar as especialidades.');
+                    }
+                });
+            }
+        }
+
+        // Trigger loadSpecialties on academic change
+        $('#formacaoAcademica').on('change', function () {
+            var selectedAcademic = $(this).val();
+            loadSpecialties(selectedAcademic, '');
+        });
+
+        // Load specialties if academic is pre-selected
+        var preSelectedAcademic = $('#formacaoAcademica').val();
+        if (preSelectedAcademic) {
+            loadSpecialties(preSelectedAcademic, '@professionalSpecialty');
+        }
     });
 
-    // Função para carregar especialidades baseadas na formação acadêmica selecionada
-    function loadSpecialties(academic, selectedSpecialty) {
-        if (academic) {
-            $.ajax({
-                url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
-                type: 'GET',
-                data: { formacaoAcademica: academic },
-                success: function (response) {
-                    var specialtySelect = document.getElementById('especialidade');
-                    specialtySelect.innerHTML = '<option value="">Selecione a Especialidade</option>';
-
-                    if (response.error) {
-                        document.getElementById('errorMessage').textContent = response.error;
-                        document.getElementById('errorMessage').style.display = 'block';
-                    } else {
-                        response.especialidades.forEach(function (especialidade) {
-                            var option = document.createElement('option');
-                            option.value = especialidade.nome;
-                            option.textContent = especialidade.nome;
-
-                            // Marca a especialidade padrão, se houver
-                            if (especialidade.nome === selectedSpecialty) {
-                                option.selected = true;
-                            }
-
-                            specialtySelect.appendChild(option);
-                        });
-                        document.getElementById('errorMessage').style.display = 'none';
-                    }
-                },
-                error: function () {
-                    document.getElementById('errorMessage').textContent = 'Erro ao carregar especialidades.';
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            });
-        }
-    }
 </script>
+
+<style>
+    input, select {
+        background-color: white !important;
+        color: black !important;
+    }
+</style>

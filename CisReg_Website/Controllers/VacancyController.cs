@@ -243,13 +243,7 @@ namespace CisReg_Website.Controllers
                     cnes= patient?.Cnes,
                     php= patient?.Phone,
                     PatientId= patient?.Id,
-                    //CID = patient?.Cid,
-
-
-
-
-                    // Dados do Hall (agreement e specialties)
-
+                   
                 };
 
                 // Adiciona os dados da vaga à lista
@@ -383,9 +377,9 @@ namespace CisReg_Website.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> CreateVacancy(string id, string firstName, string lastName, string cpf, DateTime dob, DateTime data, string susCard,
+        public async Task<IActionResult> CreateVacancy(string id, string firstName, string lastName, string cpf, DateTime dob, DateTime date, string susCard,
                                                 string cid, string phone, string motherName, string fatherName, string academic,
-                                                string specialty)
+                                                string specialty,DateTime SelectedDateTime)
         {
             // Verifica se os campos obrigatórios foram preenchidos
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(cpf))
@@ -393,7 +387,7 @@ namespace CisReg_Website.Controllers
                 ViewData["ErrorMessage"] = "Preencha todos os campos obrigatórios!";
                 return View(); // Retorna a view de criação com erro
             }
-
+ DateTime selectedDateTime = SelectedDateTime;
             var patient = new Patient();
 
             // Atribuindo os valores diretamente
@@ -422,11 +416,14 @@ namespace CisReg_Website.Controllers
                 ViewData["ErrorMessage"] = "Profissional com a formação acadêmica e especialidade fornecidas não encontrado!";
                 return View(); // Retorna a view de criação com erro
             }
+           
 
-            // 3. Criar a Vaga (Vacancy)
+            // Adicionar no ViewData com formato adequado
+            ViewData["ErrorMessage"] = selectedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
             var vacancy = new VacancyModel
             {
-                AvailableHour = data, // Exemplo, isso pode vir de algum campo de formulário ou lógica
+                AvailableHour = selectedDateTime, // Exemplo, isso pode vir de algum campo de formulário ou lógica
                 Status = Status.Available, // Inicializando com o status "Vago"
                 PatientId = patient.Id, // Atribuindo o ID do paciente criado
                 ProfessionalId = professional.Id, // Atribuindo o ID do profissional encontrado
@@ -520,7 +517,30 @@ namespace CisReg_Website.Controllers
             // Redireciona para a página de detalhes ou a página inicial
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
         }
-       
+
+        public async Task<IActionResult> GetProfissionaisPorEspecialidadeEFormacao(string especialidade, string formacaoAcademica)
+        {
+            var profissionais = await _context.Professionals
+                .Where(p => p.Specialty == especialidade && p.Academic == formacaoAcademica)
+                .ToListAsync();
+
+            if (profissionais == null || !profissionais.Any())
+            {
+                return Json(new { profissionais = new List<object>() });
+            }
+
+            // Ajustar para incluir ID, FirstName e LastName
+            var result = profissionais.Select(p => new
+            {
+                id = p.Id, // Adiciona o ID do profissional
+                firstName = p.FirstName,
+                lastName = p.LastName
+            }).ToList();
+
+            return Json(new { profissionais = result });
+        }
+
+
 
     }
 

@@ -1,294 +1,211 @@
-﻿<!-- Container Principal -->
-<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
+﻿@{
+    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
+    var vacancy = vacancyDetails != null && vacancyDetails.Count > 0 ? vacancyDetails[0] : null;
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var professionalAcademic = vacancy != null ? vacancy.ProfessionalAcademic : string.Empty;
+    var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
+}
 
-    <div>
-        <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
-        <div class="grid gap-4 mx-auto">
-            <!-- Nome -->
-            <div class="grid gap-2">
-                <label for="nome" class="block text-sm font-medium mb-0">Nome</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Nome do paciente">
-            </div>
+<h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
+    Editar a Vaga
+</h1>
 
-            <!-- Sobrenome -->
-            <div class="grid gap-2">
-                <label for="sobrenome" class="block text-sm font-medium mb-0">Sobrenome</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Sobrenome do paciente">
-            </div>
+@if (vacancy != null)
+{
+    <!-- Container Principal -->
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
+        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+        <input type="hidden" name="patientId" value="@vacancy.PatientId" />
+        <!-- Dados do Paciente -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+            <div class="grid gap-4">
+                <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
+                <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+                <input type="date" name="data" placeholder="agendado" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
 
-            <!-- CPF -->
-            <div class="grid gap-2">
-                <label for="cpf" class="block text-sm font-medium mb-0">CPF</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="CPF do paciente">
-            </div>
-
-            <!-- Data de Nascimento -->
-            <div class="grid gap-2">
-                <label for="dataNascimento" class="block text-sm font-medium mb-0">Data de Nascimento</label>
-                <input type="date" class="border rounded p-2 w-full max-w-md" aria-label="Data de Nascimento">
-            </div>
-
-            <!-- Cartão SUS -->
-            <div class="grid gap-2">
-                <label for="cartaoSUS" class="block text-sm font-medium mb-0">Cartão SUS</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Número do Cartão SUS">
-            </div>
-
-            <!-- CID -->
-            <div class="grid gap-2">
-                <label for="cid" class="block text-sm font-medium mb-0">CID</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Código CID">
-            </div>
-
-            <!-- Telefone -->
-            <div class="grid gap-2">
-                <label for="telefone" class="block text-sm font-medium mb-0">Telefone</label>
-                <input type="tel" class="border rounded p-2 w-full max-w-md" aria-label="Telefone de contato">
-            </div>
-
-            <!-- Nome da Mãe -->
-            <div class="grid gap-2">
-                <label for="nomeMae" class="block text-sm font-medium mb-0">Nome da Mãe</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Nome da mãe">
-            </div>
-
-            <!-- Nome do Pai -->
-            <div class="grid gap-2">
-                <label for="nomePai" class="block text-sm font-medium mb-0">Nome do Pai</label>
-                <input type="text" class="border rounded p-2 w-full max-w-md" aria-label="Nome do pai">
+                <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
+                <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
+                <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
+                <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
+                <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
             </div>
         </div>
-    </div>
 
-    <!-- Sexo -->
-    <div class="mt-4">
-        <h3 class="flex gap-2 text-xl font-semibold mb-4">Sexo</h3>
-        <div class="flex gap-2">
-            <label class="flex items-center">
-                <input type="radio" name="sexo" value="Masculino" class="mr-2" aria-label="Sexo Masculino">
-                Masculino
-            </label>
-            <label class="flex items-center">
-                <input type="radio" name="sexo" value="Feminino" class="mr-2" aria-label="Sexo Feminino">
-                Feminino
-            </label>
-        </div>
-    </div>
-
-    <!-- Etnia -->
-    <div class="mt-4">
-        <div class="grid gap-2">
-            <label for="etnia" class="block text-sm font-medium mb-0">Etnia</label>
-            <select id="etnia" class="border rounded p-2 w-full max-w-md">
-                <option value="pardo">Pardo</option>
-                <option value="branco">Branco</option>
-                <option value="negro">Negro</option>
-                <option value="indigena">Indígena</option>
-                <option value="amarelo">Amarelo</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Dados da Vaga -->
-    <div class="mt-6">
-        <h3 class="text-xl font-semibold mb-4">Vaga</h3>
-        <div class="grid gap-4">
-            <!-- Tipo de Profissional -->
-            <div class="grid gap-2">
-                <label for="tipoProfissional" class="block text-sm font-medium mb-0">Selecione o Tipo de Profissional</label>
-                <select id="tipoProfissional" class="border rounded p-2 w-full max-w-md" onchange="updateEspecialidade()">
-                    <option value="" disabled selected>Selecione o Tipo de Profissional</option>
-                    <option value="saude">Profissional da Saúde</option>
-                    <option value="psicologia">Profissional de Psicologia</option>
-                    <option value="nutricao">Profissional de Nutrição</option>
-                    <option value="fisioterapia">Profissional de Fisioterapia</option>
-                </select>
-            </div>
-
-            <!-- Especialidade -->
-            <div class="grid gap-2" id="especialidadeContainer" style="display:none;">
-                <label for="especialidade" class="block text-sm font-medium mb-0">Selecione a Especialidade</label>
-                <select id="especialidade" class="border rounded p-2 w-full max-w-md" onchange="updateSubespecialidade()">
-                    <option value="" disabled selected>Selecione a Especialidade</option>
-                </select>
-            </div>
-
-            <!-- Subespecialidade -->
-            <div class="grid gap-2" id="subespecialidadeContainer" style="display:none;">
-                <label for="subespecialidade" class="block text-sm font-medium mb-0">Selecione a Subespecialidade</label>
-                <select id="subespecialidade" class="border rounded p-2 w-full max-w-md" onchange="updateCalendario()">
-                    <option value="" disabled selected>Selecione a Subespecialidade</option>
-                </select>
-            </div>
-
-            <!-- Calendário -->
-            <div class="grid gap-2" id="calendarioContainer" style="display:none;">
-                <label for="calendario" class="block text-sm font-medium mb-0">Selecione o Dia</label>
-                <input type="date" id="calendario" class="border rounded p-2 w-full max-w-md" onchange="updateProfissionaisDisponiveis()">
-            </div>
-
-            <!-- Profissionais Disponíveis -->
-            <div id="profissionaisContainer" style="display:none;">
-                <h4 class="font-medium">Profissionais Disponíveis</h4>
-                <div id="profissionaisList" class="border rounded p-2 w-full max-w-md mt-2">
-                    <!-- A lista de profissionais será preenchida dinamicamente -->
+        <!-- Dados da Vaga -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Vaga</h3>
+            <div class="grid gap-4">
+                <div>
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                        <option value="">Selecione a Formação Acadêmica</option>
+                        @if (academicDetails != null)
+                        {
+                            foreach (var academic in academicDetails)
+                            {
+                                <option value="@academic">@academic</option>
+                            }
+                        }
+                    </select>
                 </div>
+
+                <div id="especialidadeForm" style="margin-top: 10px;">
+                    <label for="especialidade">Especialidade</label>
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
+                        <option value="">Selecione a Especialidade</option>
+                    </select>
+                </div>
+
+
+
+                <!-- Calendário -->
+                <div id="calendarioContainer" style="display:none; margin-top: 10px;">
+                    <label for="calendario">Selecione o Dia</label>
+                    <input type="date" id="calendario" name="date" value="@vacancy.AvailableHour" class="border rounded p-2 w-full max-w-md">
+                </div>
+
+                <!-- Profissionais -->
+                <div id="profissionaisContainer" style="display:none; margin-top: 10px;">
+                    <h4 class="font-medium">Profissionais Disponíveis</h4>
+                    <table id="profissionaisTable" class="table-auto border-collapse border border-gray-300 w-full mt-4">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2">Nome</th>
+                                <th class="border border-gray-300 px-4 py-2">Opção de Horário</th>
+                                <th class="border border-gray-300 px-4 py-2">Data e Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- As linhas serão preenchidas dinamicamente -->
+                        </tbody>
+                    </table>
+                    <button type="button" onclick="enviarHorariosSelecionados()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Enviar Seleções</button>
+                </div>
+                <input id="selectedDateTime" name="SelectedDateTime" />
             </div>
         </div>
-    </div>
 
+        <!-- Botões de Ação -->
+        <div class="flex justify-between mt-6">
+            <button type="button" class="" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="">Cadastrar</button>
+        </div>
+        <!-- Mensagem de Erro -->
+        <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+    </form>
+}
+else
+{
+    <p>Nenhuma vaga encontrada.</p>
+}
 
-    <script>
-        // Função para habilitar/desabilitar os selects
-        function toggleSelects(disabled) {
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
-                select.disabled = disabled;
+<script>
+    // Valores iniciais de formação acadêmica e especialidade vindos do servidor
+    var professionalAcademic = "@professionalAcademic";
+    var professionalSpecialty = "@professionalSpecialty";
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set the default academic formation if provided
+        if (professionalAcademic) {
+            var selectAcademic = document.getElementById('formacaoAcademica');
+            selectAcademic.value = professionalAcademic;
+
+            // Automatically load specialties and preselect the correct one
+            loadSpecialties(professionalAcademic, professionalSpecialty);
+        }
+
+        // Update specialties when the academic formation changes
+        document.getElementById('formacaoAcademica').addEventListener('change', function () {
+            var selectedAcademic = this.value;
+            // Reset specialty dropdown when academic changes
+            document.getElementById('especialidade').innerHTML = '<option value="">Selecione a Especialidade</option>';
+            loadSpecialties(selectedAcademic, null);  // Load specialties without default selection
+        });
+    });
+
+    // Function to load specialties based on the selected academic formation
+    function loadSpecialties(academic, selectedSpecialty) {
+        if (academic) {
+            $.ajax({
+                url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                type: 'GET',
+                data: { formacaoAcademica: academic },
+                success: function (response) {
+                    var specialtySelect = document.getElementById('especialidade');
+                    specialtySelect.innerHTML = '<option value="">Selecione a Especialidade</option>';
+
+                    if (response.error) {
+                        document.getElementById('errorMessage').textContent = response.error;
+                        document.getElementById('errorMessage').style.display = 'block';
+                    } else {
+                        response.especialidades.forEach(function (especialidade) {
+                            var option = document.createElement('option');
+                            option.value = especialidade.nome;
+                            option.textContent = especialidade.nome;
+
+                            // Preselect the specialty if it matches the provided value
+                            if (especialidade.nome === selectedSpecialty) {
+                                option.selected = true;
+                            }
+
+                            specialtySelect.appendChild(option);
+                        });
+                        document.getElementById('errorMessage').style.display = 'none';
+                    }
+                },
+                error: function () {
+                    document.getElementById('errorMessage').textContent = 'Erro ao carregar especialidades.';
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
             });
         }
+    }
 
-        // Função para atualizar as especialidades com base no tipo de profissional selecionado
-        function updateEspecialidade() {
-            const tipoProfissional = document.getElementById('tipoProfissional').value;
-            const especialidadeContainer = document.getElementById('especialidadeContainer');
-            const especialidadeSelect = document.getElementById('especialidade');
+    $(document).ready(function () {
+        $('#formacaoAcademica').change(function () {
+            var formacaoAcademica = $(this).val();
 
-            // Limpar as opções de especialidade
-            especialidadeSelect.innerHTML = '<option value="" disabled selected>Selecione a Especialidade</option>';
+            if (formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: formacaoAcademica },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).show();
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            $('#especialidadeForm').hide();
+                        } else {
+                            $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                            response.especialidades.forEach(function (especialidade) {
+                                $('#especialidade').append('<option value="' + especialidade.nome + '">' + especialidade.nome + '</option>');
+                            });
+                            $('#errorMessage').hide();
+                            $('#especialidadeForm').show();
 
-            if (tipoProfissional) {
-                let especialidades = [];
-
-                if (tipoProfissional === 'saude') {
-                    especialidades = ['Especialidade Saúde 1', 'Especialidade Saúde 2', 'Especialidade Saúde 3'];
-                } else if (tipoProfissional === 'psicologia') {
-                    especialidades = ['Especialidade Psicologia 1', 'Especialidade Psicologia 2'];
-                } else if (tipoProfissional === 'nutricao') {
-                    especialidades = ['Especialidade Nutrição 1', 'Especialidade Nutrição 2'];
-                } else if (tipoProfissional === 'fisioterapia') {
-                    especialidades = ['Especialidade Fisioterapia 1', 'Especialidade Fisioterapia 2'];
-                }
-
-                // Adicionar opções ao select de especialidade
-                especialidades.forEach(function (especialidade) {
-                    const option = document.createElement('option');
-                    option.value = especialidade;
-                    option.textContent = especialidade;
-                    especialidadeSelect.appendChild(option);
+                            // Chama a função para atualizar os profissionais disponíveis
+                            updateProfissionaisDisponiveis();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessage').text('Erro ao carregar especialidades.').show();
+                    }
                 });
-
-                especialidadeContainer.style.display = 'block';  // Exibe o container de especialidade
-                toggleSelects(false);  // Habilita os selects quando o tipo de profissional for escolhido
+            } else {
+                $('#especialidade').empty().append('<option value="">Selecione a Especialidade</option>');
+                $('#especialidadeForm').hide();
+                $('#errorMessage').hide();
             }
-        }
+        });
+    });
 
-        // Função para atualizar as subespecialidades com base na especialidade selecionada
-        function updateSubespecialidade() {
-            const especialidade = document.getElementById('especialidade').value;
-            const subespecialidadeContainer = document.getElementById('subespecialidadeContainer');
-            const subespecialidadeSelect = document.getElementById('subespecialidade');
-
-            // Limpar as opções de subespecialidade
-            subespecialidadeSelect.innerHTML = '<option value="" disabled selected>Selecione a Subespecialidade</option>';
-
-            if (especialidade) {
-                let subespecialidades = [];
-
-                // Lógica para selecionar subespecialidades baseadas na especialidade
-                if (especialidade.includes('Saúde')) {
-                    subespecialidades = ['Subespecialidade Saúde 1', 'Subespecialidade Saúde 2'];
-                } else if (especialidade.includes('Psicologia')) {
-                    subespecialidades = ['Subespecialidade Psicologia 1'];
-                } else if (especialidade.includes('Nutrição')) {
-                    subespecialidades = ['Subespecialidade Nutrição 1'];
-                } else if (especialidade.includes('Fisioterapia')) {
-                    subespecialidades = ['Subespecialidade Fisioterapia 1', 'Subespecialidade Fisioterapia 2'];
-                }
-
-                // Adicionar opções ao select de subespecialidade
-                subespecialidades.forEach(function (subespecialidade) {
-                    const option = document.createElement('option');
-                    option.value = subespecialidade;
-                    option.textContent = subespecialidade;
-                    subespecialidadeSelect.appendChild(option);
-                });
-
-                subespecialidadeContainer.style.display = 'block';  // Exibe o container de subespecialidade
-            }
-        }
-
-        // Função para exibir o calendário após selecionar a subespecialidade
-        function updateCalendario() {
-            const subespecialidade = document.getElementById('subespecialidade').value;
-            const calendarioContainer = document.getElementById('calendarioContainer');
-
-            if (subespecialidade) {
-                calendarioContainer.style.display = 'block';  // Exibe o container de calendário
-            }
-        }
-
-        // Função para exibir os profissionais disponíveis com base na data selecionada
-        function updateProfissionaisDisponiveis() {
-            const calendario = document.getElementById('calendario').value;
-            const profissionaisContainer = document.getElementById('profissionaisContainer');
-            const profissionaisList = document.getElementById('profissionaisList');
-
-            // Limpar lista de profissionais
-            profissionaisList.innerHTML = '';
-
-            if (calendario) {
-                // Simulação de profissionais disponíveis (você pode substituir com dados reais)
-                const profissionais = [
-                    { nome: 'Profissional 1', turno: ['matutino', 'vespertino'] },
-                    { nome: 'Profissional 2', turno: ['noturno'] },
-                    { nome: 'Profissional 3', turno: ['matutino', 'noturno'] }
-                ];
-
-                profissionais.forEach(function (profissional) {
-                    const div = document.createElement('div');
-                    div.classList.add('p-2', 'border-b', 'border-gray-200');
-                    div.textContent = profissional.nome;
-
-                    // Exibir turnos disponíveis
-                    const selectTurno = document.createElement('select');
-                    selectTurno.classList.add('border', 'rounded', 'p-2', 'w-full', 'max-w-md');
-                    const optionDefault = document.createElement('option');
-                    optionDefault.value = "";
-                    optionDefault.textContent = "Selecione um Turno";
-                    selectTurno.appendChild(optionDefault);
-
-                    profissional.turno.forEach(function (turno) {
-                        const option = document.createElement('option');
-                        option.value = turno;
-                        option.textContent = turno.charAt(0).toUpperCase() + turno.slice(1); // Capitaliza o primeiro caractere
-                        selectTurno.appendChild(option);
-                    });
-
-                    selectTurno.addEventListener('change', function () {
-                        const selectedTurno = selectTurno.value;
-                        // Desabilitar os outros selects
-                        const allSelects = document.querySelectorAll('select');
-                        allSelects.forEach(function (select) {
-                            if (select !== selectTurno) {
-                                select.disabled = selectedTurno ? true : false;
-                            }
-                        });
-                    });
-
-                    div.appendChild(selectTurno);
-                    profissionaisList.appendChild(div);
-                });
-
-                profissionaisContainer.style.display = 'block';  // Exibe o container de profissionais
-            }
-        }
-    </script>
-
-    <style>
-        input, select {
-            background-color: white !important;
-            color: black !important;
-        }
-    </style>
-</div>
+</script>
+<style>
+    input, select {
+        background-color: white !important;
+        color: black !important;
+    }
+</style>

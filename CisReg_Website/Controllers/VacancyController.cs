@@ -439,7 +439,7 @@ namespace CisReg_Website.Controllers
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após criação
         }
 
-        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, DateTime data, string susCard,
+        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, DateTime data,DateTime selectedDateTime, string susCard,
                                                     string cid, string phone, string motherName, string fatherName, string academic, string specialty)
         {
      
@@ -505,7 +505,7 @@ namespace CisReg_Website.Controllers
             var vacancyToUpdate = vacancies.FirstOrDefault(); // Exemplo: seleciona a primeira vaga associada ao paciente
             if (vacancyToUpdate != null)
             {
-                vacancyToUpdate.AvailableHour = data;
+                vacancyToUpdate.AvailableHour = selectedDateTime;
                 vacancyToUpdate.Status = Status.Available; // Ou outro status desejado
                 vacancyToUpdate.ProfessionalId = professional.Id;
 

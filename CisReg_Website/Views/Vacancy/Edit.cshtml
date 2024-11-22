@@ -6,7 +6,6 @@
     var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
 }
 
-<!-- Container Principal -->
 <div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
     <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
 
@@ -14,21 +13,21 @@
     <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
         <input type="hidden" name="id" value="@vacancy.VacancyId" />
         <input type="hidden" name="patientId" value="@vacancy.PatientId" />
-        
+        <input  id="selectedDateTime" name="selectedDateTime" />
+
         <!-- Dados do Paciente -->
         <div>
             <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
             <div class="grid gap-4">
                 <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
                 <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
-                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
-                <input type="date" name="data" placeholder="Agendado" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
-
                 <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
                 <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
                 <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
                 <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
                 <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+               
             </div>
         </div>
 
@@ -51,19 +50,24 @@
                     </select>
                 </div>
 
+                <label for="calendario">Data</label>
+               
+
+                <input type="date" id="calendario" name="calendarDate" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required />
+
                 <!-- Especialidade -->
-                <div id="especialidadeForm" style=" margin-top: 10px;">
+                <div id="especialidadeForm" style="margin-top: 10px;">
                     <label for="especialidade">Especialidade</label>
                     <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
                         <option value="">Selecione a Especialidade</option>
                     </select>
                 </div>
-                
+
                 <!-- Mensagem de Erro -->
                 <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
             </div>
         </div>
-        
+
         <!-- Tabela de Turnos -->
         <div class="mt-6">
             <h3 class="text-xl font-semibold mb-4">Seleção de Turno</h3>
@@ -89,7 +93,19 @@
     </form>
 </div>
 
+
 <script>
+    $(document).on('change', '#calendario, input[name^="turno_"]', function () {
+        const selectedDate = $('#calendario').val(); // Captura a data no formato AAAA-MM-DD
+        const selectedShift = $('input[name^="turno_"]:checked').val(); // Captura o turno selecionado
+
+        if (selectedDate && selectedShift) {
+            const shiftTime = selectedShift === 'Manha' ? '08:00:00' : '14:00:00'; // Define o horário com base no turno
+            const isoDateTime = `${selectedDate}T${shiftTime}.000Z`; // Formato ISO-8601
+            $('#selectedDateTime').val(isoDateTime); // Atualiza o campo oculto
+        }
+    });
+
     $(document).ready(function () {
         // Function to update the shift table for professionals
         function updateProfissionaisTurnos() {

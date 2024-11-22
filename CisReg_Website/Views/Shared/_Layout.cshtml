@@ -15,12 +15,11 @@
 
 <body>
     @{
-        var allowedControllers = new[] { "Login", "Registration", "ProfessionalInfo" };
+        var allowedControllers = new[] { "Login", "Registration", "PersonalInfo", "ProfessionalInfo" };
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }
-    @if (allowedControllers.Contains(currentController) &&
-    (currentAction == "Index" || currentAction == "Submit"))
+    @if (allowedControllers.Contains(currentController))
     {
         <div>
             @RenderBody()

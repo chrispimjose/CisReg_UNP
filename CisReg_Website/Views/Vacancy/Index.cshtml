@@ -37,8 +37,16 @@
             }
             else
             {
+              
                 <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId })'">
-                <!-- Card com dados de vaga -->
+                    @if (vacancy.Status == "Awaiting_validation")
+
+                    {
+                        <div class="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
+                            <span class="  text-red  text-xl font-bold">!</span>
+                        </div>
+                    }
+
                 <h3 class="title">@vacancy.ProfessionalName</h3>
                 <p class="info">
                     <span>Profissão:</span> @vacancy.ProfessionalAcademic

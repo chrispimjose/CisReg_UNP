@@ -48,35 +48,12 @@
                 <!-- Especialidade -->
                 <div id="especialidadeForm" style="display: none; margin-top: 10px;">
                     <label for="especialidade">Especialidade</label>
-                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full" onchange="updateCalendario()">
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
                         <option disabled value="">Selecione a Especialidade</option>
                     </select>
                 </div>
 
-                <!-- Calendário -->
-                <div id="calendarioContainer" style="display:none; margin-top: 10px;">
-                    <label for="calendario">Selecione o Dia</label>
-                    <input type="date" id="calendario" name="date" class="border rounded p-2 w-full max-w-md" onchange="updateProfissionaisDisponiveis()">
-                </div>
-
-                <!-- Profissionais -->
-                <div id="profissionaisContainer" style="display:none; margin-top: 10px;">
-                    <h4 class="font-medium">Profissionais Disponíveis</h4>
-                    <table id="profissionaisTable" class="table-auto border-collapse border border-gray-300 w-full mt-4">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2">Nome</th>
-                                <th class="border border-gray-300 px-4 py-2">Opção de Horário</th>
-                                <th class="border border-gray-300 px-4 py-2">Data e Hora</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- As linhas serão preenchidas dinamicamente -->
-                        </tbody>
-                    </table>
-                    <button type="button" onclick="enviarHorariosSelecionados()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Enviar Seleções</button>
-                </div>
-                <input  id="selectedDateTime" name="SelectedDateTime" />
+               
                 <!-- Mensagem de Erro -->
                 <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
             </div>
@@ -126,77 +103,6 @@
         });
     });
 
-    function updateCalendario() {
-        const especialidade = document.getElementById('especialidade').value;
-        const calendarioContainer = document.getElementById('calendarioContainer');
-        calendarioContainer.style.display = especialidade ? 'block' : 'none';
-    }
-
-    $(document).on('change', '#calendario, input[name^="horario_"]', function () {
-        const selectedDate = $('#calendario').val(); // Obtém a data selecionada no formato AAAA-MM-DD
-        const selectedTime = $('input[name^="horario_"]:checked').val(); // Obtém a opção de horário selecionada (Manhã ou Tarde)
-
-        if (selectedDate && selectedTime) {
-            // Define o horário com base na seleção de manhã ou tarde
-            const timeValue = selectedTime === 'Manha' ? '08:00:00' : '14:00:00';
-
-            // Monta o DateTime no formato ISO-8601
-            const datetimeValue = `${selectedDate}T${timeValue}.000+00:00`;
-
-            // Atualiza o campo oculto com o DateTime ajustado
-            $('#selectedDateTime').val(datetimeValue);
-        }
-    });
-
-
-
-
-    // Atualizar profissionais disponíveis
-    function updateProfissionaisDisponiveis() {
-        const especialidade = $('#especialidade').val();
-        const formacaoAcademica = $('#formacaoAcademica').val();
-        const selectedDate = $('#calendario').val();
-        const profissionaisTableBody = $('#profissionaisTable tbody');
-
-        if (especialidade && formacaoAcademica && selectedDate) {
-            $.ajax({
-                url: '@Url.Action("GetProfissionaisPorEspecialidadeEFormacao", "Vacancy")',
-                type: 'GET',
-                data: { especialidade, formacaoAcademica },
-                success: function (response) {
-                    profissionaisTableBody.empty(); // Limpar tabela anterior
-
-                    if (response.profissionais && response.profissionais.length > 0) {
-                        response.profissionais.forEach(profissional => {
-                            const row = `
-                                <tr data-professional-id="${profissional.id}">
-                                    <td class="border border-gray-300 px-4 py-2">${profissional.firstName} ${profissional.lastName}</td>
-                                    <td class="border border-gray-300 px-4 py-2">
-                                        <input type="radio" name="horario_${profissional.id}" value="Manha" class="mr-2"> Manhã
-                                        <input type="radio" name="horario_${profissional.id}" value="Tarde" class="ml-4 mr-2"> Tarde
-                                    </td>
-                                    <td class="border border-gray-300 px-4 py-2">
-                                        <input type="hidden" name="datetime_${profissional.id}" class="datetime-hidden">
-                                    </td>
-                                </tr>`;
-                            profissionaisTableBody.append(row);
-                        });
-
-                        $('#profissionaisContainer').show();
-                    } else {
-                        alert('Nenhum profissional encontrado.');
-                        $('#profissionaisContainer').hide();
-                    }
-                },
-                error: function () {
-                    alert('Erro ao carregar profissionais.');
-                    $('#profissionaisContainer').hide();
-                }
-            });
-        } else {
-            alert('Selecione a formação acadêmica, especialidade e data.');
-        }
-    }
 
 </script>
 <style>

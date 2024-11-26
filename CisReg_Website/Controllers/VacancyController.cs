@@ -8,6 +8,7 @@ using CisReg_Website.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace CisReg_Website.Controllers
 {
@@ -19,31 +20,67 @@ namespace CisReg_Website.Controllers
         {
             _context = context;
         }
-
-        public async Task<IActionResult> Index(string id = "6737780d104e9aafd1f34972")
+        private List<object> GetVacanciesByPermission(int userPermission, List<object> vacancies)
         {
-            // Obtém o HallModel usando o ID fornecido (assumindo que 'id' é o ObjectId do Hall)
-            var hall = await _context.Halls.FindAsync(new ObjectId(id));
-
-            // Se o Hall não for encontrado, retornamos um erro ou alguma lógica alternativa
-            if (hall == null)
+            // Se o usuário tiver permissão 6, pega todas as vagas
+            if (userPermission == 6)
             {
-                return NotFound($"Hall com o ID {id} não encontrado.");
+                // Prioriza as vagas com status Awaiting_validation e depois adiciona as outras
+                var prioritizedVacancies = vacancies
+                    .OrderBy(v =>
+                    {
+                        var status = ((dynamic)v).Status;
+                        return status == "Awaiting_validation" ? 0 : 1; // Awaiting_validation vem primeiro
+                    })
+                    .ToList();
+
+                return prioritizedVacancies;
             }
 
-            // Obtém a lista de vagas associadas a este Hall
-            var vacancies = await _context.Vacancies
-                .Where(v => v.ReservedById == hall.Id)  // Filtra vagas associadas ao Hall
-                .ToListAsync();
+            // Caso o usuário não tenha permissão 6, filtrar apenas vagas específicas (se necessário)
+            return vacancies
+                .Where(v =>
+                {
+                    var status = ((dynamic)v).Status;
+                    return status == "Occupied" || status == "Available"; // Filtra os status permitidos
+                })
+                .ToList();
+        }
 
-            var vacancyDetails = new List<object>(); // Lista para guardar dados de vagas com pacientes, profissionais e halls
+        public async Task<IActionResult> Index(string id = "6737780d104e9aafd1f34972", int userPermission = 2)
+        {
+           
+            List<VacancyModel> vacancies;
+            HallModel hall = new();
+
+            // Verifica se o usuário tem permissão 6
+            if (userPermission == 6)
+            {
+                // Obtém TODAS as vagas do sistema
+                vacancies = await _context.Vacancies.ToListAsync();
+            }
+            else
+            {
+                // Obtém apenas as vagas relacionadas ao Hall específico (pelo ID fornecido)
+                hall = await _context.Halls.FindAsync(new ObjectId(id));
+                if (hall == null)
+                {
+                    return NotFound($"Hall com o ID {id} não encontrado.");
+                }
+
+                vacancies = await _context.Vacancies
+                    .Where(v => v.ReservedById == hall.Id)
+                    .ToListAsync();
+            }
+
+            // Prepara a lista de detalhes das vagas
+            var vacancyDetails = new List<object>();
 
             foreach (var vacancy in vacancies)
             {
                 var patient = vacancy.PatientId.HasValue ? await _context.Patients.FindAsync(new ObjectId(vacancy.PatientId.Value.ToString())) : null;
                 var professional = vacancy.ProfessionalId.HasValue ? await _context.Professionals.FindAsync(new ObjectId(vacancy.ProfessionalId.Value.ToString())) : null;
 
-                // Prepara os dados da vaga
                 var vacancyData = new
                 {
                     VacancyId = vacancy.Id,
@@ -60,53 +97,53 @@ namespace CisReg_Website.Controllers
                     ProfessionalSpecialty = professional?.Specialty,
                     ProfessionalAcademic = professional?.Academic,
                     // Dados do Hall (agreement e specialties)
+
                     HallAgreement = hall.Agreement,
                     HallSpecialties = hall.specialties,
-                    HallId    =      hall.Id
+                    HallId = hall.Id
                 };
 
-                // Adiciona os dados da vaga à lista
                 vacancyDetails.Add(vacancyData);
             }
-
-            // Calcular a quantidade de cards vazios necessários
             int emptyCardsNeeded = hall.Agreement - vacancies.Count;
             if (emptyCardsNeeded > 0)
             {
                 // Criar cards vazios
-                var emptyVacancies = new List<VacancyModel>();
                 for (int i = 0; i < emptyCardsNeeded; i++)
-                {
-                    emptyVacancies.Add(new VacancyModel
-                    {
-
-                        Status = Status.Vazio, // Marcar como Vazio
-                        
-                    });
-                }
-
-                // Adicionar os cards vazios à lista de vagas
-                foreach (var emptyVacancy in emptyVacancies)
                 {
                     var emptyVacancyData = new
                     {
-                        VacancyId = emptyVacancy.Id,
+                        VacancyId = ObjectId.GenerateNewId(), // Gerar um ID fictício
                         AvailableHour = "N/A", // Para os cards vazios, a hora pode ser 'N/A'
                         Status = "Vazio",
                         HallAgreement = hall.Agreement,
                         HallSpecialties = hall.specialties,
-                         HallId = hall.Id.ToString()
+                        HallId = hall.Id.ToString()
                     };
 
                     vacancyDetails.Add(emptyVacancyData);
                 }
             }
 
-            // Passa os detalhes para a view
-            ViewData["VacancyDetails"] = vacancyDetails;
+            var orderedVacancyDetails = userPermission switch
+            {
+                6 => vacancyDetails.OrderBy(v => ((dynamic)v).Status != "Awaiting_validation").ToList(),
+                5 => vacancyDetails, // Exibição no formato de pilha, sem alterações
+                _ => vacancyDetails.Where(v =>
+                {
+                    var status = ((dynamic)v).Status; // Acessa o status usando dynamic
+                    return status == "Occupied" || status == "Available" || status == "Awaiting_validation" || status == "Vazio";
+                }).ToList()
+            };
 
-            return View(vacancies);
+            ViewData["VacancyDetails"] = orderedVacancyDetails;
+
+            return View(orderedVacancyDetails);
         }
+
+
+
+
 
 
         public async Task<IActionResult> Index2()
@@ -295,31 +332,34 @@ namespace CisReg_Website.Controllers
             return View(vacancyModel);
         }
 
-        public async Task<IActionResult> Delete(ObjectId id)
-        {
-            var vacancyModel = await _context.Vacancies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vacancyModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(vacancyModel);
-        }
-
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(ObjectId id)
         {
+            // Busca a vaga pelo ID
             var vacancyModel = await _context.Vacancies.FindAsync(id);
             if (vacancyModel != null)
             {
+                // Exclui o paciente associado, se existir
+                if (vacancyModel.PatientId.HasValue)
+                {
+                    var patient = await _context.Patients.FindAsync(vacancyModel.PatientId.Value);
+                    if (patient != null)
+                    {
+                        _context.Patients.Remove(patient);
+                    }
+                }
+
+                // Remove a vaga
                 _context.Vacancies.Remove(vacancyModel);
+
+                // Salva as mudanças no banco de dados
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool VacancyModelExists(ObjectId id)
         {
@@ -424,7 +464,7 @@ namespace CisReg_Website.Controllers
             var vacancy = new VacancyModel
             {
                 AvailableHour = selectedDateTime, // Exemplo, isso pode vir de algum campo de formulário ou lógica
-                Status = Status.Available, // Inicializando com o status "Vago"
+                Status = Status.Awaiting_validation, // Inicializando com o status "Vago"
                 PatientId = patient.Id, // Atribuindo o ID do paciente criado
                 ProfessionalId = professional.Id, // Atribuindo o ID do profissional encontrado
                 ReservedById = new ObjectId(id), // ID do Hall (salvo no formulário ou no banco de dados)
@@ -439,7 +479,7 @@ namespace CisReg_Website.Controllers
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após criação
         }
 
-        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, DateTime data,DateTime selectedDateTime, string susCard,
+        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, string susCard,
                                                     string cid, string phone, string motherName, string fatherName, string academic, string specialty)
         {
      
@@ -505,7 +545,7 @@ namespace CisReg_Website.Controllers
             var vacancyToUpdate = vacancies.FirstOrDefault(); // Exemplo: seleciona a primeira vaga associada ao paciente
             if (vacancyToUpdate != null)
             {
-                vacancyToUpdate.AvailableHour = selectedDateTime;
+                vacancyToUpdate.AvailableHour =new DateTime();
                 vacancyToUpdate.Status = Status.Available; // Ou outro status desejado
                 vacancyToUpdate.ProfessionalId = professional.Id;
 

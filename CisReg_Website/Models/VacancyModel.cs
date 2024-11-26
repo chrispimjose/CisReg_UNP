@@ -10,7 +10,8 @@ public enum Status
     Occupied,
     Canceled,
     Rescheduled,
-    Vazio
+    Vazio,
+        Awaiting_validation
 }
 public class VacancyModel
 {

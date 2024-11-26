@@ -1,0 +1,221 @@
+﻿@{
+    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
+    var vacancy = vacancyDetails != null && vacancyDetails.Count > 0 ? vacancyDetails[0] : null;
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var professionalAcademic = vacancy != null ? vacancy.ProfessionalAcademic : string.Empty;
+    var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
+}
+
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
+
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
+        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+        <input type="hidden" name="patientId" value="@vacancy.PatientId" />
+        <input id="selectedDateTime" name="selectedDateTime" />
+
+        <!-- Dados do Paciente -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+            <div class="grid gap-4">
+                <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
+                <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
+                <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
+                <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
+                <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
+                <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
+                <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+
+            </div>
+        </div>
+
+        <!-- Dados da Vaga -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Vaga</h3>
+            <div class="grid gap-4">
+                <!-- Formação Acadêmica -->
+                <div>
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                </div>
+
+                <label for="calendario">Data</label>
+
+
+                <input type="date" id="calendario" name="calendarDate" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required />
+
+                <!-- Especialidade -->
+                <div id="especialidadeForm" style="margin-top: 10px;">
+                    <label for="especialidade">Especialidade</label>
+                    <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                </div>
+
+                <!-- Mensagem de Erro -->
+                <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- Tabela de Turnos -->
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4">Seleção de Turno</h3>
+            <table class="table-auto w-full border-collapse border border-gray-300" id="profissionaisTurnoTable">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border p-2">Nome dos Profissionais</th>
+                        <th class="border p-2 text-center">Manhã</th>
+                        <th class="border p-2 text-center">Tarde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conteúdo será carregado dinamicamente via AJAX -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-between mt-6">
+            <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded" onclick="clearFields()">Voltar</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    $(document).on('change', '#calendario, input[name^="turno_"]', function () {
+        const selectedDate = $('#calendario').val(); // Captura a data no formato AAAA-MM-DD
+        const selectedShift = $('input[name^="turno_"]:checked').val(); // Captura o turno selecionado
+
+        if (selectedDate && selectedShift) {
+            const shiftTime = selectedShift === 'Manha' ? '08:00:00' : '14:00:00'; // Define o horário com base no turno
+            const isoDateTime = `${selectedDate}T${shiftTime}.000Z`; // Formato ISO-8601
+            $('#selectedDateTime').val(isoDateTime); // Atualiza o campo oculto
+        }
+    });
+
+    $(document).ready(function () {
+        // Function to update the shift table for professionals
+        function updateProfissionaisTurnos() {
+            const especialidade = $('#especialidade').val();
+            const formacaoAcademica = $('#formacaoAcademica').val();
+
+            // Reference to the table body
+            const profissionaisTurnoTableBody = $('#profissionaisTurnoTable tbody');
+
+            // Check if both fields are filled before making the request
+            if (especialidade && formacaoAcademica) {
+                $.ajax({
+                    url: '@Url.Action("GetProfissionaisPorEspecialidadeEFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { especialidade, formacaoAcademica },
+                    success: function (response) {
+                        console.log(response);  // Debugging: log response
+
+                        profissionaisTurnoTableBody.empty(); // Clear previous rows
+
+                        // Check if there are professionals in the response
+                        if (response.profissionais && response.profissionais.length > 0) {
+                            // Iterate over professionals and create rows
+                            response.profissionais.forEach(profissional => {
+                                const row = `
+                                        <tr data-professional-id="${profissional.id}">
+                                            <td class="border border-gray-300 px-4 py-2">${profissional.firstName} ${profissional.lastName}</td>
+                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                <input type="radio" name="turno_${profissional.id}" value="Manha">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                <input type="radio" name="turno_${profissional.id}" value="Tarde">
+                                            </td>
+                                        </tr>`;
+                                // Append the row to the table
+                                profissionaisTurnoTableBody.append(row);
+                            });
+                        } else {
+                            alert('Nenhum profissional encontrado.');
+                        }
+                    },
+                    error: function () {
+                        alert('Erro ao carregar profissionais.');
+                    }
+                });
+            }
+        }
+
+        // Function to check if both academic and specialty are selected, then update the table
+        function checkAndUpdate() {
+            const especialidade = $('#especialidade').val();
+            const formacaoAcademica = $('#formacaoAcademica').val();
+
+            if (especialidade && formacaoAcademica) {
+                updateProfissionaisTurnos();
+            }
+        }
+
+        // Call checkAndUpdate on page load
+        checkAndUpdate();
+
+        // Trigger the update when academic or specialty changes
+        $('#especialidade, #formacaoAcademica').on('change', function () {
+            checkAndUpdate();
+        });
+
+        // Function to load specialties based on the selected academic formation
+        function loadSpecialties(academic, selectedSpecialty) {
+            if (academic) {
+                $.ajax({
+                    url: '@Url.Action("GetEspecialidadesPorFormacao", "Vacancy")',
+                    type: 'GET',
+                    data: { formacaoAcademica: academic },
+                    success: function (response) {
+                        var specialtySelect = document.getElementById('especialidade');
+                        specialtySelect.innerHTML = '<option value="">Selecione a Especialidade</option>';
+
+                        if (response.error) {
+                            document.getElementById('errorMessage').textContent = response.error;
+                            document.getElementById('errorMessage').style.display = 'block';
+                        } else {
+                            response.especialidades.forEach(function (especialidade) {
+                                var option = document.createElement('option');
+                                option.value = especialidade.nome;
+                                option.textContent = especialidade.nome;
+
+                                // Preselect the specialty if it matches the provided value
+                                if (especialidade.nome === selectedSpecialty) {
+                                    option.selected = true;
+                                }
+
+                                specialtySelect.appendChild(option);
+                            });
+                            document.getElementById('errorMessage').style.display = 'none';
+                        }
+                    },
+                    error: function () {
+                        alert('Erro ao carregar as especialidades.');
+                    }
+                });
+            }
+        }
+
+        // Trigger loadSpecialties on academic change
+        $('#formacaoAcademica').on('change', function () {
+            var selectedAcademic = $(this).val();
+            loadSpecialties(selectedAcademic, '');
+        });
+
+        // Load specialties if academic is pre-selected
+        var preSelectedAcademic = $('#formacaoAcademica').val();
+        if (preSelectedAcademic) {
+            loadSpecialties(preSelectedAcademic, '@professionalSpecialty');
+        }
+    });
+
+</script>
+
+<style>
+    input, select {
+        background-color: white !important;
+        color: black !important;
+    }
+</style>

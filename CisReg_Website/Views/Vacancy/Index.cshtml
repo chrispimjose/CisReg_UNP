@@ -1,12 +1,64 @@
 ﻿@{
-   
     var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
 }
 
 <h1 class="text-center text-4xl text-customGreen-default my-12 justify-center items-center">
     Gerenciamento de Vagas
-
 </h1>
+<form method="get" asp-controller="Vacancy" asp-action="Index" class="mb-6">
+    <div class="flex items-center gap-4">
+        <!-- Filtro por Status -->
+        <div>
+            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+            <select id="status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-customGreen-default focus:border-customGreen-default">
+                <option value="">Todos</option>
+                <option value="Vazio">Vazio</option>
+                <option value="Awaiting_validation">Aguardando Validação</option>
+                <option value="Occupied">Ocupado</option>
+            </select>
+        </div>
+        <!-- Filtro por Nome do Paciente -->
+        <!-- Filtro por Nome do Paciente -->
+        <div>
+            <label for="patientName" class="block text-sm font-medium text-gray-700">Nome do Paciente</label>
+            <input type="text" id="patientName" name="patientName"
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-customGreen-default focus:border-customGreen-default"
+                   value="@ViewData["SelectedPatientName"]" placeholder="Digite o nome do paciente" />
+        </div>
+        <!-- Filtro por Formação Acadêmica -->
+        <select id="academic" name="academic" class="form-control">
+            <option value="">Selecione a formação acadêmica</option>
+            @if (ViewData["Academics"] != null)
+            {
+                foreach (var academic in (List<string>)ViewData["Academics"])
+                {
+                    <option value="@academic">@academic</option>
+                }
+            }
+        </select>
+
+        <!-- Filtro por Especialidade -->
+        <div>
+            <label for="specialty" class="block text-sm font-medium text-gray-700">Especialidade</label>
+            <select id="specialty" name="specialty"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-customGreen-default focus:border-customGreen-default">
+                <option value="">Selecione uma especialidade</option>
+                <!-- As opções de specialty serão preenchidas dinamicamente -->
+            </select>
+        </div>
+
+        <!-- Filtro por Data -->
+        <div>
+            <label for="date" class="block text-sm font-medium text-gray-700">Data</label>
+            <input type="date" id="date" name="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-customGreen-default focus:border-customGreen-default" />
+        </div>
+
+        <!-- Botão de Filtrar -->
+        <div class="flex items-end">
+            <button type="submit" class="btn">Filtrar</button>
+        </div>
+    </div>
+</form>
 
 
 <div class="container">
@@ -22,61 +74,59 @@
                 </p>
 
                 <div class="info-container">
-
-                <p class="info">
-                    <span>Para preencher, clique abaixo:</span>
-                </p>
-                <form asp-controller="Vacancy" asp-action="Preenchimento" method="post">
-                    <input type="hidden" name="id" value="@vacancy.HallId" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-plus-circle"></i> Preencher Vaga
-                    </button>
-                </form>
+                    <p class="info">
+                        <span>Para preencher, clique abaixo:</span>
+                    </p>
+                    <form asp-controller="Vacancy" asp-action="Preenchimento" method="post">
+                        <input type="hidden" name="id" value="@vacancy.HallId" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-plus-circle"></i> Preencher Vaga
+                        </button>
+                    </form>
                 </div>
 
             }
             else
             {
-              
                 <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId })'">
                     @if (vacancy.Status == "Awaiting_validation")
-
                     {
                         <div class="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                            <span class="  text-red  text-xl font-bold">!</span>
+                            <span class="text-red text-xl font-bold">!</span>
                         </div>
                     }
 
-                <h3 class="title">@vacancy.ProfessionalName</h3>
-                <p class="info">
-                    <span>Profissão:</span> @vacancy.ProfessionalAcademic
-                </p>
-                <p class="info">
-                    <span>Especialidade:</span> @vacancy.ProfessionalSpecialty
-                </p>
-                <p class="info">
-                    <span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")
-                </p>
-                <p class="info">
-                    <span>Data:</span> @vacancy.AvailableHour.ToString("dd/MM/yyyy")
-                </p>
-                <p class="info">
-                    <span>Horário:</span> @vacancy.AvailableHour.ToString("HH:mm")
-                </p>
-                <p class="info">
-                    <span>Status:</span> @vacancy.Status
-                </p>
-                <form asp-controller="Vacancy" asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
+                    <h3 class="title">@vacancy.ProfessionalName</h3>
+                    <p class="info">
+                        <span>Profissão:</span> @vacancy.ProfessionalAcademic
+                    </p>
+                    <p class="info">
+                        <span>Especialidade:</span> @vacancy.ProfessionalSpecialty
+                    </p>
+                    <p class="info">
+                        <span>Paciente:</span> @($"{vacancy.PatientFirstName} {vacancy.PatientLastName}")
+                    </p>
+                    <p class="info">
+                        <span>Data:</span> @vacancy.AvailableHour.ToString("dd/MM/yyyy")
+                    </p>
+                    <p class="info">
+                        <span>Horário:</span> @vacancy.AvailableHour.ToString("HH:mm")
+                    </p>
+                    <p class="info">
+                        <span>Status:</span> @vacancy.Status
+                    </p>
+                    <form asp-controller="Vacancy" asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
                 </div>
             }
         </div>
     }
 </div>
+
 <style>
     :root,
     [data-theme] {
@@ -91,7 +141,6 @@
         justify-content: center;
         align-items: center;
     }
-
 
     .card {
         display: flex;
@@ -109,8 +158,8 @@
     }
 
         .card .info-container {
-            margin-top: auto; /* Empurra para o final do card /
-                text-align: center; / Centraliza o conteúdo */
+            margin-top: auto; /* Empurra para o final do card */
+            text-align: center; /* Centraliza o conteúdo */
         }
 
         .card:hover {
@@ -156,3 +205,76 @@
             transform: scale(1.05);
         }
 </style>
+<script>
+
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const academicSelect = document.getElementById("academic");
+
+        try {
+            const response = await fetch('/Vacancy/GetAcademics'); // Endpoint para buscar os dados
+            const data = await response.json();
+
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            if (data.academics) {
+                academicSelect.innerHTML = '<option value="">Selecione a formação acadêmica</option>';
+                data.academics.forEach(academic => {
+                    const option = document.createElement("option");
+                    option.value = academic;
+                    option.textContent = academic;
+                    academicSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Erro ao carregar academias:", error);
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const academicSelect = document.getElementById("academic");
+        const specialtySelect = document.getElementById("specialty");
+
+        academicSelect.addEventListener("change", async function () {
+            const selectedAcademic = academicSelect.value;
+            specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta as opções
+
+            if (!selectedAcademic) return; // Não faz nada se nenhuma formação for selecionada
+
+            try {
+                specialtySelect.innerHTML = '<option value="">Carregando...</option>'; // Mostra carregando
+                const response = await fetch(`/Vacancy/GetEspecialidadesPorFormacao?formacaoAcademica=${encodeURIComponent(selectedAcademic)}`);
+
+                const data = await response.json();
+
+                // Caso a API retorne um erro
+                if (data.error) {
+                    console.warn(data.error);
+                    specialtySelect.innerHTML = `<option value="">${data.error}</option>`;
+                    return;
+                }
+
+                // Caso especialidades sejam retornadas
+                if (data.especialidades && Array.isArray(data.especialidades)) {
+                    specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta para estado padrão
+                    data.especialidades.forEach(especialidade => {
+                        const option = document.createElement("option");
+                        option.value = especialidade.nome; // Usando o campo 'nome' do objeto retornado
+                        option.textContent = especialidade.nome;
+                        specialtySelect.appendChild(option);
+                    });
+                } else {
+                    specialtySelect.innerHTML = '<option value="">Nenhuma especialidade disponível</option>';
+                }
+            } catch (error) {
+                console.error("Erro ao buscar especialidades:", error);
+                specialtySelect.innerHTML = '<option value="">Erro ao carregar especialidades</option>';
+            }
+        });
+    });
+
+</script>
+

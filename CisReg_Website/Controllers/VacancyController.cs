@@ -9,69 +9,162 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using CisReg_Website.Models.Vacancy;
+using CisReg_Website.Repositories;
+using System.Linq;
 
 namespace CisReg_Website.Controllers
 {
-    public class VacancyController : Controller
+    public class VacancyController(ApplicationDbContext context, PatientRepository patientRepository, ProfessionalRepository professionalRepository, VacancyRepository vacancyRepository) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public VacancyController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context = context;
+        private readonly PatientRepository _patientRepository = patientRepository;
+        private readonly ProfessionalRepository _professionalRepository = professionalRepository;
+        private readonly VacancyRepository _vacancyRepository = vacancyRepository;
+        public async Task<IActionResult> GetAcademics()
         {
-            _context = context;
-        }
-        private List<object> GetVacanciesByPermission(int userPermission, List<object> vacancies)
-        {
-            // Se o usuário tiver permissão 6, pega todas as vagas
-            if (userPermission == 6)
+            try
             {
-                // Prioriza as vagas com status Awaiting_validation e depois adiciona as outras
-                var prioritizedVacancies = vacancies
-                    .OrderBy(v =>
-                    {
-                        var status = ((dynamic)v).Status;
-                        return status == "Awaiting_validation" ? 0 : 1; // Awaiting_validation vem primeiro
-                    })
-                    .ToList();
+                var academics = await _context.Professionals
+                    .Select(p => p.Academic)
+                    .Distinct()
+                    .ToListAsync();
 
-                return prioritizedVacancies;
+                return Json(new { academics });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Erro ao carregar formações acadêmicas: " + ex.Message });
+            }
+        }
+
+
+        public IActionResult SchedulesMade(VacancySchedulesMadeQueryParams QueryParams)
+        {
+            var schedules = _vacancyRepository.GetAllByQuery(QueryParams);
+            var specialties = _professionalRepository.GetAllSpecialties();
+            VacancySchedulesMadeViewModel viewModel = new(schedules, specialties, QueryParams);
+
+            return View(viewModel);
+        }
+
+
+        [HttpGet]
+        public IActionResult GetEspecialidadesPorFormacao(string formacaoAcademica)
+        {
+            if (string.IsNullOrWhiteSpace(formacaoAcademica))
+            {
+                return Json(new { error = "Formação acadêmica inválida." });
             }
 
-            // Caso o usuário não tenha permissão 6, filtrar apenas vagas específicas (se necessário)
-            return vacancies
-                .Where(v =>
+            try
+            {
+                // Busca os profissionais com a formação acadêmica específica e retorna suas especialidades
+                var especialidades = _context.Professionals
+                    .Where(p => p.Academic == formacaoAcademica)  // Filtra pela formação acadêmica
+                    .Select(p => p.Specialty)  // Seleciona a especialidade de cada profissional
+                    .Distinct()  // Remove duplicados, se houver
+                    .ToList();  // Executa a consulta e retorna a lista
+
+                // Se não houver especialidades encontradas
+                if (!especialidades.Any())
                 {
-                    var status = ((dynamic)v).Status;
-                    return status == "Occupied" || status == "Available"; // Filtra os status permitidos
-                })
-                .ToList();
+                    return Json(new { error = "Nenhuma especialidade encontrada." });
+                }
+
+                // Retorna as especialidades para o front-end
+                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message + formacaoAcademica });
+            }
         }
 
-        public async Task<IActionResult> Index(string id = "6737780d104e9aafd1f34972", int userPermission = 2)
-        {
-           
-            List<VacancyModel> vacancies;
-            HallModel hall = new();
 
-            // Verifica se o usuário tem permissão 6
-            if (userPermission == 6)
+        public async Task<IActionResult> Index(
+            string status,
+            string specialty,
+            string academic,
+            DateTime? date,
+            string patientName,
+            string id = "6737780d104e9aafd1f34972",
+            int userPermission = 2)
+        
+            // Código existente...
+
             {
-                // Obtém TODAS as vagas do sistema
-                vacancies = await _context.Vacancies.ToListAsync();
-            }
-            else
+                // Variáveis auxiliares
+                List<VacancyModel> vacancies;
+            HallModel hall = new();
+            ViewData["SelectedPatientName"] = patientName;
+            // Consulta inicial das vagas
+            var query = _context.Vacancies.AsQueryable();
+
+            // Filtra as vagas de acordo com o Hall
+            if (userPermission != 6)
             {
-                // Obtém apenas as vagas relacionadas ao Hall específico (pelo ID fornecido)
                 hall = await _context.Halls.FindAsync(new ObjectId(id));
                 if (hall == null)
                 {
                     return NotFound($"Hall com o ID {id} não encontrado.");
                 }
-
-                vacancies = await _context.Vacancies
-                    .Where(v => v.ReservedById == hall.Id)
-                    .ToListAsync();
+                query = query.Where(v => v.ReservedById == hall.Id);
             }
+
+            // Filtros adicionais
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(v => v.Status.ToString() == status);
+            }
+            if (!string.IsNullOrEmpty(patientName))
+            {
+                var patientIds = await _context.Patients
+                    .Where(p => (p.FirstName + " " + p.LastName).ToLower().Contains(patientName.ToLower()))
+                    .Select(p => p.Id)
+                    .ToListAsync();
+
+                query = query.Where(v => v.PatientId.HasValue && patientIds.Contains(v.PatientId.Value));
+            }
+
+
+            if (!string.IsNullOrEmpty(specialty))
+            {
+                var professionalIds = await _context.Professionals
+                    .Where(p => p.Specialty == specialty)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                query = query.Where(v => v.ProfessionalId.HasValue && professionalIds.Contains(v.ProfessionalId.Value));
+            }
+
+            if (!string.IsNullOrEmpty(academic))
+            {
+                var professionalIds = await _context.Professionals
+                    .Where(p => p.Academic != null && p.Academic.Contains(academic))
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                query = query.Where(v => v.ProfessionalId.HasValue && professionalIds.Contains(v.ProfessionalId.Value));
+            }
+
+            if (date.HasValue)
+            {
+                query = query.Where(v => v.AvailableHour == date.Value);
+            }
+
+            // Executa a consulta final
+            vacancies = await query.ToListAsync();
+
+            var academics = await _context.Professionals
+                .Select(p => p.Academic)
+                .Distinct()
+                .ToListAsync();
+
+            ViewData["Academics"] = academics;
+
+
+
+            // Executa a consulta final para obter as vagas
+            vacancies = await query.ToListAsync();
 
             // Prepara a lista de detalhes das vagas
             var vacancyDetails = new List<object>();
@@ -97,7 +190,6 @@ namespace CisReg_Website.Controllers
                     ProfessionalSpecialty = professional?.Specialty,
                     ProfessionalAcademic = professional?.Academic,
                     // Dados do Hall (agreement e specialties)
-
                     HallAgreement = hall.Agreement,
                     HallSpecialties = hall.specialties,
                     HallId = hall.Id
@@ -105,16 +197,17 @@ namespace CisReg_Website.Controllers
 
                 vacancyDetails.Add(vacancyData);
             }
+
+            // Se o número de vagas estiver abaixo do acordo, cria vagas vazias
             int emptyCardsNeeded = hall.Agreement - vacancies.Count;
             if (emptyCardsNeeded > 0)
             {
-                // Criar cards vazios
                 for (int i = 0; i < emptyCardsNeeded; i++)
                 {
                     var emptyVacancyData = new
                     {
-                        VacancyId = ObjectId.GenerateNewId(), // Gerar um ID fictício
-                        AvailableHour = "N/A", // Para os cards vazios, a hora pode ser 'N/A'
+                        VacancyId = ObjectId.GenerateNewId(),
+                        AvailableHour = "N/A",
                         Status = "Vazio",
                         HallAgreement = hall.Agreement,
                         HallSpecialties = hall.specialties,
@@ -125,10 +218,11 @@ namespace CisReg_Website.Controllers
                 }
             }
 
+            // Ordena os detalhes das vagas conforme a permissão do usuário
             var orderedVacancyDetails = userPermission switch
             {
                 6 => vacancyDetails.OrderBy(v => ((dynamic)v).Status != "Awaiting_validation").ToList(),
-                5 => vacancyDetails, // Exibição no formato de pilha, sem alterações
+                5 => vacancyDetails, // Exibição sem alterações (pilha)
                 _ => vacancyDetails.Where(v =>
                 {
                     var status = ((dynamic)v).Status; // Acessa o status usando dynamic
@@ -136,10 +230,12 @@ namespace CisReg_Website.Controllers
                 }).ToList()
             };
 
+            // Passa os dados para a View
             ViewData["VacancyDetails"] = orderedVacancyDetails;
 
             return View(orderedVacancyDetails);
         }
+
 
 
 
@@ -384,37 +480,6 @@ namespace CisReg_Website.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult GetEspecialidadesPorFormacao(string formacaoAcademica)
-        {
-            if (string.IsNullOrWhiteSpace(formacaoAcademica))
-            {
-                return Json(new { error = "Formação acadêmica inválida." });
-            }
-
-            try
-            {
-                // Busca os profissionais com a formação acadêmica específica e retorna suas especialidades
-                var especialidades = _context.Professionals
-                    .Where(p => p.Academic == formacaoAcademica)  // Filtra pela formação acadêmica
-                    .Select(p => p.Specialty)  // Seleciona a especialidade de cada profissional
-                    .Distinct()  // Remove duplicados, se houver
-                    .ToList();  // Executa a consulta e retorna a lista
-
-                // Se não houver especialidades encontradas
-                if (!especialidades.Any())
-                {
-                    return Json(new { error = "Nenhuma especialidade encontrada." });
-                }
-
-                // Retorna as especialidades para o front-end
-                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message +   formacaoAcademica});
-            }
-        }
         
         [HttpPost]
         public async Task<IActionResult> CreateVacancy(string id, string firstName, string lastName, string cpf, DateTime dob, DateTime date, string susCard,

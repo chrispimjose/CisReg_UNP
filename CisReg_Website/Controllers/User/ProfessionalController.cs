@@ -37,7 +37,7 @@ namespace CisReg_Website.Controllers.User
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Academic,Council,CouncilNumber,Specialty,Formation,Id,Email,Password,FirstName,LastName")] Professional professional)
+        public async Task<IActionResult> Create([Bind("Academic,Council,Specialty,Id,Email,Password,FirstName,LastName")] Professional professional)
         {
             if (ModelState.IsValid)
             {

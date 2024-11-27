@@ -3,17 +3,16 @@ using CisReg_Website.Models;
 using Newtonsoft.Json;
 using CisReg_Website.Domain;
 using Microsoft.EntityFrameworkCore;
+using CisReg_Website.Repositories;
+using MongoDB.Bson;
+using System.Drawing.Drawing2D;
 
 namespace CisReg_Website.Controllers
 {
-    public class PersonalInfoController : Controller
+    public class PersonalInfoController(ApplicationDbContext context, ProfessionalRepository professionalRepository) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public PersonalInfoController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly ProfessionalRepository _professionalRepository = professionalRepository;
 
         [HttpGet]
         public IActionResult Index()
@@ -23,7 +22,7 @@ namespace CisReg_Website.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Submit(PersonalInfoModel model)
+        public async Task <IActionResult> Submit(Professional model)
         {
             if (!ModelState.IsValid)
             {
@@ -32,13 +31,18 @@ namespace CisReg_Website.Controllers
             }
             try
             {
-                var searchForCPF = await _context.Professional
+                var searchForCPF = await _context.Professionals
                     .FirstOrDefaultAsync(m => m.CPF == model.CPF);
 
                 if (searchForCPF != null)
                 {
                     ViewBag.ErrorMessage = "O CPF informado já está cadastrado.";
                     return View("~/Views/Registration/PersonalInfo.cshtml", model);
+                }
+
+                if (model.Id == ObjectId.Empty)
+                {
+                    model.Id = ObjectId.GenerateNewId();
                 }
 
                 TempData["PersonalInfo"] = JsonConvert.SerializeObject(model);

@@ -11,10 +11,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     required public DbSet<Patient> Patients { get; set; }
     required public DbSet<HallModel> Halls { get; set; }
     required public DbSet<VacancyModel> Vacancies { get; set; }
-    required public DbSet<CombinedInfoModel> Professional { get; set; }
     required public DbSet<FormationModel> Formations { get; set; }
     required public DbSet<SpecialtyModel> Specialties { get; set; }
-
     required public DbSet<Admin> Admins { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,10 +30,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Professional>().ToCollection("users");
         modelBuilder.Entity<Patient>().ToCollection("users");
         modelBuilder.Entity<Admin>().ToCollection("users");
-
-        modelBuilder.Entity<CombinedInfoModel>().ToCollection("profissional");
-        modelBuilder.Entity<FormationModel>().ToCollection("forma��o");
-        modelBuilder.Entity<SpecialtyModel>().ToCollection("especialidade");
         modelBuilder.Entity<HallModel>().ToCollection("hall");
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
     }

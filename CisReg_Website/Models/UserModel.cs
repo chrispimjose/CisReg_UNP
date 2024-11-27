@@ -27,6 +27,10 @@ public class UserModel
   [DisplayName("Email")]
   public string? Email { get; set; }
 
+  [BsonElement("cpf")]
+  [DisplayName("CPF")]
+  public string? CPF { get; set; }
+
   [BsonElement("password")]
   [DisplayName("Senha")]
   public string? Password { get; set; }
@@ -92,17 +96,9 @@ public class Professional : UserModel
   [DisplayName("Conselho")]
   public string? Council { get; set; }
 
-  [BsonElement("council_number")]
-  [DisplayName("Número do conselho")]
-  public string? CouncilNumber { get; set; }
-
   [BsonElement("specialty")]
   [DisplayName("Especialidade")]
   public string? Specialty { get; set; }
-
-  [BsonElement("formation")]
-  [DisplayName("Formação")]
-  public string? Formation { get; set; }
 
   public Professional()
   {

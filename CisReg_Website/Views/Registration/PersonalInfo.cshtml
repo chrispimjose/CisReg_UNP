@@ -1,5 +1,5 @@
 ﻿
-@model CisReg_Website.Models.PersonalInfoModel
+@model CisReg_Website.Models.Professional
 @{
 
     ViewData["Title"] = "Register";
@@ -30,9 +30,6 @@
     <!-- Error Alert -->
     @{
         if (ViewBag.ErrorMessage != null)
-
-
-
         {
             <div class="fixed z-20 top-0 mt-4 w-100-px h-auto">
                 <div id="errorAlert" role="alert" class="alert alert-error w-full mx-auto flex items-center">
@@ -62,20 +59,37 @@
                 <h3 class="text-customGreen-light text-center font-poppins font-bold text-4x1 leading-normal">Informações Pessoais</h3>
             </div>
 
-            <!-- Campo "Nome Completo" -->
+            <!-- Campo "Nome" -->
             <div class="mb-2">
-                <label for="full-name" class="w-full h-22-px text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Nome Completo</label>
+                <label for="first-name" class="w-full h-22-px text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Nome</label>
                 <div class="relative">
                     <input type="text"
-                           id="full-name"
-                           name="CompleteName"
-                           asp-for="CompleteName"
+                           id="first-name"
+                           name="FirstName"
+                           asp-for="FirstName"
                            class="input input-accent w-full h-40-px bg-white text-customGrey-default font-poppins font-normal text-base leading-4"
-                           placeholder="Nome Sobrenome"
-                           pattern="^([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)$"
-                           oninput="validateFieldInput(this, 'Por favor, insira o nome completo.')"
+                           placeholder="Nome"
+                           pattern="^[A-Z][a-z]+$"
+                           oninput="validateFieldInput(this, 'Por favor, insira o primeiro nome.')"
                            required />
-                    <span id="full-name-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized hidden"></span>
+                    <span id="first-name-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized hidden"></span>
+                </div>
+            </div>
+
+            <!-- Campo "Sobrenome" -->
+            <div class="mb-2">
+                <label for="last-name" class="w-full h-22-px text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Sobrenome</label>
+                <div class="relative">
+                    <input type="text"
+                           id="last-name"
+                           name="LastName"
+                           asp-for="LastName"
+                           class="input input-accent w-full h-40-px bg-white text-customGrey-default font-poppins font-normal text-base leading-4"
+                           placeholder="Sobrenome"
+                           pattern="^[A-Z][a-z]+$"
+                           oninput="validateFieldInput(this, 'Por favor, insira o sobrenome.')"
+                           required />
+                    <span id="last-name-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized hidden"></span>
                 </div>
             </div>
 
@@ -111,21 +125,6 @@
                            oninput="applyCpfMask(this); validateCPF(this, 'Por favor, insira um CPF válido.');"
                            required />
                     <span id="cpf-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized"></span>
-                </div>
-            </div>
-
-            <!-- Campo "Data de Nascimento" -->
-            <div class="mb-2">
-                <label for="datenasc" class="w-full h-22-px text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Data de Nascimento</label>
-                <div class="relative">
-                    <input type="date" 
-                           id="datenasc" 
-                           name="BornDate"
-                           asp-for="BornDate"
-                           class="input input-accent w-full h-40-px bg-white text-customGrey-default font-poppins font-normal text-base leading-4"
-                           oninput="validateAge(this, 'A idade não pode ser superior a 100 anos.')"
-                           required />
-                    <span id="datenasc-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized"></span>
                 </div>
             </div>
 

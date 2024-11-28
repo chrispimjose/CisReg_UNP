@@ -18,7 +18,6 @@
             </select>
         </div>
         <!-- Filtro por Nome do Paciente -->
-        <!-- Filtro por Nome do Paciente -->
         <div>
             <label for="patientName" class="block text-sm font-medium text-gray-700">Nome do Paciente</label>
             <input type="text" id="patientName" name="patientName"
@@ -119,6 +118,12 @@
                         <input type="hidden" name="id" value="@vacancy.VacancyId" />
                         <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
+                    <form asp-controller="Vacancy" asp-action="Print" method="post">
+                        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-trash"></i> Imprimir
                         </button>
                     </form>
                 </div>

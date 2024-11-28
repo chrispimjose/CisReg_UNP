@@ -12,6 +12,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 using CisReg_Website.Models.Vacancy;
 using CisReg_Website.Repositories;
 using System.Linq;
+using MongoDB.Driver.Linq;
 
 namespace CisReg_Website.Controllers
 {
@@ -80,6 +81,62 @@ namespace CisReg_Website.Controllers
                 return Json(new { error = "Erro ao buscar especialidades: " + ex.Message + formacaoAcademica });
             }
         }
+
+
+        public async Task<IActionResult> Print(ObjectId id)
+        {
+            // Busca a vaga pelo ID
+            var vacancy = await _context.Vacancies.FindAsync(id);
+            if (vacancy == null)
+            {
+                return NotFound($"Vaga com o ID {id} não encontrada.");
+            }
+
+            // Busca os dados relacionados (Paciente, Profissional e Hall)
+            var patient = vacancy.PatientId.HasValue
+                ? await _context.Patients.FindAsync(vacancy.PatientId.Value)
+                : null;
+            var professional = vacancy.ProfessionalId.HasValue
+                ? await _context.Professionals.FindAsync(vacancy.ProfessionalId.Value)
+                : null;
+            var hall = await _context.Halls.FindAsync(vacancy.ReservedById);
+
+            // Cria um modelo simplificado para exibição
+            var vacancyData = new
+            {
+                VacancyId = vacancy.Id,
+                AvailableHour = vacancy.AvailableHour,
+                Status = vacancy.Status.ToString(),
+                // Dados do paciente
+                PatientName = patient != null ? $"{patient.FirstName} {patient.LastName}" : "N/A",
+                PatientEmail = patient?.Email ?? "N/A",
+                FatherName = patient.FatherName,
+                MotherName = patient.MotherName,
+                BirthDate = patient.BirthDate, // Formatação de data
+                Phone = patient.Phone,
+                SusCard = patient.SusCard,
+                Cnes = patient.Cnes,
+
+                // Dados do profissional
+                ProfessionalName = professional != null
+                    ? $"{professional.FirstName} {professional.LastName}"
+                    : "N/A",
+                ProfessionalEmail = professional?.Email ?? "N/A", // Adicionado email profissional
+                Council = professional?.Council ?? "N/A",
+                ProfessionalSpecialty = professional?.Specialty ?? "N/A",
+                ProfessionalAcademic = professional?.Academic ?? "N/A",
+
+                // Dados do Hall
+                HallAgreement = hall?.Address.City ?? "N/A",
+                HallStateName = hall?.Address.StateName ?? "N/A",
+                HallZipcode = hall?.Address.Zipcode ?? "N/A",
+                HallId = hall?.Id.ToString() ?? "N/A",
+            };
+
+            // Passa os dados para a View
+            return View(vacancyData);
+        }
+
 
 
         public async Task<IActionResult> Index(

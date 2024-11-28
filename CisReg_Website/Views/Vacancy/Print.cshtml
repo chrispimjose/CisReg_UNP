@@ -1,0 +1,38 @@
+﻿@model dynamic
+
+<div class="container mt-5">
+    <h1>Detalhes da Vaga</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Vaga ID: @Model.VacancyId</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Horário Disponível:</strong> @Model.AvailableHour</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+
+            <h3>Paciente</h3>
+            <p><strong>Nome:</strong> @Model.PatientName</p>
+            <p><strong>Email:</strong> @Model.PatientEmail</p>
+            <p><strong>Nome do Pai:</strong> @Model.FatherName</p>
+            <p><strong>Nome da Mãe:</strong> @Model.MotherName</p>
+            <p><strong>Data de Nascimento:</strong> @Model.BirthDate.ToString("dd/MM/yyyy")</p>  <!-- Formatação de data -->
+            <p><strong>Telefone:</strong> @Model.Phone</p>
+            <p><strong>Cartão SUS:</strong> @Model.SusCard</p>
+            <p><strong>CNES:</strong> @Model.Cnes</p>
+
+            <h3>Profissional</h3>
+            <p><strong>Nome:</strong> @Model.ProfessionalName</p>
+            <p><strong>Email:</strong> @Model.ProfessionalEmail</p>
+            <p><strong>Conselho:</strong> @Model.Council</p>
+            <p><strong>Especialidade:</strong> @Model.ProfessionalSpecialty</p>
+            <p><strong>Formação Acadêmica:</strong> @Model.ProfessionalAcademic</p>
+
+            <h3>Hall</h3>
+            <p><strong>Cidade:</strong> @Model.HallAgreement</p>
+            <p><strong>Estado:</strong> @Model.HallStateName</p>
+            <p><strong>CEP:</strong> @Model.HallZipcode</p>
+            <p><strong>ID do Hall:</strong> @Model.HallId</p>
+        </div>
+    </div>
+</div>

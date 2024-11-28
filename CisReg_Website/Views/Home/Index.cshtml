@@ -7,6 +7,10 @@
 
   <div
     class="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(100px,200px))] w-full h-full gap-2 md:gap-10">
+    <a asp-controller="Professional" asp-action="SelectProfessional"
+      class="bg-customGreen-default rounded-md hover:shadow-lg transition-all text-white aspect-1 gap-2 text-center flex flex-col items-center justify-center">
+      <i class="fa-solid fa-user-nurse"></i>Selecionar Profissionais</a>
+
     <a asp-controller="Professional" asp-action="Index"
       class="bg-customGreen-default rounded-md hover:shadow-lg transition-all text-white aspect-1 gap-2 text-center flex flex-col items-center justify-center">
       <i class="fa-solid fa-user-nurse"></i>Profissionais</a>
@@ -23,7 +27,7 @@
     <a
       class="bg-customGreen-default rounded-md hover:shadow-lg transition-all text-white aspect-1 gap-2 text-center flex flex-col items-center justify-center"><i
         class="fa-regular fa-calendar"></i>Horários disponíveis</a>
-    <a
+    <a asp-controller="Vacancy" asp-action="SchedulesMade"
       class="bg-customGreen-default rounded-md hover:shadow-lg transition-all text-white aspect-1 gap-2 text-center flex flex-col items-center justify-center"><i
         class="fa-solid fa-calendar"></i>Agendamentos</a>
   </div>

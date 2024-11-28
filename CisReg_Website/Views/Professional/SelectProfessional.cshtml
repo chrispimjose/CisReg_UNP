@@ -13,7 +13,8 @@
         <div name="Container" class="flex flex-col w-[30%]">
             <div name="date" class="w-full flex flex-col gap-2">
                 <div class="bg-[#059C7B] text-white rounded">
-                    <input type="datetime-local" name="Date" value="@Model.QueryParams?.Date?.ToString("yyyy-MM-ddTHH:mm")"
+                    <input type="datetime-local" name="Date"
+                        value="@Model.QueryParams?.Date?.ToString("yyyy-MM-ddTHH:mm")"
                         class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
                 </div>
                 <div class="border-2 border-[#059C7B] rounded-lg p-2">
@@ -25,7 +26,8 @@
 
             <div class="flex flex-col gap-4">
                 <div class="flex">
-                    <input type="radio" name="Period" value="Morning" id="Morning" class="peer hidden" checked="@(Model.QueryParams.Period == Period.Morning)">
+                    <input type="radio" name="Period" value="Morning" id="Morning" class="peer hidden"
+                        checked="@(Model.QueryParams.Period == Period.Morning)">
                     <label for="Morning"
                         class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-[#059C7B]  peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-sun mr-4"></i>
@@ -33,7 +35,8 @@
                     </label>
                 </div>
                 <div class="flex">
-                    <input type="radio" name="Period" value="Afternoon" id="Afternoon" class="peer hidden" checked="@(Model.QueryParams.Period == Period.Afternoon)">
+                    <input type="radio" name="Period" value="Afternoon" id="Afternoon" class="peer hidden"
+                        checked="@(Model.QueryParams.Period == Period.Afternoon)">
                     <label for="Afternoon"
                         class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-regular fa-sun mr-4"></i>
@@ -41,7 +44,8 @@
                     </label>
                 </div>
                 <div class="flex">
-                    <input type="radio" name="Period" value="Night" id="Night" class="peer hidden" checked="@(Model.QueryParams.Period == Period.Night)">
+                    <input type="radio" name="Period" value="Night" id="Night" class="peer hidden"
+                        checked="@(Model.QueryParams.Period == Period.Night)">
                     <label for="Night"
                         class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-moon mr-4"></i>
@@ -60,7 +64,7 @@
                             name="ProfessionalSpecialties"
                             checked="@(Model.QueryParams?.ProfessionalSpecialties?.Contains(specialty))">
                         <label for="@specialty"
-                            class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer">@specialty</label>
+                            class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer flex">@specialty</label>
                     </div>
                 }
             </div>
@@ -82,7 +86,7 @@
                 @foreach (var professional in Model.Professionals)
                 {
                     <div class="card bg-customGreen-default shadow-xl text-white">
-                        <figure><img src="~/lib/images/UnP-CIS.png" alt="CisUnp" /></figure>
+                        @* <figure><img src="~/lib/images/UnP-CIS.png" alt="CisUnp" /></figure> *@
                         <div class="card-body">
                             <span class="text-2xl font-bold">@professional.FirstName @professional.LastName</span>
                             <div class="flex flex-wrap gap-2">

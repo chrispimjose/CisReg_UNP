@@ -13,7 +13,7 @@
     <form asp-controller="Vacancy" asp-action="EditVacancy" method="post">
         <input type="hidden" name="id" value="@vacancy.VacancyId" />
         <input type="hidden" name="patientId" value="@vacancy.PatientId" />
-        <input id="selectedDateTime" name="selectedDateTime" />
+        <input  id="selectedDateTime" name="selectedDateTime" />
 
         <!-- Dados do Paciente -->
         <div>
@@ -27,7 +27,7 @@
                 <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
                 <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
                 <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
-
+               
             </div>
         </div>
 
@@ -38,18 +38,29 @@
                 <!-- Formação Acadêmica -->
                 <div>
                     <label for="formacaoAcademica">Formação Acadêmica</label>
-                    <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                    <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                        <option disabled value="">Selecione a Formação Acadêmica</option>
+                        @if (academicDetails != null)
+                        {
+                            foreach (var academic in academicDetails)
+                            {
+                                <option value="@academic">@academic</option>
+                            }
+                        }
+                    </select>
                 </div>
 
                 <label for="calendario">Data</label>
-
+               
 
                 <input type="date" id="calendario" name="calendarDate" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required />
 
                 <!-- Especialidade -->
                 <div id="especialidadeForm" style="margin-top: 10px;">
                     <label for="especialidade">Especialidade</label>
-                    <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                    <select id="especialidade" name="specialty" class="border rounded p-2 w-full">
+                        <option value="">Selecione a Especialidade</option>
+                    </select>
                 </div>
 
                 <!-- Mensagem de Erro -->
@@ -120,15 +131,15 @@
                             // Iterate over professionals and create rows
                             response.profissionais.forEach(profissional => {
                                 const row = `
-                                        <tr data-professional-id="${profissional.id}">
-                                            <td class="border border-gray-300 px-4 py-2">${profissional.firstName} ${profissional.lastName}</td>
-                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                <input type="radio" name="turno_${profissional.id}" value="Manha">
-                                            </td>
-                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                <input type="radio" name="turno_${profissional.id}" value="Tarde">
-                                            </td>
-                                        </tr>`;
+                                    <tr data-professional-id="${profissional.id}">
+                                        <td class="border border-gray-300 px-4 py-2">${profissional.firstName} ${profissional.lastName}</td>
+                                        <td class="border border-gray-300 px-4 py-2 text-center">
+                                            <input type="radio" name="turno_${profissional.id}" value="Manha">
+                                        </td>
+                                        <td class="border border-gray-300 px-4 py-2 text-center">
+                                            <input type="radio" name="turno_${profissional.id}" value="Tarde">
+                                        </td>
+                                    </tr>`;
                                 // Append the row to the table
                                 profissionaisTurnoTableBody.append(row);
                             });

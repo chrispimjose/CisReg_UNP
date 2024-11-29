@@ -24,12 +24,14 @@
 
     form {
         display: flex;
-        flex-wrap: nowrap; 
+        flex-wrap: wrap; /* Permite que os elementos quebrem linha */
         gap: 1rem;
         margin-bottom: 2rem;
         width: 100%;
         justify-content: space-between;
     }
+
+
 
     label {
         font-size: 0.875rem;
@@ -151,7 +153,7 @@
 <!-- Filtro em formato de linha -->
 <div class="container">
     <form method="get" asp-controller="Vacancy" asp-action="Index" class="p-6 bg-white shadow-md rounded-md">
-        <div class="flex gap-4 flex-nowrap">
+        <div class="flex gap-4 flex-wrap">
             <!-- Filtro por Status -->
             <div class="flex-1 min-w-[180px]">
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -237,8 +239,10 @@
                 <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId })'">
                     @if (vacancy.Status == "Awaiting_validation")
                     {
-                        <div class="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                            <span class="text-red text-xl font-bold">!</span>
+                        <div class="flex justify-end">
+                            <div class="flex items-center justify-center w-8 h-8  rounded-full">
+                                <span class="text-red text-xl font-bold">!</span>
+                            </div>
                         </div>
                     }
 
@@ -261,18 +265,20 @@
                     <p class="info">
                         <span>Status:</span> @vacancy.Status
                     </p>
-                    <form asp-controller="Vacancy" asp-action="Delete" method="post">
-                        <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa-solid fa-trash"></i> Delete
-                        </button>
-                    </form>
-                    <form asp-controller="Vacancy" asp-action="Print" method="post">
-                        <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa-solid fa-trash"></i> Imprimir
-                        </button>
-                    </form>
+                    <div class="button-container">
+                        <form asp-controller="Vacancy" asp-action="Delete" method="post">
+                            <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                        <form asp-controller="Vacancy" asp-action="Print" method="post">
+                            <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-print"></i> Imprimir
+                            </button>
+                        </form>
+                    </div>
                 </div>
             }
         </div>
@@ -305,7 +311,7 @@
         padding: 1.5rem;
         width: 100%;
         transition: transform 0.2s;
-        min-height: 330px;
+        min-height: 490px;
         cursor: pointer;
     }
 

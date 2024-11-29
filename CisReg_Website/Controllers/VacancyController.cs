@@ -13,6 +13,7 @@ using CisReg_Website.Models.Vacancy;
 using CisReg_Website.Repositories;
 using System.Linq;
 using MongoDB.Driver.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CisReg_Website.Controllers
 {
@@ -138,6 +139,39 @@ namespace CisReg_Website.Controllers
         }
 
 
+        public async Task<IQueryable<VacancyModel>> GetVacancyByPermission(int permission, string id)
+        {
+            // Inicia a variável para o hall
+            var hall = await _context.Halls.FindAsync(new ObjectId(id));
+
+            // Se o Hall não for encontrado, retorna uma consulta vazia
+            if (hall == null)
+            {
+                return Enumerable.Empty<VacancyModel>().AsQueryable();
+            }
+
+            // Retorna diferentes consultas com base na permissão do usuário
+            if (permission == 3 || permission == 5)
+            {
+                // Retorna todos os registros da coleção vacancy associados ao hall
+                return _context.Vacancies
+                    .Where(v => v.ReservedById == hall.Id)
+                    .AsQueryable();
+            }
+            else if (permission == 2)
+            {
+                // Retorna apenas os registros com status "Awaiting_validation"
+                return _context.Vacancies
+                    .Where(v => v.Status == Status.Awaiting_validation)
+                    .AsQueryable();
+            }
+            else
+            {
+                // Retorna todos os registros, sem filtro
+                return _context.Vacancies.AsQueryable();
+            }
+        }
+
 
         public async Task<IActionResult> Index(
             string status,
@@ -146,7 +180,7 @@ namespace CisReg_Website.Controllers
             DateTime? date,
             string patientName,
             string id = "6737780d104e9aafd1f34972",
-            int userPermission = 6)
+            int userPermission = 5)
         
             // Código existente...
 
@@ -156,18 +190,9 @@ namespace CisReg_Website.Controllers
             HallModel hall = new();
             ViewData["SelectedPatientName"] = patientName;
             // Consulta inicial das vagas
-            var query = _context.Vacancies.AsQueryable();
 
-            // Filtra as vagas de acordo com o Hall
-            if (userPermission != 6)
-            {
-                hall = await _context.Halls.FindAsync(new ObjectId(id));
-                if (hall == null)
-                {
-                    return NotFound($"Hall com o ID {id} não encontrado.");
-                }
-                query = query.Where(v => v.ReservedById == hall.Id);
-            }
+            var query = await GetVacancyByPermission(userPermission, id);
+
 
             // Filtros adicionais
             if (!string.IsNullOrEmpty(status))
@@ -293,81 +318,6 @@ namespace CisReg_Website.Controllers
             return View(orderedVacancyDetails);
         }
 
-
-
-
-
-
-
-        public async Task<IActionResult> Index2()
-        {
-            // Obtém a lista de vagas
-            var vacancies = await _context.Vacancies.ToListAsync();
-
-            var patientDetails = new List<object>(); // Lista para guardar dados dos pacientes
-            var professionalDetails = new List<object>(); // Lista para guardar dados dos profissionais
-
-            foreach (var vacancy in vacancies)
-            {
-                // Processa dados do paciente
-                if (vacancy.PatientId.HasValue)
-                {
-                    var patientId = new ObjectId(vacancy.PatientId.Value.ToString());
-                    var patient = await _context.Patients.FindAsync(patientId);
-
-                    if (patient != null)
-                    {
-                        patientDetails.Add(new
-                        {
-                            VacancyId = vacancy.Id,
-                            AvailableHour = vacancy.AvailableHour,
-                            Status = vacancy.Status.ToString(),
-                            PatientName = patient.FatherName,
-                            PatientEmail = patient.Email,
-                            PatientFirstName = patient.FirstName,
-                            PatientLastName = patient.LastName,
-                            PatientCNES = patient.Cnes,
-                            PatientBirthDate = patient.BirthDate,
-                            PatientSusCard = patient.SusCard,
-                            PatientPhone = patient.Phone,
-                            PatientFatherName = patient.FatherName,
-                            PatientMotherName = patient.MotherName
-                        });
-                    }
-                }
-
-                // Processa dados do profissional
-                if (vacancy.ProfessionalId.HasValue)
-                {
-                    var professionalId = new ObjectId(vacancy.ProfessionalId.Value.ToString());
-                    var professional = await _context.Professionals.FindAsync(professionalId);
-
-                    if (professional != null)
-                    {
-                        professionalDetails.Add(new
-                        {
-                            VacancyId = vacancy.Id,
-                            AvailableHour = vacancy.AvailableHour,
-                            Status = vacancy.Status.ToString(),
-                            ProfessionalEmail = professional.Email,
-                            ProfessionalFirstName = professional.FirstName,
-                            ProfessionalLastName = professional.LastName,
-                            ProfessionalAcademic = professional.Academic,
-                            ProfessionalCouncil = professional.Council,
-                            ProfessionalCouncilNumber = professional.CouncilNumber,
-                            ProfessionalSpecialty = professional.Specialty
-                        });
-                    }
-                }
-            }
-
-            // Passa os detalhes para a view (opcional)
-            ViewData["PatientDetails"] = patientDetails;
-            ViewData["ProfessionalDetails"] = professionalDetails;
-
-            return View(vacancies);
-        }
-
         public async Task<IActionResult> Details(ObjectId id)
         {
             var vacancyModel = await _context.Vacancies
@@ -401,8 +351,8 @@ namespace CisReg_Website.Controllers
         public async Task<IActionResult> Edit(ObjectId id)
         {
             var vacancies = await _context.Vacancies
-            .Where(v => v.Id == id)  // Filtra vagas associadas ao Hall
-    .ToListAsync();
+                .Where(v => v.Id == id)  // Filtra vagas associadas ao Hall
+                .ToListAsync();
 
             var vacancyDetails = new List<object>(); // Lista para guardar dados de vagas com pacientes, profissionais e halls
 
@@ -410,10 +360,11 @@ namespace CisReg_Website.Controllers
             {
                 var patient = vacancy.PatientId.HasValue ? await _context.Patients.FindAsync(new ObjectId(vacancy.PatientId.Value.ToString())) : null;
                 var professional = vacancy.ProfessionalId.HasValue ? await _context.Professionals.FindAsync(new ObjectId(vacancy.ProfessionalId.Value.ToString())) : null;
-                
+
                 // Prepara os dados da vaga
                 var vacancyData = new
                 {
+                    Permissions = "2",
                     VacancyId = vacancy.Id,
                     AvailableHour = vacancy.AvailableHour,
                     Status = vacancy.Status.ToString(),
@@ -429,19 +380,34 @@ namespace CisReg_Website.Controllers
                     ProfessionalAcademic = professional?.Academic,
                     SusC = patient?.SusCard,
                     Mother = patient?.MotherName,
-                    Father= patient?.FatherName,
-                    cnes= patient?.Cnes,
-                    php= patient?.Phone,
-                    PatientId= patient?.Id,
-                   
+                    Father = patient?.FatherName,
+                    cnes = patient?.Cnes,
+                    php = patient?.Phone,
+                    PatientId = patient?.Id,
                 };
 
                 // Adiciona os dados da vaga à lista
                 vacancyDetails.Add(vacancyData);
             }
 
-          
-            // Obtenha todas as formações acadêmicas dos profissionais
+            // Obtenha a especialidade e formação acadêmica do profissional da vaga
+            var specialty = vacancies.FirstOrDefault()?.ProfessionalId.HasValue == true
+                            ? (await _context.Professionals.FindAsync(new ObjectId(vacancies.FirstOrDefault()?.ProfessionalId.ToString()))).Specialty
+                            : null;
+
+            var academic = vacancies.FirstOrDefault()?.ProfessionalId.HasValue == true
+                           ? (await _context.Professionals.FindAsync(new ObjectId(vacancies.FirstOrDefault()?.ProfessionalId.ToString()))).Academic
+                           : null;
+
+            // Obtenha todos os profissionais com a mesma especialidade e formação acadêmica
+            var professionalsBySpecialtyAndAcademic = await _context.Professionals
+                .Where(p => p.Specialty == specialty && p.Academic == academic)
+                .ToListAsync();
+
+            // Passe os profissionais filtrados para a View
+            ViewData["ProfessionalsBySpecialtyAndAcademic"] = professionalsBySpecialtyAndAcademic;
+
+            // Obtenha todas as formações acadêmicas distintas dos profissionais
             var academicDetails = _context.Professionals
                 .Select(p => p.Academic)
                 .Distinct()
@@ -450,8 +416,11 @@ namespace CisReg_Website.Controllers
             // Passe os detalhes acadêmicos para a View
             ViewData["academicDetails"] = academicDetails;
             ViewData["VacancyDetails"] = vacancyDetails;
+
             return View();
         }
+       
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

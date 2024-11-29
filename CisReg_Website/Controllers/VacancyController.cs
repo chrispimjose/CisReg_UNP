@@ -146,7 +146,7 @@ namespace CisReg_Website.Controllers
             DateTime? date,
             string patientName,
             string id = "6737780d104e9aafd1f34972",
-            int userPermission = 2)
+            int userPermission = 6)
         
             // Código existente...
 

@@ -4,146 +4,183 @@
 
 <style>
     :root {
-        --customGreen: #57BE93;
-        --customGreen-hover: #40a57b;
-        --text-color-default: #374151;
-        --text-color-light: #6b7280;
-        --border-color: #e5e7eb;
-        --background-color: white;
-        --shadow-color: rgba(0, 0, 0, 0.1);
+    --customGreen: #57BE93;
+    --customGreen-hover: #40a57b;
+    --text-color-default: #374151;
+    --text-color-light: #6b7280;
+    --border-color: #e5e7eb;
+    --background-color: white;
+    --shadow-color: rgba(0, 0, 0, 0.1);
     }
 
     body {
-        background-color: var(--background-color);
-        font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    font-family: 'Poppins', sans-serif;
     }
 
     h1 {
-        color: var(--customGreen);
+    color: var(--customGreen);
     }
 
     form {
-        display: flex;
-        flex-wrap: wrap; /* Permite que os elementos quebrem linha */
-        gap: 1rem;
-        margin-bottom: 2rem;
-        width: 100%;
-        justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    justify-content: space-between;
     }
 
-
-
     label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-color-default);
+    font-size: 1rem; /* Aumenta o tamanho da fonte dos rótulos */
+    font-weight: 500;
+    color: var(--text-color-default);
+    margin-bottom: 0.25rem; /* Reduz a margem inferior */
     }
 
     input, select {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 0.375rem;
-        background-color: var(--background-color);
-        color: var(--text-color-default);
-        box-shadow: 0 1px 2px var(--shadow-color);
-        transition: all 0.2s;
+    font-size: 1rem; /* Aumenta o tamanho da fonte dos campos */
+    padding: 0.6rem; /* Aumenta o espaçamento interno */
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--background-color);
+    color: var(--text-color-default);
+    box-shadow: 0 1px 2px var(--shadow-color);
+    transition: all 0.2s;
+    margin-bottom: 0.5rem; /* Reduz o espaçamento inferior */
     }
 
-        input:focus, select:focus {
-            border-color: var(--customGreen);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(87, 190, 147, 0.4);
-        }
+
+    input:focus,
+    select:focus {
+    border-color: var(--customGreen);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(87, 190, 147, 0.4);
+    }
 
     .btn {
-        padding: 0.6rem 1.2rem;
-        background-color: var(--customGreen);
-        color: white;
-        font-weight: bold;
-        border-radius: 0.375rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        width: 100%;
+    font-size: 1rem; /* Aumenta o tamanho da fonte dos botões */
+    padding: 0.6rem 1.2rem; /* Ajusta o espaçamento interno do botão */
+    background-color: var(--customGreen);
+    color: white;
+    font-weight: bold;
+    border-radius: 0.375rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 2rem; /* Adiciona espaço acima do botão */
     }
 
-        .btn:hover {
-            background-color: var(--customGreen-hover);
-            transform: scale(1.05);
-        }
+    .btn:hover {
+    background-color: var(--customGreen-hover);
+    transform: scale(1.05);
+    }
 
     .container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem;
-        justify-content: center;
-        align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
     }
 
     .card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background-color: var(--background-color);
-        border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
-        padding: 1.5rem;
-        box-shadow: 0 12px 14px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-        min-height: 330px;
-        cursor: pointer;
-        width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 12px 14px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    min-height: 330px;
+    cursor: pointer;
     }
 
-        .card .info-container {
-            margin-top: auto;
-            text-align: center;
-        }
+    .card .info-container {
+    margin-top: auto;
+    text-align: center;
+    }
 
-        .card:hover {
-            transform: scale(1.05);
-        }
+    .card:hover {
+    transform: scale(1.05);
+    }
 
-        .card:active {
-            box-shadow: inset -1px -1px;
-        }
+    .card:active {
+    box-shadow: inset -1px -1px;
+    }
 
     .title {
-        font-size: 1.125rem;
-        font-family: 'Poppins';
-        color: #374151;
+    font-size: 1.125rem;
+    color: var(--text-color-default);
     }
 
     .info {
-        font-size: 0.875rem;
-        font-family: 'Poppins';
-        color: #6b7280;
-        margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-color-light);
+    margin-bottom: 0.5rem;
     }
 
-        .info span {
-            font-weight: bold;
-            color: #374151;
-        }
-
-    .btn {
-        display: inline-block;
-        background-color: #57BE93;
-        color: black;
-        padding: 0.9rem 1rem;
-        border-radius: 0.25rem;
-        text-align: center;
-        text-decoration: none;
-        max-height: 20px;
-        transition: transform 0.2s, background-color 0.2s;
+    .info span {
+    font-weight: bold;
+    color: var(--text-color-default);
     }
 
-        .btn:hover {
-            background-color: #40a57b;
-            transform: scale(1.05);
+    .alert-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #f56565;
+    border-radius: 9999px;
+    }
+
+    .text-sm {
+    font-size: 0.875rem;
+    }
+
+    .font-bold {
+    font-weight: 700;
+    }
+
+    .centered-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2rem; /* Ajuste o tamanho conforme necessário */
+    }
+
+    .flex-row-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+        .flex-row-container .name {
+            text-align: left;
+            flex: 1; /* Nome ocupa todo o espaço disponível à esquerda */
         }
+
+        .flex-row-container .alert-circle {
+            flex: none; /* A exclamação mantém seu tamanho fixo à direita */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #f56565;
+            border-radius: 9999px;
+        }
+
+
+
+
+
 </style>
 
 <h1 class="text-center text-4xl my-12">
@@ -191,6 +228,7 @@
                 <select id="specialty" name="specialty" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-customGreen focus:border-customGreen">
                     <option value="">Selecione uma especialidade</option>
                 </select>
+
             </div>
             <!-- Filtro por Data -->
             <div class="flex-1 min-w-[180px]">
@@ -236,17 +274,34 @@
             }
             else
             {
-                <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId })'">
+                <div onclick="window.location.href='@Url.Action("Edit", "Vacancy", new { id = vacancy.VacancyId, userPermission = vacancy.userPermission })'">
+
+
                     @if (vacancy.Status == "Awaiting_validation")
                     {
-                        <div class="flex justify-end">
-                            <div class="flex items-center justify-center w-8 h-8  rounded-full">
-                                <span class="text-red text-xl font-bold">!</span>
+                        <div class="flex-row-container">
+                            <span class="name title"></span>
+                            <div class="alert-circle">
+                                <span class="text-red text-sm font-bold">!</span>
                             </div>
                         </div>
-                    }
 
-                    <h3 class="title">@vacancy.ProfessionalName</h3>
+
+
+
+
+                    }
+                    else {
+
+                        <div class="flex-row-container">
+                            <h3 class="name title">@vacancy.ProfessionalName</h3>
+                            <span></span> <!-- Espaço vazio para alinhar corretamente -->
+                        </div>
+
+
+             
+                    }
+                    
                     <p class="info">
                         <span>Profissão:</span> @vacancy.ProfessionalAcademic
                     </p>
@@ -265,13 +320,11 @@
                     <p class="info">
                         <span>Status:</span> @vacancy.Status
                     </p>
-                    <div class="button-container">
-                        <form asp-controller="Vacancy" asp-action="Delete" method="post">
-                            <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
-                        </form>
+
+              
+                </div>
+      <div class="button-container">
+                        
                         <form asp-controller="Vacancy" asp-action="Print" method="post">
                             <input type="hidden" name="id" value="@vacancy.VacancyId" />
                             <button type="submit" class="btn btn-primary">
@@ -279,90 +332,13 @@
                             </button>
                         </form>
                     </div>
-                </div>
+
             }
         </div>
     }
 </div>
 
-<style>
-    :root,
-    [data-theme] {
-        background-color: white;
-    }
 
-    .container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background-color: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        box-shadow: 0 12px 14px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        width: 100%;
-        transition: transform 0.2s;
-        min-height: 490px;
-        cursor: pointer;
-    }
-
-        .card .info-container {
-            margin-top: auto; /* Empurra para o final do card */
-            text-align: center; /* Centraliza o conteúdo */
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card:active {
-            box-shadow: inset -1px -1px;
-        }
-
-    .title {
-        font-size: 1.125rem;
-        font-family: 'Poppins';
-        color: #374151;
-    }
-
-    .info {
-        font-size: 0.875rem;
-        font-family: 'Poppins';
-        color: #6b7280;
-        margin-bottom: 0.5rem;
-    }
-
-        .info span {
-            font-weight: bold;
-            color: #374151;
-        }
-
-    .btn {
-        display: inline-block;
-        background-color: #57BE93;
-        color: black;
-        padding: 0.9rem 1rem;
-        border-radius: 0.25rem;
-        text-align: center;
-        text-decoration: none;
-        max-height: 20px;
-        transition: transform 0.2s, background-color 0.2s;
-    }
-
-        .btn:hover {
-            background-color: #40a57b;
-            transform: scale(1.05);
-        }
-</style>
 <script>
 
 
@@ -393,46 +369,39 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-        const academicSelect = document.getElementById("academic");
-        const specialtySelect = document.getElementById("specialty");
-
-        academicSelect.addEventListener("change", async function () {
-            const selectedAcademic = academicSelect.value;
-            specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta as opções
-
-            if (!selectedAcademic) return; // Não faz nada se nenhuma formação for selecionada
-
-            try {
-                specialtySelect.innerHTML = '<option value="">Carregando...</option>'; // Mostra carregando
-                const response = await fetch(`/Vacancy/GetEspecialidadesPorFormacao?formacaoAcademica=${encodeURIComponent(selectedAcademic)}`);
-
-                const data = await response.json();
-
-                // Caso a API retorne um erro
-                if (data.error) {
-                    console.warn(data.error);
-                    specialtySelect.innerHTML = `<option value="">${data.error}</option>`;
-                    return;
+            const academicSelect = document.getElementById("academic");
+            const specialtySelect = document.getElementById("specialty");
+            academicSelect.addEventListener("change", async function () {
+                const selectedAcademic = academicSelect.value;
+                specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta as opções
+                if (!selectedAcademic) return; // Não faz nada se nenhuma formação for selecionada
+                try {
+                    specialtySelect.innerHTML = '<option value="">Carregando...</option>'; // Mostra carregando
+                    const response = await fetch(`/Vacancy/GetEspecialidadesPorFormacao?formacaoAcademica=${encodeURIComponent(selectedAcademic)}`);
+                    const data = await response.json();
+                    // Caso a API retorne um erro
+                    if (data.error) {
+                        console.warn(data.error);
+                        specialtySelect.innerHTML = `<option value="">${data.error}</option>`;
+                        return;
+                    }
+                    // Caso especialidades sejam retornadas
+                    if (data.especialidades && Array.isArray(data.especialidades)) {
+                        specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta para estado padrão
+                        data.especialidades.forEach(especialidade => {
+                            const option = document.createElement("option");
+                            option.value = especialidade.nome; // Usando o campo 'nome' do objeto retornado
+                            option.textContent = especialidade.nome;
+                            specialtySelect.appendChild(option);
+                        });
+                    } else {
+                        specialtySelect.innerHTML = '<option value="">Nenhuma especialidade disponível</option>';
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar especialidades:", error);
+                    specialtySelect.innerHTML = '<option value="">Erro ao carregar especialidades</option>';
                 }
-
-                // Caso especialidades sejam retornadas
-                if (data.especialidades && Array.isArray(data.especialidades)) {
-                    specialtySelect.innerHTML = '<option value="">Selecione uma especialidade</option>'; // Reseta para estado padrão
-                    data.especialidades.forEach(especialidade => {
-                        const option = document.createElement("option");
-                        option.value = especialidade.nome; // Usando o campo 'nome' do objeto retornado
-                        option.textContent = especialidade.nome;
-                        specialtySelect.appendChild(option);
-                    });
-                } else {
-                    specialtySelect.innerHTML = '<option value="">Nenhuma especialidade disponível</option>';
-                }
-            } catch (error) {
-                console.error("Erro ao buscar especialidades:", error);
-                specialtySelect.innerHTML = '<option value="">Erro ao carregar especialidades</option>';
-            }
+            });
         });
-    });
 
 </script>
-

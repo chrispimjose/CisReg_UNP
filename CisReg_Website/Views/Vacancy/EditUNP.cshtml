@@ -48,6 +48,24 @@
                             }
                         }
                     </select>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            // Obtém o valor de ProfessionalAcademic do servidor
+                            var professionalAcademic = "@vacancy.ProfessionalAcademic";
+
+                            // Seleciona o dropdown
+                            var selectElement = document.getElementById("formacaoAcademica");
+
+                            // Percorre todas as opções e marca a correspondente como selecionada
+                            Array.from(selectElement.options).forEach(function (option) {
+                                if (option.value === professionalAcademic) {
+                                    option.selected = true;
+                                }
+                            });
+                        });
+                    </script>
+
                 </div>
 
                 <label for="calendario">Data</label>

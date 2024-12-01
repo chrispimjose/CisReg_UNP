@@ -14,6 +14,7 @@ using CisReg_Website.Repositories;
 using System.Linq;
 using MongoDB.Driver.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CisReg_Website.Controllers
 {
@@ -51,37 +52,8 @@ namespace CisReg_Website.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult GetEspecialidadesPorFormacao(string formacaoAcademica)
-        {
-            if (string.IsNullOrWhiteSpace(formacaoAcademica))
-            {
-                return Json(new { error = "Formação acadêmica inválida." });
-            }
+        
 
-            try
-            {
-                // Busca os profissionais com a formação acadêmica específica e retorna suas especialidades
-                var especialidades = _context.Professionals
-                    .Where(p => p.Academic == formacaoAcademica)  // Filtra pela formação acadêmica
-                    .Select(p => p.Specialty)  // Seleciona a especialidade de cada profissional
-                    .Distinct()  // Remove duplicados, se houver
-                    .ToList();  // Executa a consulta e retorna a lista
-
-                // Se não houver especialidades encontradas
-                if (!especialidades.Any())
-                {
-                    return Json(new { error = "Nenhuma especialidade encontrada." });
-                }
-
-                // Retorna as especialidades para o front-end
-                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message + formacaoAcademica });
-            }
-        }
 
 
         public async Task<IActionResult> Print(ObjectId id)
@@ -259,6 +231,7 @@ namespace CisReg_Website.Controllers
                 var vacancyData = new
                 {
                     VacancyId = vacancy.Id,
+                    userPermission= userPermission,
                     AvailableHour = vacancy.AvailableHour,
                     Status = vacancy.Status.ToString(),
                     // Dados do paciente
@@ -348,7 +321,7 @@ namespace CisReg_Website.Controllers
             return View(vacancyModel);
         }
 
-        public async Task<IActionResult> Edit(ObjectId id)
+        public async Task<IActionResult> Edit(ObjectId id,int userPermission)
         {
             var vacancies = await _context.Vacancies
                 .Where(v => v.Id == id)  // Filtra vagas associadas ao Hall
@@ -364,7 +337,7 @@ namespace CisReg_Website.Controllers
                 // Prepara os dados da vaga
                 var vacancyData = new
                 {
-                    Permissions = "2",
+                    Permissions = userPermission,
                     VacancyId = vacancy.Id,
                     AvailableHour = vacancy.AvailableHour,
                     Status = vacancy.Status.ToString(),
@@ -419,7 +392,69 @@ namespace CisReg_Website.Controllers
 
             return View();
         }
-       
+
+        public IActionResult GetEspecialidadesPorFormacao(string formacaoAcademica)
+        {
+            if (string.IsNullOrWhiteSpace(formacaoAcademica))
+            {
+                return Json(new { error = "Formação acadêmica inválida." });
+            }
+
+            try
+            {
+                // Busca os profissionais com a formação acadêmica específica e retorna suas especialidades
+                var especialidades = _context.Professionals
+                    .Where(p => p.Academic == formacaoAcademica)  // Filtra pela formação acadêmica
+                    .Select(p => p.Specialty)  // Seleciona a especialidade de cada profissional
+                    .Distinct()  // Remove duplicados, se houver
+                    .ToList();  // Executa a consulta e retorna a lista
+
+                // Se não houver especialidades encontradas
+                if (!especialidades.Any())
+                {
+                    return Json(new { error = "Nenhuma especialidade encontrada." });
+                }
+
+                // Retorna as especialidades para o front-end
+                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message + formacaoAcademica });
+            }
+        }
+        [HttpGet]
+        [Route("api/especialidades/por-formacao")]
+        public IActionResult GetEspecialidadesPorFormacaoAsync([FromQuery] string formacao)
+        {
+            if (string.IsNullOrWhiteSpace(formacao))
+            {
+                return Json(new { error = "Formação acadêmica inválida." });
+            }
+
+            try
+            {
+                // Busca as especialidades relacionadas à formação acadêmica
+                var especialidades = _context.Professionals
+                    .Where(p => p.Academic == formacao) // Filtra pela formação
+                    .Select(p => p.Specialty)          // Seleciona as especialidades
+                    .Distinct()                        // Remove duplicados
+                    .ToList();                         // Executa a consulta
+
+                // Retorna mensagem de erro se nenhuma especialidade for encontrada
+                if (!especialidades.Any())
+                {
+                    return Json(new { error = "Nenhuma especialidade encontrada para a formação acadêmica especificada." });
+                }
+
+                // Retorna as especialidades
+                return Json(new { especialidades = especialidades.Select(e => new { nome = e }).ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Erro ao buscar especialidades: " + ex.Message });
+            }
+        }
 
 
         [HttpPost]
@@ -570,13 +605,122 @@ namespace CisReg_Website.Controllers
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após criação
         }
 
-        public async Task<IActionResult> EditVacancy(string id,string patientId, string firstName, string lastName, DateTime dob, string susCard,
-                                                    string cid, string phone, string motherName, string fatherName, string academic, string specialty)
+        [HttpPost]
+        public async Task<IActionResult> EditVacancyUNP(
+            string id,
+            string patientId,
+            string firstName,
+            string lastName,
+            DateTime dob,
+            string susCard,
+            string cid,
+            string phone,
+            string motherName,
+            string fatherName,
+            string academic,
+            string specialty,
+            string selectedProfessionalId,
+            string appointmentTime)
         {
-     
             // Buscar o paciente pelo ID
             var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id.ToString() == patientId);
 
+            if (patient == null)
+            {
+                ViewData["ErrorMessage"] = "Paciente não encontrado!";
+                return View(); // Retorna a view de edição com erro
+            }
+
+            // Atualizar as informações do paciente
+            patient.FirstName = firstName;
+            patient.LastName = lastName;
+            patient.Email = $"{firstName.ToLower()}.{lastName.ToLower()}@teste.com"; // Gera um email fictício
+            patient.Cnes = cid;
+            patient.BirthDate = dob;
+            patient.SusCard = susCard;
+            patient.Phone = phone;
+            patient.FatherName = fatherName;
+            patient.MotherName = motherName;
+
+            // Salva as atualizações do paciente
+            _context.Patients.Update(patient);
+            await _context.SaveChangesAsync();
+
+            // Buscar o profissional pelo ID
+            var professional = await _context.Professionals.FindAsync(new ObjectId(selectedProfessionalId));
+            if (professional == null)
+            {
+                ViewData["ErrorMessage"] = "Profissional não encontrado!";
+                return View(); // Retorna a view de edição com erro
+            }
+
+           // Combinar a data de hoje com o horário recebido no formato ISO
+    var today = DateTime.UtcNow.Date; // Data de hoje
+    TimeSpan time;
+    if (!TimeSpan.TryParse(appointmentTime, out time))
+    {
+        ViewData["ErrorMessage"] = "Horário inválido!";
+        return View(); // Retorna a view de edição com erro
+    }
+            var selectedDateTime = today.Add(time).ToUniversalTime();
+
+            // Buscar todas as vagas associadas ao PatientId
+            var vacancies = await _context.Vacancies
+                .Where(v => v.PatientId == patient.Id)  // Filtra vagas associadas ao paciente
+                .ToListAsync();
+
+            var vacancyDetails = new List<object>(); // Lista para armazenar os detalhes das vagas
+
+            foreach (var vacancy in vacancies)
+            {
+                // Para cada vaga, buscar o paciente e o profissional associados
+                var vacancyPatient = vacancy.PatientId.HasValue ? await _context.Patients.FindAsync(new ObjectId(vacancy.PatientId.Value.ToString())) : null;
+                var vacancyProfessional = vacancy.ProfessionalId.HasValue ? await _context.Professionals.FindAsync(new ObjectId(vacancy.ProfessionalId.Value.ToString())) : null;
+
+                // Adiciona os detalhes da vaga à lista
+                vacancyDetails.Add(new
+                {
+                    Vacancy = vacancy,
+                    Patient = vacancyPatient,
+                    Professional = vacancyProfessional
+                });
+            }
+
+            // Se não encontrar nenhuma vaga associada, retorne um erro
+            if (vacancyDetails.Count == 0)
+            {
+                ViewData["ErrorMessage"] = "Nenhuma vaga associada ao paciente foi encontrada!";
+                return View();
+            }
+
+            // Atualizar os dados da vaga para o paciente (caso haja uma vaga para atualizar)
+            var vacancyToUpdate = vacancies.FirstOrDefault(); // Exemplo: seleciona a primeira vaga associada ao paciente
+            if (vacancyToUpdate != null)
+            {
+                vacancyToUpdate.AvailableHour = selectedDateTime;
+                vacancyToUpdate.Status = Status.Available; // Ou outro status desejado
+                vacancyToUpdate.ProfessionalId = professional.Id;
+
+                // Salvar as atualizações da vaga
+                _context.Vacancies.Update(vacancyToUpdate);
+                await _context.SaveChangesAsync();
+            }
+
+            // Redireciona para a página de detalhes ou a página inicial
+            return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
+        }
+
+
+
+
+        public async Task<IActionResult> EditVacancyHall(string id, string patientId, string firstName, string lastName, DateTime dob, DateTime calendarDate, string susCard,
+                                                         string cid, string phone, string motherName, string fatherName, string academic, string specialty)
+        {
+            // Zera o horário da data explicitamente e define como UTC
+            calendarDate = new DateTime(calendarDate.Year, calendarDate.Month, calendarDate.Day, 0, 0, 0, DateTimeKind.Utc);
+
+            // Buscar o paciente pelo ID
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id.ToString() == patientId);
 
             // Atualizar as informações do paciente
             patient.FirstName = firstName;
@@ -636,8 +780,8 @@ namespace CisReg_Website.Controllers
             var vacancyToUpdate = vacancies.FirstOrDefault(); // Exemplo: seleciona a primeira vaga associada ao paciente
             if (vacancyToUpdate != null)
             {
-                vacancyToUpdate.AvailableHour =new DateTime();
-                vacancyToUpdate.Status = Status.Available; // Ou outro status desejado
+                vacancyToUpdate.AvailableHour = calendarDate;  // Atribui a data com as horas zeradas
+                vacancyToUpdate.Status = Status.Awaiting_validation; // Ou outro status desejado
                 vacancyToUpdate.ProfessionalId = professional.Id;
 
                 // Salvar as atualizações da vaga
@@ -648,29 +792,6 @@ namespace CisReg_Website.Controllers
             // Redireciona para a página de detalhes ou a página inicial
             return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
         }
-
-        public async Task<IActionResult> GetProfissionaisPorEspecialidadeEFormacao(string especialidade, string formacaoAcademica)
-        {
-            var profissionais = await _context.Professionals
-                .Where(p => p.Specialty == especialidade && p.Academic == formacaoAcademica)
-                .ToListAsync();
-
-            if (profissionais == null || !profissionais.Any())
-            {
-                return Json(new { profissionais = new List<object>() });
-            }
-
-            // Ajustar para incluir ID, FirstName e LastName
-            var result = profissionais.Select(p => new
-            {
-                id = p.Id, // Adiciona o ID do profissional
-                firstName = p.FirstName,
-                lastName = p.LastName
-            }).ToList();
-
-            return Json(new { profissionais = result });
-        }
-
 
 
     }

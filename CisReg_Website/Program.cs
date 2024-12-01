@@ -1,4 +1,4 @@
-﻿using CisReg_Website.Domain;
+using CisReg_Website.Domain;
 using CisReg_Website.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +52,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Vacancy}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

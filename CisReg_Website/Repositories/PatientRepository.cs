@@ -1,4 +1,4 @@
-﻿using CisReg_Website.Domain;
+using CisReg_Website.Domain;
 using CisReg_Website.Models;
 
 namespace CisReg_Website.Repositories;

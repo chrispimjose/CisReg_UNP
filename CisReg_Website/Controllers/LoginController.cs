@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CisReg_Website.Models;
 using Newtonsoft.Json;
-using CisReg_Website.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using CisReg_Website.Domain;
@@ -34,9 +33,10 @@ namespace CisReg_Website.Controllers
                 ViewBag.ErrorMessage = "Erro no envio...";
                 return View();
             }
+#pragma warning disable CS0168 // A variável foi declarada, mas nunca foi usada
             try
             {
-                var professionalTable = await _context.Professional
+                var professionalTable = await _context.Professionals
                      .FirstOrDefaultAsync(m => m.Email == model.Email);
 
                 if (professionalTable == null)
@@ -63,8 +63,9 @@ namespace CisReg_Website.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
-               
+
             }
+#pragma warning restore CS0168 // A variável foi declarada, mas nunca foi usada
             return View();
         }
 

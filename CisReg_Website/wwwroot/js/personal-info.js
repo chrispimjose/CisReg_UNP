@@ -223,60 +223,6 @@ function validateEmail(input, errorMessageText) {
 
 }
 
-// Função que valida a data inserida, verificando se o usuário não inseriu informações falsas.
-function validateAge(input, errorMessageText) {
-
-    const span = document.querySelector(`#${input.id}-error`);
-
-    input.classList.remove('input-error', 'input-accent');
-
-    const isEmpty = input.value.trim() === '';
-
-    const birthDate = new Date(input.value);
-    const currentDate = new Date();
-
-    if (isEmpty) {
-        input.classList.add('input-error');
-        span.classList.add('hidden');
-        span.innerHTML = "";
-        return;
-    }
-
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-    const monthDifference = currentDate.getMonth() - birthDate.getMonth();
-
-    if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())) {
-        age--;
-    }
-
-    if (birthDate.getFullYear() > currentDate.getFullYear()) {
-        input.classList.add('input-error');
-        span.classList.remove('hidden');
-        span.innerHTML = "Por favor, insira um ano válido.";
-        return;
-    }
-
-    if (age < 18) {
-        input.classList.add('input-error');
-        span.classList.remove('hidden');
-        span.innerHTML = "A idade não pode ser inferior a 18 anos.";
-        return;
-    } 
-
-    if (age > 130) {
-        input.classList.add('input-error');
-        span.classList.remove('hidden');
-        span.innerHTML = errorMessageText;
-        return;
-    }
-
-    input.classList.add('input-accent');
-    span.classList.add('hidden');
-    span.innerHTML = "";
-    
-
-}
-
 // Função que verifica se o campo (Senha) e o (Confirmar Senha) tem os inputs equivalentes.
 function verifyIfPasswordsMatch(input, errorMessageText) {
 

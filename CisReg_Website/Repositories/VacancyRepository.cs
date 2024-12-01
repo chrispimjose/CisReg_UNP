@@ -1,4 +1,4 @@
-﻿using CisReg_Website.Domain;
+using CisReg_Website.Domain;
 using CisReg_Website.Models.Vacancy;
 using CisReg_Website.Models;
 using MongoDB.Bson;
@@ -85,7 +85,7 @@ public class VacancyRepository(ApplicationDbContext context)
 
     private static bool IsSearchInUsersNames(VacancyComplete vacancy, string search)
     {
-        return (vacancy.Professional?.FirstName + " " + vacancy.Professional?.LastName).Contains(search) ||
-          (vacancy.Patient?.FirstName + " " + vacancy.Patient?.LastName).Contains(search);
+        return (vacancy.Professional?.FirstName + " " + vacancy.Professional?.LastName).ToLower().Contains(search.ToLower()) ||
+          (vacancy.Patient?.FirstName + " " + vacancy.Patient?.LastName).ToLower().Contains(search.ToLower());
     }
 }

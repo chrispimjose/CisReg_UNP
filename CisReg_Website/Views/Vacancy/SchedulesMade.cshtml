@@ -1,4 +1,4 @@
-﻿@using CisReg_Website.Models;
+@using CisReg_Website.Models;
 @using CisReg_Website.Models.Vacancy;
 @model CisReg_Website.Models.Vacancy.VacancySchedulesMadeViewModel;
 
@@ -138,9 +138,9 @@
                 @foreach (var vacancy in Model.Vacancies)
                 {
                     <div class="card w-100 shadow-xl bg-customGreen-default ">
-                        <figure>
+                        @* <figure>
                             <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
-                        </figure>
+                        </figure> *@
                         <div class="card-body">
                             <div class="flex items-end gap-2">
                                 <span class="card-title text-5xl font-bold">

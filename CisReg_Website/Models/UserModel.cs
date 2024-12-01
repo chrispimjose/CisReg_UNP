@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -28,6 +27,10 @@ public class UserModel
     [DisplayName("Email")]
     public string? Email { get; set; }
 
+    [BsonElement("cpf")]
+    [DisplayName("CPF")]
+    public string? CPF { get; set; }
+
     [BsonElement("password")]
     [DisplayName("Senha")]
     public string? Password { get; set; }
@@ -53,8 +56,6 @@ public class UserModel
 
 public class Patient : UserModel
 {
-    private readonly ApplicationDbContext _context;
-
     [BsonElement("cnes")]
     [DisplayName("CNES")]
     public string? Cnes { get; set; }
@@ -78,18 +79,10 @@ public class Patient : UserModel
     [BsonElement("mother_name")]
     [DisplayName("Nome da mãe")]
     public string? MotherName { get; set; }
+
     public Patient()
     {
-        
-    }
-    public Patient(ApplicationDbContext context)
-    {
-        _context = context;
-    }
 
-    public IEnumerable<Patient> GetAll()
-    {
-        return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
     }
 }
 
@@ -103,37 +96,28 @@ public class Professional : UserModel
     [DisplayName("Conselho")]
     public string? Council { get; set; }
 
-    [BsonElement("council_number")]
-    [DisplayName("Número do conselho")]
-    public string? CouncilNumber { get; set; }
-
     [BsonElement("specialty")]
     [DisplayName("Especialidade")]
     public string? Specialty { get; set; }
 
-    [BsonElement("formation")]
-    [DisplayName("Formação")]
-    public string? Formation { get; set; }
-
     public Professional()
     {
+
     }
 }
 
 public class UserHall : UserModel
 {
     [BsonElement("hall")]
+    [DisplayName("Prefeitura")]
     public string? HallModel { get; set; }
+
+    [BsonElement("phone")]
+    [DisplayName("Telefone")]
+    public string? Phone { get; set; }
 }
 
-public class SupUnp : UserModel, IVacancyReserver, IVacancyCreator
+public class Admin : UserModel
 {
-}
 
-public class SupHall : UserHall, IVacancyCreator
-{
-}
-
-public class Admin : UserModel, IVacancyReserver, IVacancyCreator
-{
 }

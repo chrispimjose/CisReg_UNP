@@ -1,6 +1,5 @@
-﻿namespace CisReg_Website.Models.ProfessionalModels;
+namespace CisReg_Website.Models.ProfessionalModels;
 using CisReg_Website.Models;
-using CisReg_Website.Models.Vacancy;
 
 public class SelectProfessionalQueryParams
 {

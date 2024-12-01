@@ -4,44 +4,14 @@ using Newtonsoft.Json;
 using MongoDB.Bson;
 using CisReg_Website.Domain;
 using Microsoft.EntityFrameworkCore;
+using CisReg_Website.Repositories;
 
 namespace CisReg_Website.Controllers
 {
-    public class ProfessionalInfoController : Controller
+    public class ProfessionalInfoController(ApplicationDbContext context, ProfessionalRepository professionalRepository) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProfessionalInfoController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        [HttpGet]
-        public IActionResult Index()
-        {
-            // Recebe apenas as informações pessoais do profissional da saúde como informação temporária.
-            var modelJson = TempData["PersonalInfo"] as string;
-            var personalInfoModel = string.IsNullOrEmpty(modelJson) ? new PersonalInfoModel() : JsonConvert.DeserializeObject<PersonalInfoModel>(modelJson);
-
-            var combinedModel = new CombinedInfoModel
-            {
-                CompleteName = personalInfoModel.CompleteName,
-                Email = personalInfoModel.Email,
-                CPF = personalInfoModel.CPF,
-                BornDate = personalInfoModel.BornDate,
-                Password = personalInfoModel.Password
-            };
-
-            TempData["CombinedInfo"] = JsonConvert.SerializeObject(combinedModel);
-
-            var formationsList = _context.Formations.ToList();
-            var specialtiesList = _context.Specialties.ToList();
-
-            ViewBag.Formations = formationsList;
-            ViewBag.Specialties = specialtiesList;
-
-            return View("~/Views/Registration/ProfessionalInfo.cshtml");
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly ProfessionalRepository _professionalRepository = professionalRepository;
 
         public class ObjectIdConverter : JsonConverter<ObjectId>
         {
@@ -57,38 +27,47 @@ namespace CisReg_Website.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult Index()
+        {
+
+            var formationsList = _professionalRepository.GetAllFormations();
+            var specialtiesList = _professionalRepository.GetAllSpecialties();
+
+            ViewBag.Formations = formationsList;
+            ViewBag.Specialties = specialtiesList;
+
+            return View("~/Views/Registration/ProfessionalInfo.cshtml");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Submit(ProfessionalInfoModel model)
+        public async Task<IActionResult> Submit(Professional model)
         {
-            var modelJson = TempData["CombinedInfo"] as string;
+            var personalInfoJson = TempData["PersonalInfo"] as string;
 
             var settings = new JsonSerializerSettings();
             settings.Converters.Add(new ObjectIdConverter());
 
-            var combinedModel = string.IsNullOrEmpty(modelJson)
-                ? new CombinedInfoModel()
-                : JsonConvert.DeserializeObject<CombinedInfoModel>(modelJson, settings);
+            var professionalModel = string.IsNullOrEmpty(personalInfoJson)
+                ? new Professional()
+                : JsonConvert.DeserializeObject<Professional>(personalInfoJson, settings);
 
-            combinedModel.registrationNumber = model.registrationNumber;
-            combinedModel.academicTraining = model.academicTraining;
-            combinedModel.specialty = model.specialty;
+            professionalModel.Council = model.Council;
+            professionalModel.Academic = model.Academic;
+            professionalModel.Specialty = model.Specialty;
+            professionalModel.Permission = Permissions.Professional;
 
             if (!ModelState.IsValid)
             {
-                ViewBag.ErrorMessage = "Erro no envio...";
+                ViewBag.ErrorMessage = "Erro no envio dos dados";
                 return View(model);
             }
             try
             {
-                TempData["ProfessionalInfo"] = JsonConvert.SerializeObject(combinedModel);
+                TempData["ProfessionalInfo"] = JsonConvert.SerializeObject(professionalModel);
 
-                if (combinedModel.Id == ObjectId.Empty)
-                {
-                    combinedModel.Id = ObjectId.GenerateNewId();
-                }
-
-                _context.Add(combinedModel);
+                _context.Add(professionalModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Login");
             }

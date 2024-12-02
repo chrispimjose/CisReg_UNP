@@ -8,8 +8,8 @@ public class HallRepository(ApplicationDbContext context)
 {
   private readonly ApplicationDbContext _context = context;
 
-  public IEnumerable<Hall> GetAll()
+  public IEnumerable<UserHall> GetAll()
   {
-    return [.. _context.Hall.Where(u => u.Permission == Permissions.Hall)];
+    return [.. _context.UserHall.Where(u => u.Permission == Permissions.UserHall)];
   }
 }

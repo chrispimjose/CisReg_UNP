@@ -1,4 +1,4 @@
-@model IEnumerable<CisReg_Website.Models.Hall>
+@model IEnumerable<CisReg_Website.Models.HallModel>
 
 @{
     ViewData["Title"] = "Dados da Prefeitura";
@@ -17,7 +17,7 @@
                     @Html.DisplayNameFor(model => model.CNPJ)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Cnes)
+                    @Html.DisplayNameFor(model => model.CNES)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Address)
@@ -48,7 +48,7 @@
                         @Html.DisplayFor(modelItem => item.CNPJ)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Cnes)
+                        @Html.DisplayFor(modelItem => item.CNES)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Address)

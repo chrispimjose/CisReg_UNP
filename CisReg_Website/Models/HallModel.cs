@@ -22,13 +22,13 @@ public class HallModel
   public string? CNPJ { get; set; }
 
   [BsonElement("cnes")]
-  public int CNES { get; set; }
+  public string CNES { get; set; }
 
   [BsonElement("agreement")]
-  public int Agreement { get; set; }
+  public string Agreement { get; set; }
 
   [BsonElement("address")]
-  public Address? Address { get; set; }
+  public string? Address { get; set; }
 
   [BsonElement("cityHallName")]
   public string CityHallName { get; set; } = string.Empty;
@@ -45,13 +45,4 @@ public class HallModel
   [BsonElement("responsibleEmail")]
   public string ResponsibleEmail { get; set; } = string.Empty;
 
-// Optional constructor to initialize required fields
-    public HallModel()
-    {
-        CityHallName = string.Empty;
-        AgreementNumber = string.Empty;
-        CityHallManager = string.Empty;
-        ResponsiblePhoneNumber = string.Empty;
-        ResponsibleEmail = string.Empty;
-    }
 }

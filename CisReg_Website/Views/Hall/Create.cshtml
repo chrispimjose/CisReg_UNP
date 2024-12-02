@@ -1,4 +1,4 @@
-@model CisReg_Website.Models.Hall
+@model CisReg_Website.Models.HallModel
 
 @{
     ViewData["Title"] = "Create";
@@ -19,9 +19,9 @@
                     <span asp-validation-for="CNPJ" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Cnes" class="control-label"></label>
-                    <input asp-for="Cnes" class="form-control input-md" />
-                    <span asp-validation-for="Cnes" class="text-danger"></span>
+                    <label asp-for="CNES" class="control-label"></label>
+                    <input asp-for="CNES" class="form-control input-md" />
+                    <span asp-validation-for="CNES" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Address" class="control-label"></label>

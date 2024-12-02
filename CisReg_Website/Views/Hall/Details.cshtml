@@ -1,4 +1,4 @@
-@model CisReg_Website.Models.Hall
+@model CisReg_Website.Models.HallModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -18,10 +18,10 @@
             @Html.DisplayFor(model => model.CNPJ)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cnes)
+            @Html.DisplayNameFor(model => model.CNES)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cnes)
+            @Html.DisplayFor(model => model.CNES)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Address)

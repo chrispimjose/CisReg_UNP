@@ -14,6 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     required public DbSet<CombinedInfoModel> Professional { get; set; }
     required public DbSet<FormationModel> Formations { get; set; }
     required public DbSet<SpecialtyModel> Specialties { get; set; }
+    required public DbSet<Hall> Hall { get; set; }
 
     required public DbSet<Admin> Admins { get; set; }
 
@@ -32,6 +33,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Professional>().ToCollection("users");
         modelBuilder.Entity<Patient>().ToCollection("users");
         modelBuilder.Entity<Admin>().ToCollection("users");
+        modelBuilder.Entity<Hall>().ToCollection("users");
 
         modelBuilder.Entity<CombinedInfoModel>().ToCollection("profissional");
         modelBuilder.Entity<FormationModel>().ToCollection("forma��o");

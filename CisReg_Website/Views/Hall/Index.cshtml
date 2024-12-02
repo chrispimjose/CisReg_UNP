@@ -1,0 +1,80 @@
+@model IEnumerable<CisReg_Website.Models.Hall>
+
+@{
+    ViewData["Title"] = "Dados da Prefeitura";
+}
+
+<div class="p-28 flex flex-col gap-4">
+    <h1 class="text-2xl">Dados da Prefeitura</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Dados Prefeitura</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CNPJ)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cnes)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CityHallName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AgreementNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CityHallManager)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ResponsiblePhoneNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ResponsibleEmail)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CNPJ)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cnes)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityHallName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AgreementNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityHallManager)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ResponsiblePhoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ResponsibleEmail)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

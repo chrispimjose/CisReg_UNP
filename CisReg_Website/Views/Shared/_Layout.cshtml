@@ -16,7 +16,7 @@
 
 <body>
     @{
-        var allowedControllers = new[] { "Login", "Registration", "ProfessionalInfo","Vacancy" };
+        var allowedControllers = new[] { "Login", "Registration", "ProfessionalInfo","Vacancy","Hall" };
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }

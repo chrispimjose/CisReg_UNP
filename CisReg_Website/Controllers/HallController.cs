@@ -62,16 +62,34 @@ namespace CisReg_Website.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            // Obtém a lista de halls
             var listaHalls = await _context.Halls.ToListAsync();
-            // Verifica se encontrou algum município
+
+            // Verifica se encontrou algum hall
             if (listaHalls.Count == 0)
             {
-                TempData["AlertMessage"] = "Nenhum município encontrado.";
+                TempData["AlertMessage"] = "Nenhum hall encontrado.";
             }
             else
             {
-                TempData["AlertMessage"] = $"Carregados {listaHalls.Count} municípios com sucesso!";
+                TempData["AlertMessage"] = $"Carregados {listaHalls.Count} halls com sucesso!";
             }
+
+            // Dicionário para armazenar o ID do hall e a contagem de vagas
+            var vacancyCounts = new Dictionary<string, int>();
+
+            foreach (var hall in listaHalls)
+            {
+                // Busca o número de vagas relacionadas ao hall atual
+                var count = await _context.Vacancies
+                    .CountAsync(v => v.ReservedById == hall.Id);
+
+                vacancyCounts[hall.Id.ToString()] = count;
+            }
+
+
+            // Armazena no ViewBag
+            ViewBag.VacancyCounts = vacancyCounts;
 
             return View(listaHalls);
         }

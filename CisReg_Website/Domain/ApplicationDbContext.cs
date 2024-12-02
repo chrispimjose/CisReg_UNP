@@ -19,7 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseMongoDB("mongodb+srv://Kaion:kaionmurilo123@cisregdb.lagqc.mongodb.net/?retryWrites=true&w=majority&appName=Cisregdb", "CisregDB");
+            optionsBuilder.UseMongoDB("mongodb+srv://root:admin@cisreg.kzr70.mongodb.net/?retryWrites=true&w=majority&appName=CisReg", "cisreg");
         }
     }
 

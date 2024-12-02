@@ -70,13 +70,15 @@
             /* Distância maior entre a mensagem e a tabela */
         }
 
+        .text-black {
+            color: black !important;
         }
     </style>
 
 
 </head>
 
-<body class="bg-gray-100">
+<body style="background-color: white;"  class="bg-gray-100">
 
     <div class="flex flex-col items-center justify-center min-h-screen p-4">
 
@@ -112,17 +114,19 @@
                     @foreach (var hall in Model)
                     {
                         <tr>
-                            <td class="px-4 py-2 text-gray-700 break-words">@hall.Address?.City</td>
-                            <td class="px-4 py-2 text-gray-700 break-words">@hall.CNPJ</td>
-                            <td class="px-4 py-2 text-gray-700 break-words">@hall.CNES</td>
-                            <td class="px-4 py-2 text-gray-700 break-words">
+                            <td class="px-4 py-2 text-gray-700 break-words text-black">@hall.Address?.City</td>
+                            <td class="px-4 py-2 text-gray-700 break-words text-black">@hall.CNPJ</td>
+                            <td class="px-4 py-2 text-gray-700 break-words text-black">@hall.CNES</td>
+                            <td class="px-4 py-2 text-gray-700 break-words text-black">
                                 @hall.Address?.StreetName, @hall.Address?.Number, @hall.Address?.Zipcode
                             </td>
-                            <td class="px-4 py-2 text-gray-700">@hall.Agreement</td>
-                            <td class="px-4 py-2 text-gray-700">10</td>
+                            <td class="px-4 py-2 text-gray-700 text-black">@hall.Agreement</td>
+                            <td class="text-black">
+                                @ViewBag.VacancyCounts[hall.Id.ToString()]
+                            </td>
                             <td class="px-4 py-2 print-hidden">
                                 <button type="button"
-                                        class="bg-customGreen-default text-white px-3 py-2 md:px-4 sm:px-2 rounded-lg w-full text-sm truncate" onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City', '@hall.Id')">
+                                        class="bg-customGreen-default text-white px-3 py-2 md:px-4 sm:px-2 rounded-lg w-full text-sm truncate " onclick="openModal('@hall.CNPJ', @hall.Agreement, '@hall.Address.City', '@hall.Id')">
                                     Editar
                                 </button>
                                 

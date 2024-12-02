@@ -30,12 +30,28 @@ public class HallModel
   [BsonElement("address")]
   public Address? Address { get; set; }
 
-  [BsonElement]("")
+  [BsonElement("cityHallName")]
+  public string CityHallName { get; set; } = string.Empty;
 
-public string CityHallName { get; set; } = string.Empty;
-    public string AgreementNumber { get; set; } = string.Empty;
-    public string CityHallManager { get; set; } = string.Empty;
-    public string ResponsiblePhoneNumber { get; set; } = string.Empty;
-    public string ResponsibleEmail { get; set; } = string.Empty;
+  [BsonElement("agreementNumber")]
+  public string AgreementNumber { get; set; } = string.Empty;
 
+  [BsonElement("cityHallManager")]
+  public string CityHallManager { get; set; } = string.Empty;
+
+  [BsonElement("responsiblePhoneNumber")]
+  public string ResponsiblePhoneNumber { get; set; } = string.Empty;
+
+  [BsonElement("responsibleEmail")]
+  public string ResponsibleEmail { get; set; } = string.Empty;
+
+// Optional constructor to initialize required fields
+    public HallModel()
+    {
+        CityHallName = string.Empty;
+        AgreementNumber = string.Empty;
+        CityHallManager = string.Empty;
+        ResponsiblePhoneNumber = string.Empty;
+        ResponsibleEmail = string.Empty;
+    }
 }

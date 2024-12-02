@@ -5,6 +5,7 @@ using CisReg_Website.Domain;
 using CisReg_Website.Models.Vacancy;
 using MongoDB.Bson;
 using CisReg_Website.Repositories;
+using CisReg_Website.Models;
 
 namespace CisReg_Website.Controllers
 {
@@ -358,7 +359,7 @@ namespace CisReg_Website.Controllers
             }
 
             // Redireciona para a página de detalhes ou a página inicial
-            return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
+            return RedirectToAction(nameof(Index1)); // Ou outra ação desejada após edição
         }
 
 
@@ -440,8 +441,8 @@ namespace CisReg_Website.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // Redireciona para a página de detalhes ou a página inicial
-            return RedirectToAction(nameof(Index)); // Ou outra ação desejada após edição
+            // Redisreciona para a página de detalhes ou a página inicial
+            return RedirectToAction(nameof(Index1)); // Ou outra ação desejada após edição
         }
 
 
@@ -581,37 +582,7 @@ namespace CisReg_Website.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit1(ObjectId id, [Bind("Id,AvailableHour,PatientId,ProfessionalId,ReservedById,CreatedById,Status")] VacancyModel vacancyModel)
-        {
-            if (id != vacancyModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(vacancyModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VacancyModelExists(vacancyModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index1));
-            }
-            return View(vacancyModel);
-        }
+        
 
         [HttpPost, ActionName("Delete1")]
         [ValidateAntiForgeryToken]
@@ -640,18 +611,6 @@ namespace CisReg_Website.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        public IActionResult SchedulesMade(VacancySchedulesMadeQueryParams QueryParams)
-        {
-            var schedules = _vacancyRepository.GetAllByQuery(QueryParams);
-            var specialties = _professionalRepository.GetAllSpecialties();
-            VacancySchedulesMadeViewModel viewModel = new(schedules, specialties, QueryParams);
-
-            return View(viewModel);
-        }
-
-
-
 
 
 
@@ -710,48 +669,38 @@ namespace CisReg_Website.Controllers
         }
 
 
-        public async Task<IQueryable<VacancyModel>> GetVacancyByPermission(int permission, string id)
+        private IQueryable<VacancyModel> GetVacancyByPermissionQueryable(int permission, string id)
         {
-            // Inicia a variável para o hall
-            var hall = await _context.Halls.FindAsync(new ObjectId(id));
+            // Converte o ID para ObjectId (assumindo que 'id' é uma string)
+            var hallId = ObjectId.Parse(id);
 
-            // Se o Hall não for encontrado, retorna uma consulta vazia
-            if (hall == null)
-            {
-                return Enumerable.Empty<VacancyModel>().AsQueryable();
-            }
-
-            // Retorna diferentes consultas com base na permissão do usuário
             if (permission == 3 || permission == 5)
             {
-                // Retorna todos os registros da coleção vacancy associados ao hall
-                return _context.Vacancies
-                    .Where(v => v.ReservedById == hall.Id)
-                    .AsQueryable();
+                // Filtro para IDs associados ao hall
+                return _context.Vacancies.Where(v => v.ReservedById == hallId);
             }
             else if (permission == 2)
             {
-                // Retorna apenas os registros com status "Awaiting_validation"
-                return _context.Vacancies
-                    .Where(v => v.Status == Status.Awaiting_validation)
-                    .AsQueryable();
+                // Filtro para status 'Awaiting_validation'
+                return _context.Vacancies.Where(v => v.Status == Status.Awaiting_validation);
             }
             else
             {
-                // Retorna todos os registros, sem filtro
-                return _context.Vacancies.AsQueryable();
+                // Retorna todas as vagas sem filtro
+                return _context.Vacancies;
             }
         }
 
 
+
         public async Task<IActionResult> Index1(
-            string status,
-            string specialty,
-            string academic,
-            DateTime? date,
-            string patientName,
-            string id = "6737780d104e9aafd1f34972",
-            int userPermission = 5)
+                    string status,
+                    string specialty,
+                    string academic,
+                    DateTime? date,
+                    string patientName,
+                    string id = "6737780d104e9aafd1f34972",
+                    int userPermission = 5)
 
         // Código existente...
 
@@ -762,7 +711,7 @@ namespace CisReg_Website.Controllers
             ViewData["SelectedPatientName"] = patientName;
             // Consulta inicial das vagas
 
-            var query = await GetVacancyByPermission(userPermission, id);
+            var query = GetVacancyByPermissionQueryable(userPermission, id);
 
 
             // Filtros adicionais
@@ -845,7 +794,7 @@ namespace CisReg_Website.Controllers
                     ProfessionalAcademic = professional?.Academic,
                     // Dados do Hall (agreement e specialties)
                     HallAgreement = hall.Agreement,
-                    HallSpecialties = hall.specialties,
+                   
                     HallId = hall.Id
                 };
 
@@ -864,7 +813,7 @@ namespace CisReg_Website.Controllers
                         AvailableHour = "N/A",
                         Status = "Vazio",
                         HallAgreement = hall.Agreement,
-                        HallSpecialties = hall.specialties,
+                        
                         HallId = hall.Id.ToString()
                     };
 
@@ -889,5 +838,7 @@ namespace CisReg_Website.Controllers
 
             return View(orderedVacancyDetails);
         }
+
+
     }
 }

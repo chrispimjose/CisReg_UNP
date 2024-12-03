@@ -117,6 +117,17 @@ public class UserHall : UserModel
     public string? Phone { get; set; }
 }
 
+public class SupUnp : UserModel
+{
+    [BsonElement("employee_number")]
+    [DisplayName("Número do Funcionário")]
+    public string? EmployeeNumber { get; set; }
+
+    [BsonElement("supervisor")]
+    [DisplayName("Supervisor")]
+    public string? Supervisor { get; set; }
+}
+
 public class Admin : UserModel
 {
 

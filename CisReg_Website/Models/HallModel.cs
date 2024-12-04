@@ -22,10 +22,10 @@ public class HallModel
   public string? CNPJ { get; set; }
 
   [BsonElement("cnes")]
-  public string CNES { get; set; }
+  public string? CNES { get; set; }
 
   [BsonElement("agreement")]
-  public string Agreement { get; set; }
+  public string? Agreement { get; set; }
 
   [BsonElement("address")]
   public string? Address { get; set; }

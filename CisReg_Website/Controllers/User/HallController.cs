@@ -10,18 +10,20 @@ namespace CisReg_Website.Controllers.User
     public class HallController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly HallRepository _hallRepository;
+      
 
-        public HallController(ApplicationDbContext context, HallRepository hallRepository)
+        public HallController(ApplicationDbContext context)
         {
             _context = context;
-            _hallRepository = hallRepository;
+           
         }
 
         public IActionResult Index()
         {
-            return View(_hallRepository.GetAll());
-        }
+            var halls = _context.Halls.ToList(); // Exemplo com Entity Framework
+    return View(halls);
+}
+        
 
         public async Task<IActionResult> Details(ObjectId id)
         {
@@ -42,7 +44,7 @@ namespace CisReg_Website.Controllers.User
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Cnpj,Cnes,Address,NameOfCityHall,AgreementNumber,Id,CityHallManager,ResponsiblePhoneNumber,ResponsibleEmail")] HallModel hall)
+        public IActionResult Create([Bind("CNPJ,CNES,Address,CityHallName,AgreementNumber,Id,CityHallManager,ResponsiblePhoneNumber,ResponsibleEmail")] HallModel hall)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +69,7 @@ namespace CisReg_Website.Controllers.User
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ObjectId id, [Bind("Cnpj,Cnes,Address,NameOfCityHall,AgreementNumber,Id,CityHallManager,ResponsiblePhoneNumber,ResponsibleEmail")] HallModel hall)
+        public async Task<IActionResult> Edit(ObjectId id, [Bind("CNPJ,CNES,Address,CityHallName,AgreementNumber,Id,CityHallManager,ResponsiblePhoneNumber,ResponsibleEmail")] HallModel hall)
         {
             if (id != hall.Id)
             {

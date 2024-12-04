@@ -17,9 +17,9 @@
             <div class="flex flex-col gap-4">
                 <div class="flex">
                     <input type="radio" name="Period" id="AllPeriods" class="peer hidden"
-                        checked="@(Model.QueryParams.Period is null)">
+                           checked="@(Model.QueryParams.Period is null)">
                     <label for="AllPeriods"
-                        class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
+                           class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-sun mr-4"></i>
                         Todos os turnos
                     </label>
@@ -27,9 +27,9 @@
 
                 <div class="flex">
                     <input type="radio" name="Period" value="Morning" id="Morning" class="peer hidden"
-                        checked="@(Model.QueryParams.Period == Period.Morning)">
+                           checked="@(Model.QueryParams.Period == Period.Morning)">
                     <label for="Morning"
-                        class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
+                           class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-sun mr-4"></i>
                         Manhã
                     </label>
@@ -37,9 +37,9 @@
 
                 <div class="flex">
                     <input type="radio" name="Period" value="Afternoon" id="Afternoon" class="peer hidden"
-                        checked="@(Model.QueryParams.Period == Period.Afternoon)">
+                           checked="@(Model.QueryParams.Period == Period.Afternoon)">
                     <label for="Afternoon"
-                        class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
+                           class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-cloud-sun mr-4"></i>
                         Tarde
                     </label>
@@ -47,9 +47,9 @@
 
                 <div class="flex">
                     <input type="radio" name="Period" value="Night" id="Night" class="peer hidden"
-                        checked="@(Model.QueryParams.Period == Period.Night)">
+                           checked="@(Model.QueryParams.Period == Period.Night)">
                     <label for="Night"
-                        class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
+                           class="w-full border border-customGreen-default cursor-pointer text-customGreen-default py-2 px-4 rounded-lg bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default peer-checked:border-customGreen-default">
                         <i class="fa-solid fa-moon mr-4"></i>
                         Noite
                     </label>
@@ -64,10 +64,10 @@
                 {
                     <div class="flex">
                         <input id="@specialty" type="checkbox" class="peer hidden" value="@specialty"
-                            name="ProfessionalSpecialties"
-                            checked="@(Model.QueryParams?.ProfessionalSpecialties?.Contains(specialty))">
+                               name="ProfessionalSpecialties"
+                               checked="@(Model.QueryParams?.ProfessionalSpecialties?.Contains(specialty))">
                         <label for="@specialty"
-                            class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer">@specialty</label>
+                               class="border border-customGreen-default text-customGreen-default py-2 px-4 rounded-full bg-white transition-colors peer-checked:text-white peer-checked:bg-customGreen-default cursor-pointer">@specialty</label>
                     </div>
                 }
             </div>
@@ -78,17 +78,17 @@
             <div class="bg-customGreen-default border rounded-lg p-4 grid gap-4">
                 <label class="flex items-center gap-2">
                     <input type="checkbox" name="Status" value="Occupied" class="form-checkbox h-5 w-5 text-white"
-                        checked="@(Model.QueryParams?.Status?.Contains(Status.Occupied))">
+                           checked="@(Model.QueryParams?.Status?.Contains(Status.Occupied))">
                     <span class=" text-white font-semibold">Confirmados</span>
                 </label>
                 <label class="flex items-center gap-2">
                     <input type="checkbox" name="Status" value="Rescheduled" class="form-checkbox h-5 w-5 text-white"
-                        checked="@(Model.QueryParams?.Status?.Contains(Status.Rescheduled))">
+                           checked="@(Model.QueryParams?.Status?.Contains(Status.Rescheduled))">
                     <span class="text-white font-semibold">Reagendados</span>
                 </label>
                 <label class="flex items-center gap-2">
                     <input type="checkbox" name="Status" value="Canceled" class="form-checkbox h-5 w-5 text-white"
-                        checked="@(Model.QueryParams?.Status?.Contains(Status.Canceled))">
+                           checked="@(Model.QueryParams?.Status?.Contains(Status.Canceled))">
                     <span class="text-white font-semibold">Cancelados</span>
                 </label>
             </div>
@@ -101,10 +101,12 @@
                     <i class="fa-solid fa-magnifying-glass absolute top-3 left-3"></i>
                 </div>
                 <input type="search" id="search" name="Search" value="@Model.QueryParams?.Search"
-                    class="w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg rounded-r-none bg-gray-50 dark:border-customGreen-default dark:text-black focus:outline-none focus:ring focus:ring-customGreen-default"
-                    placeholder="Pesquisar" />
+                       class="w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg rounded-r-none bg-gray-50 dark:border-customGreen-default dark:text-black focus:outline-none focus:ring focus:ring-customGreen-default"
+                       placeholder="Pesquisar" />
                 <button type="submit"
-                    class="text-white end-1.5 bottom-1.5 bg-customGreen-default hover:bg-customGreen-default focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg rounded-l-none text-sm px-4 py-1 dark:bg-customGreen-default dark:hover:bg-customGreen-defaultdark:focus:ring-blue-800">Pesquisar</button>
+                        class="text-white end-1.5 bottom-1.5 bg-customGreen-default hover:bg-customGreen-default focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg rounded-l-none text-sm px-4 py-1 dark:bg-customGreen-default dark:hover:bg-customGreen-defaultdark:focus:ring-blue-800">
+                    Pesquisar
+                </button>
             </div>
 
             <!--Acrescentando os botoes de datas de agendamentos-->
@@ -114,8 +116,8 @@
                         Filtrar a partir de
                     </span>
                     <input type="datetime-local" name="InitialDate"
-                        value="@Model.QueryParams?.InitialDate?.ToString("yyyy-MM-ddTHH:mm")"
-                        class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
+                           value="@Model.QueryParams?.InitialDate?.ToString("yyyy-MM-ddTHH:mm")"
+                           class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
                 </div>
 
                 <div class="grid">
@@ -123,21 +125,22 @@
                         Até
                     </span>
                     <input type="datetime-local" name="FinalDate"
-                        value="@Model.QueryParams?.FinalDate?.ToString("yyyy-MM-ddTHH:mm")"
-                        class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
+                           value="@Model.QueryParams?.FinalDate?.ToString("yyyy-MM-ddTHH:mm")"
+                           class="bg-customGreen-default border-none rounded-lg p-2 hover:bg-emerald-700 w-full text-white">
                 </div>
 
                 <a asp-action="SchedulesMade"
-                    class=" border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors h-fit">
-                    <i class="fa-solid fa-broom mr-6"></i>Limpar filtros</a>
+                   class=" border border-customGreen-default text-customGreen-default py-2 px-4 rounded-lg bg-white hover:bg-customGreen-default hover:text-white focus:bg-customGreen-default focus:text-white active:bg-customGreen-default active:text-white transition-colors h-fit">
+                    <i class="fa-solid fa-broom mr-6"></i>Limpar filtros
+                </a>
 
                 <!-- Acrescentado o layout dos agendamentos realizados - card com os agendametos-->
                 @foreach (var vacancy in Model.Vacancies)
                 {
                     <div class="card w-100 shadow-xl bg-customGreen-default ">
-                        <figure>
+                        @* <figure>
                             <img src="~/lib/images/logo-unp.svg" alt="Shoes" />
-                        </figure>
+                        </figure> *@
                         <div class="card-body">
                             <div class="flex items-end gap-2">
                                 <span class="card-title text-5xl font-bold">
@@ -149,8 +152,10 @@
                             </div>
                             <p>Agendamento para @vacancy?.Patient?.FirstName @vacancy?.Patient?.LastName</p>
                             <div class="card-actions mt-1">
-                                <div class="badge badge-outline">@vacancy?.Professional?.FirstName
-                                    @vacancy?.Professional?.LastName</div>
+                                <div class="badge badge-outline">
+                                    @vacancy?.Professional?.FirstName
+                                    @vacancy?.Professional?.LastName
+                                </div>
                                 <div class="badge badge-outline">@vacancy?.Professional?.Specialty</div>
                             </div>
                         </div>

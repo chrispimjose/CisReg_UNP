@@ -8,7 +8,7 @@ public class SpecialtyModel
     [BsonId] 
     public ObjectId Id { get; set; }
 
-    [BsonElement("nome")]
-    public string? Name { get; set; }
+    [BsonElement("name")]
+    public string? name { get; set; }
 
 }

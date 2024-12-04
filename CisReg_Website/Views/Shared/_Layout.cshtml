@@ -11,11 +11,12 @@
         crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body>
     @{
-        var allowedControllers = new[] { "Login", "Registration", "PersonalInfo", "ProfessionalInfo" };
+        var allowedControllers = new[] { "Login", "Registration", "ProfessionalInfo","Vacancy","Hall" };
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }
@@ -28,9 +29,9 @@
     else
     {
 
-        <div class="flex flex-col md:flex-row">
+        <div class="flex flex-col md:flex-row bg-customGreen-dark">
             <div
-                class="bg-customGreen-dark w-full h-20 flex justify-end p-6 md:text-sm md:w-20 md:h-screen md:flex-col md:items-center md:justify-start">
+                class="w-full h-20 flex justify-end p-6 md:text-sm md:w-20 md:h-screen md:flex-col md:items-center md:justify-start">
                 <div class="drawer-content">
                     <label for="my-drawer" class="btn btn-ghost drawer-button">
                         <i class="fa-solid fa-bars text-3xl text-white"></i>

@@ -3349,6 +3349,10 @@ html:has(.drawer-toggle:checked) {
     height: 100vh;
   }
 
+  .md\:h-full {
+    height: 100%;
+  }
+
   .md\:w-20 {
     width: 5rem;
   }

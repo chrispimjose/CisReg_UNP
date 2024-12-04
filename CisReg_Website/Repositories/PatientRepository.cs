@@ -5,10 +5,10 @@ namespace CisReg_Website.Repositories;
 
 public class PatientRepository(ApplicationDbContext context)
 {
-  private readonly ApplicationDbContext _context = context;
+    private readonly ApplicationDbContext _context = context;
 
-  public IEnumerable<Patient> GetAll()
-  {
-    return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
-  }
+    public IEnumerable<Patient> GetAll()
+    {
+        return [.. _context.Patients.Where(u => u.Permission == Permissions.Patient)];
+    }
 }

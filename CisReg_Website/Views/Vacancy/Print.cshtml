@@ -1,0 +1,61 @@
+﻿<div class="container mt-5">
+    <h1>Detalhes da Vaga</h1>
+
+    <!-- Card a ser impresso -->
+    <div id="printable-card" class="card">
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+            <p><strong>Horário Disponível:</strong> @Model.AvailableHour</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+
+            <h3>Paciente</h3>
+            <p><strong>Nome:</strong> @Model.PatientName</p>
+            <p><strong>Email:</strong> @Model.PatientEmail</p>
+            <p><strong>Nome do Pai:</strong> @Model.FatherName</p>
+            <p><strong>Nome da Mãe:</strong> @Model.MotherName</p>
+            <p><strong>Data de Nascimento:</strong> @Model.BirthDate.ToString("dd/MM/yyyy")</p>
+            <p><strong>Telefone:</strong> @Model.Phone</p>
+            <p><strong>Cartão SUS:</strong> @Model.SusCard</p>
+            <p><strong>CNES:</strong> @Model.Cnes</p>
+
+            <h3>Profissional</h3>
+            <p><strong>Nome:</strong> @Model.ProfessionalName</p>
+            <p><strong>Email:</strong> @Model.ProfessionalEmail</p>
+            <p><strong>Conselho:</strong> @Model.Council</p>
+            <p><strong>Especialidade:</strong> @Model.ProfessionalSpecialty</p>
+            <p><strong>Formação Acadêmica:</strong> @Model.ProfessionalAcademic</p>
+
+            <h3>Hall</h3>
+            <p><strong>Cidade:</strong> @Model.HallAgreement</p>
+            <p><strong>Estado:</strong> @Model.HallStateName</p>
+            <p><strong>CEP:</strong> @Model.HallZipcode</p>
+            <p><strong>ID do Hall:</strong> @Model.HallId</p>
+        </div>
+    </div>
+
+    <!-- Botão de Imprimir -->
+    <div class="mt-3">
+        <button class="btn btn-primary d-flex align-items-center justify-content-center" style="background-color: #57BE93; color: #000; font-family: 'Poppins', sans-serif; font-size: 14px; padding: 14px 16px;" onclick="printCard()">
+            <i class="bi bi-printer-fill me-2"></i> Imprimir
+        </button>
+    </div>
+</div>
+
+<script>
+    function printCard() {
+        // Salva o conteúdo da div que será impressa
+        const cardContent = document.getElementById('printable-card').outerHTML;
+
+        // Esconde tudo na página que não será impresso
+        document.body.innerHTML = cardContent;
+
+        // Chama a função de impressão para a página modificada
+        window.print();
+
+        // Após a impressão, restaura o conteúdo original da página
+        window.onafterprint = function() {
+            location.reload();  // Recarrega a página para restaurar o conteúdo original
+        };
+    }
+</script>

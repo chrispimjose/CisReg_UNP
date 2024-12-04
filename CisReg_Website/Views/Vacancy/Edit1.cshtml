@@ -1,0 +1,345 @@
+
+﻿@{
+    var vacancyDetails = ViewData["VacancyDetails"] as List<dynamic>;
+    var vacancy = vacancyDetails != null && vacancyDetails.Count > 0 ? vacancyDetails[0] : null;
+    var academicDetails = ViewData["academicDetails"] as List<string>;
+    var professionalAcademic = vacancy != null ? vacancy.ProfessionalAcademic : string.Empty;
+    var professionalSpecialty = vacancy != null ? vacancy.ProfessionalSpecialty : string.Empty;
+ 
+    var professionalsBySpecialtyAndAcademic = ViewData["ProfessionalsBySpecialtyAndAcademic"] as List<Professional>;
+    
+}
+@if (@vacancy.Permissions == 2 )
+            {
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
+
+    <!-- Formulário de Cadastro -->
+    <form asp-controller="Vacancy" asp-action="EditVacancyUNP" method="post">
+        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+        <input type="hidden" name="patientId" value="@vacancy.PatientId" />
+        <input  id="selectedDateTime" name="selectedDateTime" />
+
+            <!-- Dados do Paciente -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+                <div class="grid gap-4">
+                    <input type="date"
+                           name="dob"
+                           placeholder="Data de Nascimento"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)"
+                           readonly>
+                    <input type="text"
+                           name="firstName"
+                           placeholder="First name"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.PatientFirstName"
+                           readonly>
+                    <input type="text"
+                           name="lastName"
+                           placeholder="Last name"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.PatientLastName"
+                           readonly>
+                    <input type="text"
+                           name="susCard"
+                           placeholder="Cartão SUS"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.SusC"
+                           readonly>
+                    <input type="text"
+                           name="cid"
+                           placeholder="CID"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.cnes"
+                           readonly>
+                    <input type="tel"
+                           name="phone"
+                           placeholder="Telefone"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.php"
+                           readonly>
+                    <input type="text"
+                           name="motherName"
+                           placeholder="Nome da Mãe"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.Mother"
+                           readonly>
+                    <input type="text"
+                           name="fatherName"
+                           placeholder="Nome do Pai"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.Father"
+                           readonly>
+
+                    <label for="calendario">Data</label>
+                    <input type="date"
+                           id="calendario"
+                           name="calendarDate"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)"
+                           readonly />
+
+                    <label for="formacaoAcademica">Formação Acadêmica</label>
+                    <input type="text"
+                           name="academic"
+                           placeholder="Academic"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.ProfessionalAcademic"
+                           readonly>
+
+                    <label for="especialidade">Especialidade</label>
+                    <input type="text"
+                           name="specialty"
+                           placeholder="Especialidade"
+                           class="border rounded p-2 w-full bg-gray-100"
+                           value="@vacancy.ProfessionalSpecialty"
+                           readonly>
+                </div>
+            </div>
+
+            <select id="professionalSelect" name="selectedProfessionalId" class="border rounded p-2 w-full" required>
+                <option value="">Selecione um profissional</option>
+                @if (professionalsBySpecialtyAndAcademic != null)
+                {
+                    foreach (var professional in professionalsBySpecialtyAndAcademic)
+                    {
+                        <option value="@professional.Id">
+                            @professional.FirstName @professional.LastName - @professional.Specialty
+                        </option>
+                    }
+                }
+            </select>
+
+            <script>
+               document.addEventListener("DOMContentLoaded", function () {
+    // Valores enviados pelo servidor
+    var professionalSpecialty = "@vacancy.ProfessionalSpecialty".trim(); // Especialidade
+    var professionalName = "@vacancy.ProfessionalName".trim(); // Nome completo do profissional
+
+    // Seleciona o dropdown
+    var selectElement = document.getElementById("professionalSelect");
+
+    // Verifica e seleciona a opção correspondente
+    Array.from(selectElement.options).forEach(function (option) {
+        var optionText = option.text.trim(); // Texto da opção atual no formato "Nome Completo - Especialidade"
+        
+        // Compara o texto da opção com o formato "Nome Completo - Especialidade"
+        if (optionText === `${professionalName} - ${professionalSpecialty}`) {
+            option.selected = true; // Marca a opção como selecionada
+        }
+    });
+});
+
+            </script>
+
+
+            <div class="mt-4">
+                <label for="appointmentTime">Horário</label>
+                <input type="time" id="appointmentTime" name="appointmentTime" class="border rounded p-2 w-full" required
+                       value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("HH:mm") : "")" />
+            </div>
+
+
+
+
+
+            <!-- Botões de Ação -->
+            <div class="flex justify-between mt-6">
+                <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded" onclick="clearFields()">Voltar</button>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+
+
+}
+else{
+<div class="container mx-auto mt-10 p-4 bg-white rounded shadow-lg max-w-2xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Preenchimento de Vagas</h2>
+
+    <form asp-controller="Vacancy" asp-action="EditVacancyHall" method="post">
+        <input type="hidden" name="id" value="@vacancy.VacancyId" />
+        <input type="hidden" name="patientId" value="@vacancy.PatientId" />
+        <input id="selectedDateTime" name="selectedDateTime" />
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Dados do Paciente</h3>
+                <div class="grid gap-4">
+                    <input type="text" name="firstName" placeholder="First name" class="border rounded p-2 w-full" value="@vacancy.PatientFirstName" required>
+                    <input type="text" name="lastName" placeholder="Last name" class="border rounded p-2 w-full" value="@vacancy.PatientLastName" required>
+                    <input type="text" name="susCard" placeholder="Cartão SUS" class="border rounded p-2 w-full" value="@vacancy.SusC" required>
+                    <input type="text" name="cid" placeholder="CID" class="border rounded p-2 w-full" value="@vacancy.cnes" required>
+                    <input type="tel" name="phone" placeholder="Telefone" class="border rounded p-2 w-full" value="@vacancy.php" required>
+                    <input type="text" name="motherName" placeholder="Nome da Mãe" class="border rounded p-2 w-full" value="@vacancy.Mother" required>
+                    <input type="text" name="fatherName" placeholder="Nome do Pai" class="border rounded p-2 w-full" value="@vacancy.Father" required>
+                    <input type="date" name="dob" placeholder="Data de Nascimento" class="border rounded p-2 w-full" value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" required>
+
+                </div>
+            </div>
+           
+            <!-- Dados da Vaga -->
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-4">Vaga</h3>
+                <div class="grid gap-4">
+                    <!-- Formação Acadêmica -->
+                    <div>
+                        <label for="formacaoAcademica">Formação Acadêmica</label>
+                        <select id="formacaoAcademica" name="academic" class="border rounded p-2 w-full" required>
+                            <option disabled value="">Selecione a Formação Acadêmica</option>
+                            @if (academicDetails != null)
+                            {
+                                foreach (var academic in academicDetails)
+                                {
+                                    <option value="@academic">@academic</option>
+                                }
+                            }
+                        </select>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                // Obtém o valor de ProfessionalAcademic do servidor
+                                var professionalAcademic = "@vacancy.ProfessionalAcademic";
+
+                                // Seleciona o dropdown
+                                var selectElement = document.getElementById("formacaoAcademica");
+
+                                // Percorre todas as opções e marca a correspondente como selecionada
+                                Array.from(selectElement.options).forEach(function (option) {
+                                    if (option.value === professionalAcademic) {
+                                        option.selected = true;
+                                    }
+                                });
+                            });
+                        </script>
+
+
+
+
+
+                    </div>
+
+                    <div id="especialidadeForm" style="margin-top: 10px;">
+                        <label for="especialidade">Especialidade</label>
+                        <select id="especialidade" name="specialty" class="border rounded p-2 w-full" required>
+                            <option disabled value="">Selecione a Especialidade</option>
+                        </select>
+                    </div>
+
+
+
+                    <!-- Mensagem de Erro -->
+                    <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+                </div>
+            </div>
+            <label for="calendario">Data</label>
+            <input type="date"
+                   id="calendario"
+                   name="calendarDate"
+                   class="border rounded p-2 w-full bg-gray-100"
+                   value="@(vacancy.AvailableHour != null ? ((DateTime)vacancy.AvailableHour).ToString("yyyy-MM-dd") : string.Empty)" />
+                
+
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-between mt-6">
+                <form asp-controller="Vacancy" asp-action="Delete1" method="post">
+                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </form>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
+}
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formacaoAcademicaDropdown = document.getElementById("formacaoAcademica");
+        const especialidadeDropdown = document.getElementById("especialidade");
+        const errorMessage = document.getElementById("errorMessage");
+
+        // Valores passados do backend para o formulário
+        const professionalAcademic = "@vacancy.ProfessionalAcademic";
+        const professionalSpecialty = "@vacancy.ProfessionalSpecialty";
+
+        // Pré-seleciona a formação acadêmica no dropdown
+        Array.from(formacaoAcademicaDropdown.options).forEach(function (option) {
+            if (option.value === professionalAcademic) {
+                option.selected = true;
+            }
+        });
+
+        // Carrega as especialidades relacionadas à formação acadêmica selecionada
+        if (professionalAcademic) {
+            fetch(`/api/especialidades/por-formacao?formacao=${encodeURIComponent(professionalAcademic)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        errorMessage.textContent = data.error;
+                        errorMessage.style.display = "block";
+                    } else {
+                        errorMessage.style.display = "none";
+                        especialidadeDropdown.innerHTML = '<option disabled value="">Selecione a Especialidade</option>';
+                        data.especialidades.forEach(especialidade => {
+                            const option = document.createElement("option");
+                            option.value = especialidade.nome;
+                            option.textContent = especialidade.nome;
+
+                            // Marca a especialidade como selecionada, se corresponder
+                            if (especialidade.nome === professionalSpecialty) {
+                                option.selected = true;
+                            }
+
+                            especialidadeDropdown.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = "Erro ao carregar especialidades.";
+                    errorMessage.style.display = "block";
+                });
+        }
+    });
+</script>
+
+
+
+
+
+<style>
+    :root {
+        --customGreen: #57BE93;
+        --customGreen-hover: #40a57b;
+        --text-color-default: #374151;
+        --text-color-light: #6b7280;
+        --border-color: #e5e7eb;
+        --background-color: white;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    .btn {
+        font-size: 1rem; /* Aumenta o tamanho da fonte dos botões */
+        padding: 0.6rem 1.2rem; /* Ajusta o espaçamento interno do botão */
+        background-color: var(--customGreen);
+        color: white;
+        font-weight: bold;
+        border-radius: 0.375rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 25%;
+        margin-top: 2rem; /* Adiciona espaço acima do botão */
+    }
+
+        .btn:hover {
+            background-color: var(--customGreen-hover);
+            transform: scale(1.05);
+        }
+    input, select {
+        background-color: white !important;
+        color: black !important;
+    }
+</style>

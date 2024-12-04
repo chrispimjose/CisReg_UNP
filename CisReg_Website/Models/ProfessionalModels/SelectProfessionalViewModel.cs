@@ -3,10 +3,10 @@ using CisReg_Website.Models;
 
 public class SelectProfessionalQueryParams
 {
-  public Period? Period { get; set; }
-  public IEnumerable<string>? ProfessionalSpecialties { get; set; }
-  public DateTime? Date { get; set; }
-  public string? Search { get; set; }
+    public Period? Period { get; set; }
+    public IEnumerable<string>? ProfessionalSpecialties { get; set; }
+    public DateTime? Date { get; set; }
+    public string? Search { get; set; }
 }
 
 public class SelectProfessionalViewModel(
@@ -15,7 +15,7 @@ public class SelectProfessionalViewModel(
   SelectProfessionalQueryParams queryParams
 )
 {
-  public IEnumerable<Professional> Professionals { get; set; } = professionals;
-  public IEnumerable<string> ProfessionalSpecialties { get; set; } = professionalSpecialties;
-  public SelectProfessionalQueryParams QueryParams { get; set; } = queryParams;
+    public IEnumerable<Professional> Professionals { get; set; } = professionals;
+    public IEnumerable<string> ProfessionalSpecialties { get; set; } = professionalSpecialties;
+    public SelectProfessionalQueryParams QueryParams { get; set; } = queryParams;
 }

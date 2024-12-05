@@ -21,7 +21,7 @@ namespace CisReg_Website.Controllers.User
         public IActionResult Index()
         {
             var halls = _context.Halls.ToList(); // Exemplo com Entity Framework
-    return View(halls);
+    return View("Listar", halls);
 }
         
 

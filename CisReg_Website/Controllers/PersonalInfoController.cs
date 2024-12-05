@@ -31,8 +31,7 @@ namespace CisReg_Website.Controllers
             }
             try
             {
-                var searchForCPF = await _context.Professionals
-                    .FirstOrDefaultAsync(m => m.CPF == model.CPF);
+                var searchForCPF = _professionalRepository.SearchForProfessionalCPF(model);
 
                 if (searchForCPF != null)
                 {

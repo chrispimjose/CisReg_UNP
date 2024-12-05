@@ -19,16 +19,16 @@ public class HallModel
   public ObjectId Id { get; set; }
 
   [BsonElement("cnpj")]
-  public string? CNPJ { get; set; }
+  public string CNPJ { get; set; } = string.Empty;
 
   [BsonElement("cnes")]
-  public string? CNES { get; set; }
+  public string CNES { get; set; } = string.Empty;
 
   [BsonElement("agreement")]
-  public string? Agreement { get; set; }
+  public string Agreement { get; set; } = string.Empty;
 
   [BsonElement("address")]
-  public string? Address { get; set; }
+  public string Address { get; set; } = string.Empty;
 
   [BsonElement("cityHallName")]
   public string CityHallName { get; set; } = string.Empty;

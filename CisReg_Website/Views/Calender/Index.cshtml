@@ -1,0 +1,351 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calendário de Disponibilidade por Horário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .calendar-container {
+            width: 70%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-details {
+            width: 30%;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-left: 1px solid #ddd;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .day {
+            border: 1px solid #ddd;
+            min-height: 100px;
+            padding: 5px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .day:hover {
+                background-color: #f0f0f0;
+            }
+
+        .day-number {
+            font-weight: bold;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+
+        .time-slot {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+            position: relative;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+            .time-slot label {
+                width: 80px;
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .time-slot textarea {
+                flex-grow: 1;
+                height: 50px;
+                resize: vertical;
+            }
+
+        .day-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .close-details {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+
+        .time-slot-status {
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .hour-status-btn {
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+            .hour-status-btn:hover {
+                transform: scale(1.1);
+            }
+
+        /* Status Colors with Strong Contrast */
+        .time-slot.available {
+            background-color: #e6f3e6;
+            border-left: 5px solid #2E7D32;
+        }
+
+        .time-slot.unavailable {
+            background-color: #f9e6e6;
+            border-left: 5px solid #C62828;
+        }
+
+        .time-slot.booked {
+            background-color: #e6f0f9;
+            border-left: 5px solid #1565C0;
+        }
+
+        .hour-status-btn.available {
+            background-color: #4CAF50;
+            border-color: #2E7D32;
+        }
+
+        .hour-status-btn.unavailable {
+            background-color: #F44336;
+            border-color: #C62828;
+        }
+
+        .hour-status-btn.booked {
+            background-color: #2196F3;
+            border-color: #1565C0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">‹ Mês Anterior</button>
+            <h2 id="current-month-year">Dezembro 2024</h2>
+            <button onclick="changeMonth(1)">Próximo Mês ›</button>
+        </div>
+
+        <div class="calendar">
+            <div>Dom</div>
+            <div>Seg</div>
+            <div>Ter</div>
+            <div>Qua</div>
+            <div>Qui</div>
+            <div>Sex</div>
+            <div>Sáb</div>
+            <!-- Days will be dynamically populated here -->
+        </div>
+    </div>
+
+    <div class="day-details">
+        <span class="close-details" onclick="closeDayDetails()">×</span>
+        <div id="selected-day-info">
+            <div class="day-title" id="selected-day-title">Selecione um dia</div>
+            <!-- Time slots will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        const daysContainer = document.querySelector('.calendar');
+        const dayDetailsContainer = document.querySelector('.day-details');
+        const selectedDayTitle = document.getElementById('selected-day-info');
+        const closeDetailsButton = document.querySelector('.close-details');
+
+        // Objeto para armazenar disponibilidade dos horários
+        const availabilityData = JSON.parse(localStorage.getItem('hourAvailabilityData')) || {};
+
+        function updateHourStatus(year, month, day, hour, status) {
+            if (!availabilityData[year]) availabilityData[year] = {};
+            if (!availabilityData[year][month + 1]) availabilityData[year][month + 1] = {};
+            if (!availabilityData[year][month + 1][day]) availabilityData[year][month + 1][day] = {};
+
+            availabilityData[year][month + 1][day][hour] = status;
+
+            // Salvar no localStorage
+            localStorage.setItem('hourAvailabilityData', JSON.stringify(availabilityData));
+
+            // Atualizar visual do horário
+            const hourStatusBtn = document.querySelector(`.hour-status-btn[data-hour="${hour}"]`);
+            if (hourStatusBtn) {
+                hourStatusBtn.className = `hour-status-btn ${status}`;
+            }
+        }
+
+        function getHourStatus(year, month, day, hour) {
+            return availabilityData[year] &&
+                availabilityData[year][month + 1] &&
+                availabilityData[year][month + 1][day] &&
+                availabilityData[year][month + 1][day][hour]
+                ? availabilityData[year][month + 1][day][hour]
+                : 'available';
+        }
+
+        function createTimeSlots(year, month, day) {
+            const container = document.getElementById('selected-day-info');
+            container.innerHTML = `
+                <div class="day-title" id="selected-day-title">${day}/${month + 1}/${year}</div>
+            `;
+
+            // Create time slots from 8:00 to 22:00
+            for (let hour = 6; hour <= 22; hour++) {
+                const timeSlot = document.createElement('div');
+                timeSlot.classList.add('time-slot');
+
+                const label = document.createElement('label');
+                label.textContent = `${hour.toString().padStart(2, '0')}:00`;
+
+                const textarea = document.createElement('textarea');
+                textarea.placeholder = 'Adicione suas anotações';
+
+                // Status buttons for each hour
+                const timeSlotStatus = document.createElement('div');
+                timeSlotStatus.classList.add('time-slot-status');
+
+                const availableBtn = document.createElement('button');
+                availableBtn.classList.add('hour-status-btn', 'available');
+                availableBtn.dataset.hour = hour;
+                availableBtn.title = 'Disponível';
+                availableBtn.addEventListener('click', () => updateHourStatus(year, month, day, hour, 'available'));
+
+                const unavailableBtn = document.createElement('button');
+                unavailableBtn.classList.add('hour-status-btn', 'unavailable');
+                unavailableBtn.dataset.hour = hour;
+                unavailableBtn.title = 'Indisponível';
+                unavailableBtn.addEventListener('click', () => updateHourStatus(year, month, day, hour, 'unavailable'));
+
+                const bookedBtn = document.createElement('button');
+                bookedBtn.classList.add('hour-status-btn', 'booked');
+                bookedBtn.dataset.hour = hour;
+                bookedBtn.title = 'Reservado';
+                bookedBtn.addEventListener('click', () => updateHourStatus(year, month, day, hour, 'booked'));
+
+                timeSlotStatus.appendChild(availableBtn);
+                timeSlotStatus.appendChild(unavailableBtn);
+                timeSlotStatus.appendChild(bookedBtn);
+
+                // Load saved content from localStorage
+                const storageKey = `calendar-detailed-${year}-${month + 1}-${day}-${hour}`;
+                textarea.value = localStorage.getItem(storageKey) || '';
+
+                // Save content to localStorage when changed
+                textarea.addEventListener('change', (e) => {
+                    localStorage.setItem(storageKey, e.target.value);
+                });
+
+                // Set initial status
+                const hourStatus = getHourStatus(year, month, day, hour);
+                timeSlot.classList.add(hourStatus);
+
+                timeSlot.appendChild(label);
+                timeSlot.appendChild(textarea);
+                timeSlot.appendChild(timeSlotStatus);
+                container.appendChild(timeSlot);
+            }
+
+            // Mostrar botão de fechar
+            closeDetailsButton.style.display = 'block';
+        }
+
+        function renderCalendar(date) {
+            // Limpar dias anteriores
+            while (daysContainer.children.length > 7) {
+                daysContainer.removeChild(daysContainer.lastChild);
+            }
+
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            // Atualizar mês e ano
+            document.getElementById('current-month-year').textContent =
+                new Date(year, month).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+
+            // Primeiro dia do mês
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            // Determinar o dia da semana do primeiro dia
+            const startingDay = firstDay.getDay();
+
+            // Adicionar espaços em branco antes do primeiro dia
+            for (let i = 0; i < startingDay; i++) {
+                daysContainer.appendChild(document.createElement('div'));
+            }
+
+            // Criar dias
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+
+                const dayNumberSpan = document.createElement('span');
+                dayNumberSpan.classList.add('day-number');
+                dayNumberSpan.textContent = day;
+
+                // Adicionar evento de clique para mostrar detalhes
+                dayElement.addEventListener('click', () => {
+                    createTimeSlots(year, month, day);
+                });
+
+                dayElement.appendChild(dayNumberSpan);
+                daysContainer.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar(currentDate);
+        }
+
+        function closeDayDetails() {
+            const container = document.getElementById('selected-day-info');
+            container.innerHTML = '<div class="day-title" id="selected-day-title">Selecione um dia</div>';
+            closeDetailsButton.style.display = 'none';
+        }
+
+        // Renderização inicial
+        renderCalendar(currentDate);
+    </script>
+</body>

@@ -14,6 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     required public DbSet<FormationModel> Formations { get; set; }
     required public DbSet<SpecialtyModel> Specialties { get; set; }
     required public DbSet<Admin> Admins { get; set; }
+    required public DbSet<SupUnp> SupsUnps { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -32,8 +33,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Admin>().ToCollection("users");
         modelBuilder.Entity<HallModel>().ToCollection("hall");
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
+        modelBuilder.Entity<SupUnp>().ToCollection("users");
     }
 
     public DbSet<CisReg_Website.Models.UserHall> UserHall { get; set; } = default!;
+
+public DbSet<CisReg_Website.Models.SupUnp> SupUnp { get; set; } = default!;
 
 }

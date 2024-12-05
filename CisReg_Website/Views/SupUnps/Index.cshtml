@@ -10,68 +10,63 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form method="post" asp-action="Submit" asp-controller="UnpSup" >
+        <form method="post" asp-action="Create" >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
+                <label asp-for="FirstName" class="control-label">Nome </label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
+                <label asp-for="LastName" class="control-label">Sobrenome</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">Email</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
+                <label asp-for="Password" class="control-label">Senha</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
+                <label asp-for="BirthDate" class="control-label">Data de nascimento</label>
                 <input asp-for="BirthDate" class="form-control" />
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CPF" class="control-label"></label>
+                <label asp-for="CPF" class="control-label">CPF</label>
                 <input asp-for="CPF" class="form-control" />
                 <span asp-validation-for="CPF" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
+                <label asp-for="Phone" class="control-label">Numero de telefone</label>
                 <input asp-for="Phone" class="form-control" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
+                <label asp-for="Address" class="control-label">Endereço</label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Position" class="control-label"></label>
+                <label asp-for="Position" class="control-label">Cargo</label>
                 <input asp-for="Position" class="form-control" />
                 <span asp-validation-for="Position" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Department" class="control-label"></label>
+                <label asp-for="Department" class="control-label">Departamento</label>
                 <input asp-for="Department" class="form-control" />
                 <span asp-validation-for="Department" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="WorkShift" class="control-label"></label>
+                <label asp-for="WorkShift" class="control-label">Horario</label>
                 <input asp-for="WorkShift" class="form-control" />
                 <span asp-validation-for="WorkShift" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Permission" class="control-label"></label>
-                <input asp-for="Permission" class="form-control" />
-                <span asp-validation-for="Permission" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -83,4 +78,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-

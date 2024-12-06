@@ -129,7 +129,7 @@ public class SupUnp : UserModel
     [DisplayName("Endereço")]
     public string? Address { get; set; }
 
-    [BsonElement("birthDate")]
+    [BsonElement("birth_date")]
     [DisplayName("Data de Nascimento")]
     public Date? BirthDate { get; set; }
 

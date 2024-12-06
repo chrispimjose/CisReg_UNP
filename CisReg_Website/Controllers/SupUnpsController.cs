@@ -34,8 +34,9 @@ namespace CisReg_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Phone,Address,Position,Department,WorkShift,Id,Email,CPF,Password,FirstName,LastName,Permission")] SupUnp supUnp)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+                supUnp.Permission = Permissions.SupUnp;
                 _context.Add(supUnp);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

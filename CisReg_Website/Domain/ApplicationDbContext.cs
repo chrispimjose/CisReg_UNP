@@ -1,6 +1,7 @@
 ﻿using CisReg_Website.Models;
 using CisReg_Website.Models.Vacancy;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson.IO;
 using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace CisReg_Website.Domain;
@@ -15,6 +16,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     required public DbSet<SpecialtyModel> Specialties { get; set; }
     required public DbSet<Admin> Admins { get; set; }
     required public DbSet<SupUnp> SupsUnps { get; set; }
+    required public DbSet<ScheduleModel> Schedules { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -34,6 +36,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<HallModel>().ToCollection("hall");
         modelBuilder.Entity<VacancyModel>().ToCollection("vacancy");
         modelBuilder.Entity<SupUnp>().ToCollection("users");
+        modelBuilder.Entity<ScheduleModel>().ToCollection("schedules");
     }
 
     public DbSet<CisReg_Website.Models.UserHall> UserHall { get; set; } = default!;

@@ -1,6 +1,7 @@
 using CisReg_Website.Domain;
 using CisReg_Website.Models;
 using CisReg_Website.Models.ProfessionalModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace CisReg_Website.Repositories;
 
@@ -59,4 +60,27 @@ public class ProfessionalRepository(ApplicationDbContext context)
           + professional?.LastName + " "
           + professional?.Council).ToLower().Contains(search.ToLower());
     }
+
+    public async Task<bool> UpdatePasswordAsync(string email, string newPassword)
+    {
+        var professional = await _context.Professionals
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        if (professional == null)
+        {
+            return false;
+        }
+
+        if (newPassword == professional.Password)
+        {
+            return false;
+        }
+
+        professional.Password = newPassword;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
 }

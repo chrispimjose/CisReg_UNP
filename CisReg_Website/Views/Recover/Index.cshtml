@@ -1,0 +1,161 @@
+﻿@model CisReg_Website.Models.RecoverModel
+@{
+
+    ViewData["Title"] = "Recover";
+
+    string action = "Submit";
+    string button = "Enviar código";
+
+    if (ViewBag.CodeSended == true)
+    {
+        if (ViewBag.ValidCode == true)
+        {
+            action = "ChangePassword"; 
+            button = "Alterar senha"; 
+        }
+        else
+        {
+            action = "ValidateCode";  
+            button = "Conferir";      
+        }
+    }
+
+}
+
+<style>
+    .no-scroll {
+        overflow: hidden;
+    }
+</style>
+
+<!-- Container flexível para centralização -->
+<div id="mainContainer" class="relative flex min-h-screen items-center custom-lg:justify-end justify-center bg-customGrey-light">
+
+    <!-- Primeiro círculo -->
+    <div class="fixed custom-lg:w-61-rem custom-lg:h-61-rem custom-lg:left-minus-133-px w-125-rem h-125-rem bg-green-gradient rounded-full aspect-circle top-minus-323-px"></div>
+
+    <!-- UNP Logo -->
+    <div class="fixed custom-sm:bottom-50-px custom-sm:left-150-px custom-sm:z-10">
+        <img src="~/lib/images/logo-unp.svg" class="scale-200" />
+    </div>
+
+    <!-- Segundo círculo -->
+    <div class="fixed custom-lg:w-61-rem custom-lg:h-61-rem custom-lg:left-minus-267-px w-125-rem h-125-rem bg-green-gradient rounded-full aspect-circle top-294-px"></div>
+
+    <!-- Background Color Range -->
+    <div id="rangeBackground" class="fixed flex w-32 items-center custom-lg:mr-5 custom-lg:bottom-10-px">
+        <i id="moonIcon" class="fa-solid fa-moon fa-xl mr-2" style="color: #000000"></i>
+        <input id="colorRange" type="range" min="0" max="100" value="100" class="w-full range range-xs" />
+        <i id="sunIcon" class="fa-solid fa-sun fa-xl ml-2" style="color: #000000"></i>
+    </div>
+
+    <!-- Error Alert -->
+    @{
+        if (ViewBag.ErrorMessage != null)
+
+        {
+            <div class="fixed z-20 top-0 mt-4 w-100-px h-auto">
+                <div id="errorAlert" role="alert" class="alert alert-error w-full mx-auto flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6 shrink-0 stroke-current"
+                         fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>@ViewBag.ErrorMessage</span>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Formulário de Recuperação de Senha -->
+    <div class="flex flex-col custom-sm:w-394-px custom-sm:h-auto w-360-px custom-lg:mr-36 rounded-lg-border bg-customGrey-light shadow-login justify-center items-center z-10">
+        <form method="post" asp-action="@action" asp-controller="Recover" class="recover-form p-4" autocomplete="off">
+
+            <!-- Título "Recuperar Senha" -->
+            <div class="relative">
+                <h3 class="absolute w-80 left-1/2 transform -translate-x-1/2 top-26-px text-customGreen-light text-center font-poppins font-bold text-4x1 leading-normal">Recuperar Senha</h3>
+            </div>
+
+            @{
+                if (ViewBag.CodeSended == false && ViewBag.ValidCode == false)
+                {
+                    <!-- Campo de E-mail -->
+                    <div class="relative mt-32">
+                        <label for="email" class="w-full text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">E-mail</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-customGrey-default"></i>
+                            <input type="email"
+                                   id="email"
+                                   name="Email"
+                                   asp-for="Email"
+                                   class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base"
+                                   placeholder="Digite seu e-mail"
+                                   oninput="applyEmailFormatAtRecover(this); validateEmail(this, 'Por favor, insira um e-mail válido.')"
+                                   required />
+                        </div>
+                    </div>
+                }
+
+                if (ViewBag.CodeSended == true && ViewBag.ValidCode == false)
+                {
+                    <!-- Campo de Código -->
+                    <div class="relative mt-32">
+                        <label for="code" class="w-full text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Código</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-customGrey-default"></i>
+                            <input type="text"
+                                   id="code"
+                                   name="Code"
+                                   asp-for="Code"
+                                   class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base"
+                                   placeholder="Insira o código"
+                                   oninput="applyCodeFormatAtRecover(this);"
+                                   required />
+                        </div>
+                    </div>
+                }
+
+                if (ViewBag.ValidCode == true)
+                {
+                    <!-- Campo de Senha -->
+                    <div class="relative mt-32">
+                        <label for="password" class="w-full text-customGreen-dark text-left font-poppins font-normal text-base leading-personalized mb-2 block">Nova Senha</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-customGrey-default"></i>
+                            <input type="password"
+                                   id="password"
+                                   name="Password"
+                                   asp-for="Password"
+                                   class="input input-accent pl-10 w-full bg-white text-customGrey-default font-poppins text-base"
+                                   placeholder="Digite a nova senha"
+                                   pattern="(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@@$!%*?&]{8,}"
+                                   oninput="validateFieldInput(this, 'Por favor, insira uma senha mais forte.')"
+                                   required />
+                            <button type="button"
+                                    onclick="togglePasswordVisibility()"
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                <i class="fa-solid fa-eye text-customGrey-default" id="toggle-icon"></i>
+                            </button>
+                        </div>
+                        <span id="password-error" class="hidden text-customRed-default text-left font-poppins font-normal text-xs leading-personalized"></span>
+                    </div>
+                }
+            }
+
+            <!-- Botão para enviar dados -->
+            <div class="relative mt-6 mb-5">
+                <button type="submit" 
+                        class="w-full h-entrar-height-px rounded-lg-border bg-customGreen-default hover:bg-onHoverGreen-on_hover_default text-customGrey-light text-center font-poppins text-base leading-personalized">
+                    @button
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/recover.js"></script>
+<script src="~/js/colorRange.js"></script>

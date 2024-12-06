@@ -31,9 +31,9 @@ namespace CisReg_Website.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Erro no envio...";
-                return View();
+                return View("Index");
             }
-#pragma warning disable CS0168 // A variável foi declarada, mas nunca foi usada
+#pragma warning disable CS0168 
             try
             {
                 var professionalTable = await _context.Professionals
@@ -65,8 +65,8 @@ namespace CisReg_Website.Controllers
                 ViewBag.ErrorMessage = "Erro inesperado. Tente novamente.";
 
             }
-#pragma warning restore CS0168 // A variável foi declarada, mas nunca foi usada
-            return View();
+#pragma warning restore CS0168 
+            return View("Index");
         }
 
         [HttpGet]

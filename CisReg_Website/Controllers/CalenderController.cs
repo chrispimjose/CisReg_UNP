@@ -2,7 +2,7 @@
 
 namespace CisReg_Website.Controllers
 {
-    public class UnpSupController : Controller
+    public class CalenderController : Controller
     {
         public IActionResult Index()
         {

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using CisReg_Website.Domain;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CisReg_Website.Models;
 
@@ -119,13 +120,30 @@ public class UserHall : UserModel
 
 public class SupUnp : UserModel
 {
-    [BsonElement("employee_number")]
-    [DisplayName("Número do Funcionário")]
-    public string? EmployeeNumber { get; set; }
 
-    [BsonElement("supervisor")]
-    [DisplayName("Supervisor")]
-    public string? Supervisor { get; set; }
+    [BsonElement("phone")]
+    [DisplayName("Telefone")]
+    public string? Phone { get; set; }
+
+    [BsonElement("address")]
+    [DisplayName("Endereço")]
+    public string? Address { get; set; }
+
+    [BsonElement("birth_date")]
+    [DisplayName("Data de Nascimento")]
+    public Date? BirthDate { get; set; }
+
+    [BsonElement("position")]
+    [DisplayName("Cargo")]
+    public string? Position { get; set; }
+
+    [BsonElement("department")]
+    [DisplayName("Departamento")]
+    public string? Department { get; set; }
+
+    [BsonElement("workShift")]
+    [DisplayName("Turno de Trabalho")]
+    public string? WorkShift { get; set; }
 }
 
 public class Admin : UserModel

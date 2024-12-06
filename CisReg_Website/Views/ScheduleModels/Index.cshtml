@@ -1,0 +1,113 @@
+﻿@model IEnumerable<CisReg_Website.Models.ScheduleModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Médicos Disponíveis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .doctor-card {
+            margin-bottom: 20px;
+        }
+
+        .specialty-section {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-5">Médicos Disponíveis</h1>
+        <div class="form-group">
+            <input type="text" id="search-input" class="form-control" placeholder="Buscar por especialidade...">
+        </div>
+        <div id="doctor-list">
+            <!-- Seções de especialidades e médicos serão inseridas aqui dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        const doctors = [
+            { name: 'Dr. João Silva', specialty: 'Cardiologia' },
+            { name: 'Dr. Ana Pereira', specialty: 'Pediatria' },
+            { name: 'Dr. Maria Oliveira', specialty: 'Dermatologia' },
+            { name: 'Dr. Pedro Souza', specialty: 'Ortopedia' },
+            { name: 'Dr. Cláudia Lima', specialty: 'Cardiologia' },
+            { name: 'Dr. Luís Almeida', specialty: 'Pediatria' },
+            // Adicione mais médicos conforme necessário
+        ];
+
+        const doctorListContainer = document.getElementById('doctor-list');
+        const searchInput = document.getElementById('search-input');
+
+        function renderDoctorCards(doctors) {
+            // Limpar a lista existente
+            doctorListContainer.innerHTML = '';
+
+            // Agrupar médicos por especialidade
+            const groupedDoctors = doctors.reduce((acc, doctor) => {
+                if (!acc[doctor.specialty]) {
+                    acc[doctor.specialty] = [];
+                }
+                acc[doctor.specialty].push(doctor);
+                return acc;
+            }, {});
+
+            // Renderizar médicos agrupados por especialidade
+            Object.keys(groupedDoctors).forEach(specialty => {
+                const section = document.createElement('div');
+                section.classList.add('specialty-section');
+
+                const specialtyHeader = document.createElement('h3');
+                specialtyHeader.textContent = specialty;
+                section.appendChild(specialtyHeader);
+
+                const row = document.createElement('div');
+                row.classList.add('row');
+
+                groupedDoctors[specialty].forEach(doctor => {
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-4', 'doctor-card');
+
+                    card.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${doctor.name}</h5>
+                                <p class="card-text">${doctor.specialty}</p>
+                                <button class="btn btn-primary" onclick="addToCalendar('${doctor.name}')">Adicionar ao Calendário</button>
+                            </div>
+                        </div>
+                    `;
+                    row.appendChild(card);
+                });
+
+                section.appendChild(row);
+                doctorListContainer.appendChild(section);
+            });
+        }
+
+        function addToCalendar(doctorName) {
+            // Redirecionar para a página de calendário do médico
+            window.location.href = `calendario.html?medico=${encodeURIComponent(doctorName)}`;
+        }
+
+        // Filtrar médicos conforme o termo de busca
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.toLowerCase();
+            const filteredDoctors = doctors.filter(doctor =>
+                doctor.specialty.toLowerCase().includes(searchTerm)
+            );
+            renderDoctorCards(filteredDoctors);
+        });
+
+        // Renderizar a lista de médicos inicialmente
+        renderDoctorCards(doctors);
+    </script>
+</body>

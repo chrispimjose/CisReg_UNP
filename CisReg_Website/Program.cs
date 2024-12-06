@@ -21,7 +21,6 @@ builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<ProfessionalRepository>();
 builder.Services.AddScoped<PatientRepository>();
 builder.Services.AddScoped<VacancyRepository>();
-builder.Services.AddScoped<HallRepository>();
 
 var app = builder.Build();
 

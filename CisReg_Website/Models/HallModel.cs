@@ -29,20 +29,4 @@ public class HallModel
 
   [BsonElement("address")]
   public Address? Address { get; set; }
-
-  [BsonElement("cityHallName")]
-  public string CityHallName { get; set; } = string.Empty;
-
-  [BsonElement("agreementNumber")]
-  public string AgreementNumber { get; set; } = string.Empty;
-
-  [BsonElement("cityHallManager")]
-  public string CityHallManager { get; set; } = string.Empty;
-
-  [BsonElement("responsiblePhoneNumber")]
-  public string ResponsiblePhoneNumber { get; set; } = string.Empty;
-
-  [BsonElement("responsibleEmail")]
-  public string ResponsibleEmail { get; set; } = string.Empty;
-
 }
